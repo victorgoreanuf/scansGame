@@ -1,9 +1,13 @@
 """Async game client — one instance per account, wraps all game HTTP calls."""
 
+import asyncio
+from typing import Callable
+
 import httpx
 
 from veyra.game.auth import do_login
 from veyra.game.endpoints import (
+    ALLOCATE_STAT_URL,
     BASE_URL,
     BATTLE_URL,
     CHAPTER_URL,
@@ -20,6 +24,7 @@ from veyra.game.endpoints import (
     PVP_MATCHMAKE_URL,
     PVP_URL,
     REACT_URL,
+    STATS_URL,
     USE_ITEM_URL,
     WAVE_MAP,
 )
@@ -28,6 +33,7 @@ from veyra.game.parser import (
     group_monsters,
     parse_chapter_id,
     parse_chapter_list,
+    parse_character_stats,
     parse_damage_response,
     parse_dead_monsters,
     parse_exp_per_dmg,
@@ -39,7 +45,11 @@ from veyra.game.parser import (
     parse_stamina_potions,
     parse_unclaimed_kills,
 )
-from veyra.game.types import AttackResult, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
+from veyra.game.types import AttackResult, CharacterStats, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
+
+
+SITE_DOWN_THRESHOLD = 3        # consecutive failures before declaring site down
+SITE_CHECK_INTERVAL = 60       # seconds between recovery checks
 
 
 class GameClient:
@@ -50,6 +60,64 @@ class GameClient:
             headers=HEADERS, timeout=15, follow_redirects=True
         )
         self.user_id: str = ""
+        # Site health tracking
+        self._consecutive_net_failures: int = 0
+        self._site_down: bool = False
+
+    @property
+    def is_site_down(self) -> bool:
+        return self._site_down
+
+    def record_net_success(self) -> None:
+        """Call after any successful HTTP response (even game-level errors)."""
+        self._consecutive_net_failures = 0
+        self._site_down = False
+
+    def record_net_failure(self) -> None:
+        """Call after network-level failures (timeout, connection error, 5xx)."""
+        self._consecutive_net_failures += 1
+        if self._consecutive_net_failures >= SITE_DOWN_THRESHOLD:
+            self._site_down = True
+
+    async def wait_for_site_up(
+        self,
+        log_fn: Callable[[str], None],
+        stop_check: Callable[[], bool],
+    ) -> bool:
+        """Block until the site recovers or stop is signaled. Returns True if recovered."""
+        log_fn("")
+        log_fn(
+            f"=== SITE DOWN — {self._consecutive_net_failures} consecutive failures ==="
+        )
+        log_fn(f"Checking every {SITE_CHECK_INTERVAL}s until site recovers...")
+
+        while self._site_down:
+            # Sleep in 1s ticks for responsive stopping
+            for _ in range(SITE_CHECK_INTERVAL):
+                if stop_check():
+                    return False
+                await asyncio.sleep(1)
+
+            # Quick health check
+            try:
+                resp = await self._client.get(
+                    BASE_URL, headers=HEADERS, timeout=10
+                )
+                if resp.status_code < 500:
+                    self._site_down = False
+                    self._consecutive_net_failures = 0
+                    log_fn("")
+                    log_fn("=== SITE IS BACK UP — resuming ===")
+                    return True
+                log_fn(
+                    f"Still down (HTTP {resp.status_code}), "
+                    f"next check in {SITE_CHECK_INTERVAL}s..."
+                )
+            except Exception as e:
+                log_fn(
+                    f"Still down ({type(e).__name__}), "
+                    f"next check in {SITE_CHECK_INTERVAL}s..."
+                )
 
     @property
     def client(self) -> httpx.AsyncClient:
@@ -325,6 +393,26 @@ class GameClient:
             return resp.json()
         except Exception:
             return {"error": resp.text[:300]}
+
+    # ── Stat allocation ──────────────────────────────────────────────────────
+
+    async def fetch_character_stats(self) -> CharacterStats:
+        """Fetch current character stats and unspent points from stats.php."""
+        html = await self.fetch_page(STATS_URL)
+        return parse_character_stats(html)
+
+    async def allocate_stat(self, stat: str, amount: int) -> dict:
+        """Allocate stat points. stat should be 'attack', 'defense', or 'stamina'."""
+        resp = await self._client.post(
+            ALLOCATE_STAT_URL,
+            data={"action": "allocate", "stat": stat, "amount": str(amount)},
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": STATS_URL},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"status": "error", "message": resp.text[:300]}
 
     def get_cookies_json(self) -> str:
         """Serialize current cookies to JSON for persistence."""

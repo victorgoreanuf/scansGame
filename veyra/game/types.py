@@ -111,6 +111,15 @@ class StaminaPotion:
 
 
 @dataclass
+class CharacterStats:
+    """Current character stat values + unspent points from stats.php."""
+    unspent: int = 0
+    attack: int = 0
+    defense: int = 0
+    stamina: int = 0
+
+
+@dataclass
 class FarmStats:
     killed: int = 0
     damage: int = 0

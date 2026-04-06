@@ -38,6 +38,11 @@ async def reaction_topup_loop(
     chapter_idx = 0
 
     while state.running:
+        # Skip if site is down — main worker handles recovery
+        if game.is_site_down:
+            await asyncio.sleep(CHECK_INTERVAL)
+            continue
+
         # 1. Check current stamina + farmed today
         try:
             player = await game.fetch_player_stats(1)

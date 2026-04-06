@@ -7,106 +7,189 @@
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="app">
 
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">&#9876;</div>
-      <h1>Veyra Bot<br><span>Priority Mode</span></h1>
+<div class="toast-container" id="toasts"></div>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-mark">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 12.5-8 8a2.12 2.12 0 1 1-3-3l8-8"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>
+      </div>
+      <h1>Veyra Bot</h1>
+      <p>Game Control Panel</p>
     </div>
-    <div class="header-right">
-      <div class="status"><span class="dot" id="dot"></span><span id="statusText">Offline</span></div>
-      <button class="btn btn-ghost btn-sm" onclick="toggleSettings()">&#9881;</button>
-      <button class="btn btn-primary" id="connectBtn" onclick="connect()">Connect</button>
-    </div>
+    <form class="login-form" onsubmit="login(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" id="loginEmail" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg login-btn" id="loginBtn">Connect</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
   </div>
+</div>
 
-  <div class="dashboard" id="dashboard">
-    <div class="stat-box"><div class="stat-val" id="stKilled">0</div><div class="stat-lbl">Killed</div></div>
-    <div class="stat-box"><div class="stat-val" id="stDmg">0</div><div class="stat-lbl">Damage</div></div>
-    <div class="stat-box"><div class="stat-val" id="stStam">0</div><div class="stat-lbl">Stamina</div></div>
-    <div class="stat-box"><div class="stat-val" id="stLooted">0</div><div class="stat-lbl">Looted</div></div>
-    <div class="stat-box"><div class="stat-val" id="stTime">00:00</div><div class="stat-lbl">Time</div></div>
-  </div>
-
-  <div class="settings" id="settingsPanel">
-    <div class="settings-grid">
-      <div class="field"><label>Email</label><input type="text" id="email" value=""></div>
-      <div class="field"><label>Password</label><input type="password" id="password" value=""></div>
-    </div>
-  </div>
-
-  <div class="wave-section">
-    <div class="wave-header">
-      <div class="wave-title"><span class="num w1">W1</span> Wave 1</div>
-      <div class="wave-right">
-        <button class="btn btn-ghost btn-sm" onclick="toggleWave('w1grid',true)">All On</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleWave('w1grid',false)">All Off</button>
-        <span class="wave-badge" id="w1badge"></span>
+<div class="app" id="mainApp" style="display:none">
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-mark sm">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="m14.5 12.5-8 8a2.12 2.12 0 1 1-3-3l8-8"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>
+        </div>
+        <span class="logo-text">Veyra</span>
+      </div>
+      <div class="header-actions">
+        <div class="status-indicator">
+          <span class="dot" id="dot"></span>
+          <span id="statusText">Offline</span>
+        </div>
+        <button class="btn btn-icon" id="refreshBtn" onclick="refreshWaves()" title="Refresh waves">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
       </div>
     </div>
-    <div class="monster-grid" id="w1grid">
-      <div class="empty" id="w1empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
-    </div>
-  </div>
+  </header>
 
-  <div class="wave-section">
-    <div class="wave-header">
-      <div class="wave-title"><span class="num w2">W2</span> Wave 2</div>
-      <div class="wave-right">
-        <button class="btn btn-ghost btn-sm" onclick="toggleWave('w2grid',true)">All On</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleWave('w2grid',false)">All Off</button>
-        <span class="wave-badge" id="w2badge"></span>
+  <main class="content">
+    <div class="panel-section">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Profiles</span>
+        </div>
+        <div class="panel-body">
+          <select id="profileSelect" class="f-profile">
+            <option value="">Select profile...</option>
+          </select>
+          <div class="panel-btns">
+            <button class="btn btn-xs btn-ghost" onclick="loadProfile()">Load</button>
+            <button class="btn btn-xs btn-accent" onclick="saveProfile()">Save</button>
+            <button class="btn btn-xs btn-ghost btn-danger" onclick="deleteProfile()">Del</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="monster-grid" id="w2grid">
-      <div class="empty" id="w2empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
-    </div>
-  </div>
 
-  <div class="profile-section">
-    <div class="profile-header">
-      <span class="profile-title">Profiles</span>
-      <div class="profile-actions">
-        <select id="profileSelect" class="f-profile">
-          <option value="">-- Profiles --</option>
-        </select>
-        <button class="btn btn-ghost btn-sm" onclick="loadProfile()">Load</button>
-        <button class="btn btn-ghost btn-sm" onclick="saveProfile()">Save</button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteProfile()">Delete</button>
+      <div class="panel" id="pvpSection">
+        <div class="panel-header">
+          <span class="panel-title">
+            Solo PvP
+            <span class="pvp-badge off" id="pvpBadge">OFF</span>
+          </span>
+        </div>
+        <div class="panel-body">
+          <span class="pvp-stat" id="pvpStat"></span>
+          <div class="pvp-btns">
+            <button class="btn btn-sm btn-pvp" id="pvpStartBtn" onclick="startPvP()">Start PvP</button>
+            <button class="btn btn-sm btn-red" id="pvpStopBtn" onclick="stopPvP()" style="display:none">Stop PvP</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="pvp-section" id="pvpSection">
-    <div class="pvp-header">
-      <div class="pvp-left">
-        <span class="pvp-icon">&#9876;&#xFE0E;</span>
-        <span class="pvp-title">Solo PvP</span>
-        <span class="pvp-badge" id="pvpBadge">OFF</span>
-      </div>
-      <div class="pvp-right">
-        <span class="pvp-stat" id="pvpStat"></span>
-        <button class="btn btn-sm btn-pvp-start" id="pvpStartBtn" onclick="startPvP()">Start PvP</button>
-        <button class="btn btn-sm btn-red" id="pvpStopBtn" onclick="stopPvP()" style="display:none">Stop PvP</button>
+      <div class="panel" id="statSection">
+        <div class="panel-header">
+          <span class="panel-title">
+            Auto Stats
+            <span class="pvp-badge off" id="statBadge">OFF</span>
+          </span>
+        </div>
+        <div class="panel-body">
+          <span class="stat-info" id="statDisplay"></span>
+          <div class="stat-controls">
+            <select id="statTarget" class="f-stat-target">
+              <option value="attack">Attack</option>
+              <option value="defense">Defense</option>
+              <option value="stamina">Stamina</option>
+            </select>
+            <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start</button>
+            <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div class="dashboard" id="dashboard">
+      <div class="stat-card" data-accent="red">
+        <div class="stat-val" id="stKilled">0</div>
+        <div class="stat-lbl">Killed</div>
+      </div>
+      <div class="stat-card" data-accent="purple">
+        <div class="stat-val" id="stDmg">0</div>
+        <div class="stat-lbl">Damage</div>
+      </div>
+      <div class="stat-card" data-accent="green">
+        <div class="stat-val" id="stStam">0</div>
+        <div class="stat-lbl">Stamina</div>
+      </div>
+      <div class="stat-card" data-accent="amber">
+        <div class="stat-val" id="stLooted">0</div>
+        <div class="stat-lbl">Looted</div>
+      </div>
+      <div class="stat-card" data-accent="blue">
+        <div class="stat-val" id="stTime">00:00</div>
+        <div class="stat-lbl">Uptime</div>
+      </div>
+    </div>
+
+    <section class="wave-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="wave-num w1">W1</span>
+          <span>Wave 1</span>
+          <span class="wave-count" id="w1badge"></span>
+        </div>
+        <div class="section-actions">
+          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w1grid',true)">All On</button>
+          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w1grid',false)">All Off</button>
+        </div>
+      </div>
+      <div class="monster-grid" id="w1grid">
+        <div class="empty" id="w1empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
+      </div>
+    </section>
+
+    <section class="wave-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="wave-num w2">W2</span>
+          <span>Wave 2</span>
+          <span class="wave-count" id="w2badge"></span>
+        </div>
+        <div class="section-actions">
+          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w2grid',true)">All On</button>
+          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w2grid',false)">All Off</button>
+        </div>
+      </div>
+      <div class="monster-grid" id="w2grid">
+        <div class="empty" id="w2empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
+      </div>
+    </section>
+
+    <section class="log-section">
+      <div class="log-header">
+        <span class="log-title">Activity Log</span>
+        <button class="btn btn-xs btn-ghost" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="log-box" id="logBox"></div>
+    </section>
+  </main>
 
   <div class="action-bar">
-    <button class="btn btn-green" id="startBtn" onclick="start()">&#9654;&#xFE0E; Start</button>
-    <button class="btn btn-red" id="stopBtn" onclick="stop()" disabled>&#9632;&#xFE0E; Stop</button>
+    <button class="btn btn-start" id="startBtn" onclick="start()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+      Start Farming
+    </button>
+    <button class="btn btn-stop" id="stopBtn" onclick="stop()" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="1.5"/></svg>
+      Stop
+    </button>
   </div>
-
-  <div class="log-section">
-    <div class="log-header">
-      <span class="log-title">Activity Log</span>
-      <button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear</button>
-    </div>
-    <div class="log-box" id="logBox"></div>
-  </div>
-
 </div>
+
 <script src="/static/app.js"></script>
 </body>
 </html>

@@ -19,6 +19,8 @@ CHAPTER_URL = f"{BASE_URL}/chaptered.php"
 LAST_UPDATES_URL = f"{BASE_URL}/lastupdates.php"
 INVENTORY_URL = f"{BASE_URL}/inventory.php"
 USE_ITEM_URL = f"{BASE_URL}/use_item.php"
+STATS_URL = f"{BASE_URL}/stats.php"
+ALLOCATE_STAT_URL = f"{BASE_URL}/stats_ajax.php"
 
 STAMINA_PER_REACTION = 2
 FARMED_DAILY_CAP = 1000

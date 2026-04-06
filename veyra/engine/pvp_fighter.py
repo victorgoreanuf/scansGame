@@ -54,6 +54,14 @@ async def pvp_worker(game: GameClient, state: PvPState) -> None:
             return
 
         while state.running:
+            # Wait for site recovery if it's down
+            if game.is_site_down:
+                recovered = await game.wait_for_site_up(
+                    state.log, lambda: not state.running
+                )
+                if not recovered:
+                    break
+
             if tokens == 0:
                 state.log("Out of solo tokens. Stopping PvP.")
                 break
@@ -64,8 +72,10 @@ async def pvp_worker(game: GameClient, state: PvPState) -> None:
             # 1. Queue for matchmaking
             try:
                 mm_result = await game.pvp_find_match("solo")
+                game.record_net_success()
             except Exception as e:
                 state.log(f"Matchmaking error: {e}")
+                game.record_net_failure()
                 await _sleep(state, 10)
                 continue
 
@@ -108,10 +118,12 @@ async def pvp_worker(game: GameClient, state: PvPState) -> None:
                 try:
                     data = await game.pvp_poll_state(match_id, since_log_id)
                     poll_errors = 0
+                    game.record_net_success()
                 except Exception as e:
                     poll_errors += 1
+                    game.record_net_failure()
                     state.log(f"Poll error: {e}")
-                    if poll_errors >= 5:
+                    if game.is_site_down or poll_errors >= 5:
                         state.log("Too many poll errors, assuming battle ended.")
                         battle_done = True
                     continue

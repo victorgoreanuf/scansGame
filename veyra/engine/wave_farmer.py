@@ -59,7 +59,7 @@ async def farm_monster(
     reduced_hits = 0
     prev_hp = None
 
-    while total < goal and state.running and errors < 5:
+    while total < goal and state.running and errors < 5 and not game.is_site_down:
         # Re-join every N hits
         if hits > 0 and hits % REJOIN_EVERY == 0:
             try:
@@ -84,9 +84,14 @@ async def farm_monster(
             )
         except Exception as e:
             state.log(f"    Error: {e}")
+            game.record_net_failure()
             errors += 1
+            if game.is_site_down:
+                return "error"
             await asyncio.sleep(2)
             continue
+
+        game.record_net_success()
 
         if result.is_success:
             dmg = result.damage
@@ -261,7 +266,10 @@ async def single_attack(
             result = await game.attack(monster_id, stam["skill_id"], stam["cost"])
         except Exception as e:
             state.log(f"    Error: {e}")
+            game.record_net_failure()
             return "error"
+
+        game.record_net_success()
 
         if result.is_success:
             state.stats.stamina_spent += stam["cost"]
@@ -319,6 +327,14 @@ async def worker(
             any_attacked = False
             wave_cache: dict[int, list[Monster]] = {}
 
+            # If site went down (detected during previous round), wait for recovery
+            if game.is_site_down:
+                recovered = await game.wait_for_site_up(
+                    state.log, lambda: not state.running
+                )
+                if not recovered:
+                    break
+
             for ti, t in enumerate(targets, 1):
                 if not state.running:
                     break
@@ -327,8 +343,12 @@ async def worker(
                 if t.wave not in wave_cache:
                     try:
                         wave_cache[t.wave] = await game.fetch_wave(t.wave)
+                        game.record_net_success()
                     except Exception as e:
                         state.log(f"  Fetch wave {t.wave} failed: {e}")
+                        game.record_net_failure()
+                        if game.is_site_down:
+                            break  # exit targets loop → triggers site-down wait
                         wave_cache[t.wave] = []
 
                 fresh = [m for m in wave_cache[t.wave] if m.name == t.name]

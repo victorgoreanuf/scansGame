@@ -5,7 +5,7 @@ import re
 from bs4 import BeautifulSoup, Tag
 
 from veyra.game.endpoints import BASE_URL
-from veyra.game.types import AttackResult, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
+from veyra.game.types import AttackResult, CharacterStats, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
 
 
 def parse_monsters(html: str) -> list[Monster]:
@@ -515,6 +515,37 @@ def parse_pvp_solo_tokens(html: str) -> int:
         return int(m.group(1).replace(",", ""))
 
     return 0
+
+
+def parse_character_stats(html: str) -> CharacterStats:
+    """Parse unspent points and current stat values from stats.php.
+
+    Expected HTML structure (Current Stats card):
+      <div class="row"><span>ATTACK</span><span>200</span></div>
+      <div class="row"><span>DEFENSE</span><span>200</span></div>
+      <div class="row"><span>STAMINA</span><span>1590</span></div>
+
+    And unspent points:
+      <div class="row"><span>Unspent Points</span><span>5</span></div>
+    """
+    stats = CharacterStats()
+
+    # Unspent points
+    m = re.search(r"Unspent\s+Points\s*</span>\s*<span[^>]*>\s*(\d+)", html, re.IGNORECASE)
+    if not m:
+        m = re.search(r"Unspent\s+Points.*?(\d+)", html, re.IGNORECASE | re.DOTALL)
+    if m:
+        stats.unspent = int(m.group(1))
+
+    # Current stat values — look in the "Current Stats" card
+    for stat_name in ("attack", "defense", "stamina"):
+        pattern = rf"{stat_name}\s*</span>\s*<span[^>]*>\s*([\d,]+)"
+        m = re.search(pattern, html, re.IGNORECASE)
+        if m:
+            val = int(m.group(1).replace(",", ""))
+            setattr(stats, stat_name, val)
+
+    return stats
 
 
 def parse_chapter_id(html: str) -> str | None:

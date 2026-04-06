@@ -2,6 +2,23 @@ const $ = id => document.getElementById(id);
 let waveData = {};
 let sse = null;
 
+// ── Toast Notifications ─────────────────────────────────────────────────────
+
+function toast(msg, type = 'info') {
+  const container = $('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  container.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  }, 3500);
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
 const GRADS = [
   'linear-gradient(135deg,#6366f1,#818cf8)','linear-gradient(135deg,#8b5cf6,#a78bfa)',
   'linear-gradient(135deg,#ec4899,#f472b6)','linear-gradient(135deg,#ef4444,#f87171)',
@@ -32,7 +49,7 @@ function fmtGoal(n) {
   return n.toLocaleString();
 }
 
-function toggleSettings(){$('settingsPanel').classList.toggle('open');}
+function toggleSettings(){} // backward compat
 
 function toggleWave(gridId, on) {
   $(gridId).querySelectorAll('.mc').forEach(card => {
@@ -48,29 +65,108 @@ function setGoal(btn, val) {
   btn.classList.add('on');
 }
 
-async function connect() {
-  const btn = $('connectBtn');
-  btn.disabled = true; btn.textContent = 'Connecting...';
-  startSSE();
+// ── Auth ─────────────────────────────────────────────────────────────────────
+
+async function checkSession() {
   try {
+    const res = await fetch('/api/session');
+    const data = await res.json();
+    if (data.ok) { showApp(data); return; }
+  } catch(e) {}
+  showLogin();
+}
+
+function showLogin() {
+  $('loginScreen').classList.remove('hidden');
+  $('mainApp').style.display = 'none';
+  const savedEmail = localStorage.getItem('veyra_email');
+  if (savedEmail) $('loginEmail').value = savedEmail;
+}
+
+function showApp(data) {
+  $('loginScreen').classList.add('hidden');
+  $('mainApp').style.display = '';
+
+  if (data.waves) {
+    waveData = {};
+    for (const [k,v] of Object.entries(data.waves)) waveData[k] = v;
+    renderWave('1', waveData['1']||[], 'w1grid', 'w1badge', 'w1empty', 0);
+    renderWave('2', waveData['2']||[], 'w2grid', 'w2badge', 'w2empty', 3000000);
+  }
+
+  $('dot').classList.add('on');
+  $('statusText').textContent = 'Connected';
+
+  if (data.running) {
+    $('startBtn').disabled = true;
+    $('stopBtn').disabled = false;
+  }
+  if (data.stats) {
+    $('stKilled').textContent = fmtGoal(data.stats.killed);
+    $('stDmg').textContent = fmtGoal(data.stats.damage);
+    $('stStam').textContent = fmtGoal(data.stats.stamina);
+    $('stLooted').textContent = fmtGoal(data.stats.looted || 0);
+  }
+  updatePvPStatus(data.pvp_running, data.pvp_stats);
+  updateStatStatus(data.stat_running, data.stat_stats);
+
+  startSSE();
+  startPolling();
+  fetchProfiles();
+}
+
+async function login(e) {
+  e.preventDefault();
+  const btn = $('loginBtn');
+  const err = $('loginError');
+  btn.disabled = true; btn.textContent = 'Connecting...'; err.textContent = '';
+  try {
+    const email = $('loginEmail').value;
+    const password = $('loginPassword').value;
     const res = await fetch('/api/connect', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({email:$('email').value, password:$('password').value}),
+      body: JSON.stringify({email, password}),
     });
     const data = await res.json();
     if (data.ok) {
-      localStorage.setItem('veyra_email', $('email').value);
-      localStorage.setItem('veyra_password', $('password').value);
+      localStorage.setItem('veyra_email', email);
+      showApp(data);
+    } else {
+      err.textContent = data.error || 'Login failed';
+    }
+  } catch(ex) {
+    err.textContent = ex.message;
+  }
+  btn.disabled = false; btn.textContent = 'Connect';
+}
+
+async function logout() {
+  await fetch('/api/logout', {method:'POST'});
+  if (sse) { sse.close(); sse = null; }
+  if (statusPoll) { clearInterval(statusPoll); statusPoll = null; }
+  showLogin();
+}
+
+async function refreshWaves() {
+  const btn = $('refreshBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  startSSE();
+  try {
+    const res = await fetch('/api/refresh', {method:'POST'});
+    const data = await res.json();
+    if (data.ok) {
       waveData = {};
       for (const [k,v] of Object.entries(data.waves)) waveData[k] = v;
       renderWave('1', waveData['1']||[], 'w1grid', 'w1badge', 'w1empty', 0);
       renderWave('2', waveData['2']||[], 'w2grid', 'w2badge', 'w2empty', 3000000);
-      $('dot').classList.add('on');
-      $('statusText').textContent = 'Connected';
-      $('settingsPanel').classList.remove('open');
-    } else { $('statusText').textContent = data.error||'Failed'; }
-  } catch(e) { $('statusText').textContent = e.message; }
-  btn.disabled = false; btn.textContent = 'Refresh';
+      toast('Waves refreshed', 'success');
+    } else if (data.error === 'Not authenticated') {
+      showLogin();
+    } else {
+      toast(data.error || 'Refresh failed', 'error');
+    }
+  } catch(e) { toast(e.message, 'error'); }
+  btn.disabled = false; btn.classList.remove('loading');
 }
 
 function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
@@ -95,6 +191,7 @@ function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
     card.dataset.wave = waveNum;
     card.dataset.ids = JSON.stringify(g.ids);
     card.dataset.instances = JSON.stringify(g.instances);
+    card.style.animationDelay = (idx * 40) + 'ms';
 
     const hasImg = g.image && g.image.length > 5;
     const chipHtml = presets.map(p =>
@@ -145,6 +242,8 @@ function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
   });
 }
 
+// ── Start / Stop ────────────────────────────────────────────────────────────
+
 async function start() {
   const cards = document.querySelectorAll('.mc');
   const targets = [];
@@ -161,20 +260,22 @@ async function start() {
       damage_goal,
     });
   });
-  if (!targets.length) { alert('Enable at least one monster type!'); return; }
+  if (!targets.length) { toast('Enable at least one monster type', 'warning'); return; }
 
   $('startBtn').disabled = true;
   $('stopBtn').disabled = false;
   startSSE();
   const res = await fetch('/api/start', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targets})});
   const data = await res.json();
-  if (!data.ok) { alert(data.error); $('startBtn').disabled=false; $('stopBtn').disabled=true; return; }
+  if (!data.ok) { toast(data.error, 'error'); $('startBtn').disabled=false; $('stopBtn').disabled=true; return; }
 }
 
 async function stop() {
   await fetch('/api/stop',{method:'POST'});
   $('startBtn').disabled=false; $('stopBtn').disabled=true;
 }
+
+// ── SSE / Polling ───────────────────────────────────────────────────────────
 
 function startSSE() {
   if (sse) sse.close();
@@ -231,11 +332,12 @@ function startPolling() {
         $('stopBtn').disabled = true;
       }
       updatePvPStatus(s.pvp_running, s.pvp_stats);
+      updateStatStatus(s.stat_running, s.stat_stats);
     } catch(e){}
   }, 1000);
 }
 
-// ── PvP ──────────────────────────────────────────────────────────────────
+// ── PvP ─────────────────────────────────────────────────────────────────────
 
 async function startPvP() {
   $('pvpStartBtn').disabled = true;
@@ -249,11 +351,11 @@ async function startPvP() {
       $('pvpBadge').textContent = 'FIGHTING';
       $('pvpBadge').className = 'pvp-badge on';
     } else {
-      alert(data.error || 'Failed to start PvP');
+      toast(data.error || 'Failed to start PvP', 'error');
       $('pvpStartBtn').disabled = false;
     }
   } catch(e) {
-    alert('PvP start error: ' + e.message);
+    toast('PvP error: ' + e.message, 'error');
     $('pvpStartBtn').disabled = false;
   }
 }
@@ -287,7 +389,63 @@ function updatePvPStatus(pvpRunning, pvpStats) {
   }
 }
 
-// ── Profiles ──────────────────────────────────────────────────────────────
+// ── Stat Allocator ──────────────────────────────────────────────────────────
+
+async function startStats() {
+  const target = $('statTarget').value;
+  $('statStartBtn').disabled = true;
+  startSSE();
+  try {
+    const res = await fetch('/api/stats/start', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})});
+    const data = await res.json();
+    if (data.ok) {
+      $('statStartBtn').style.display = 'none';
+      $('statStopBtn').style.display = '';
+      $('statBadge').textContent = target.toUpperCase();
+      $('statBadge').className = 'pvp-badge on';
+      $('statTarget').disabled = true;
+    } else {
+      toast(data.error || 'Failed to start stat allocator', 'error');
+      $('statStartBtn').disabled = false;
+    }
+  } catch(e) {
+    toast('Stat allocator error: ' + e.message, 'error');
+    $('statStartBtn').disabled = false;
+  }
+}
+
+async function stopStats() {
+  await fetch('/api/stats/stop', {method:'POST'});
+  $('statStartBtn').style.display = '';
+  $('statStartBtn').disabled = false;
+  $('statStopBtn').style.display = 'none';
+  $('statBadge').textContent = 'OFF';
+  $('statBadge').className = 'pvp-badge off';
+  $('statTarget').disabled = false;
+}
+
+function updateStatStatus(statRunning, statStats) {
+  if (statRunning) {
+    $('statStartBtn').style.display = 'none';
+    $('statStopBtn').style.display = '';
+    $('statBadge').textContent = (statStats && statStats.target ? statStats.target.toUpperCase() : 'ON');
+    $('statBadge').className = 'pvp-badge on';
+    $('statTarget').disabled = true;
+    if (statStats && statStats.target) $('statTarget').value = statStats.target;
+  } else {
+    $('statStartBtn').style.display = '';
+    $('statStartBtn').disabled = false;
+    $('statStopBtn').style.display = 'none';
+    $('statBadge').textContent = 'OFF';
+    $('statBadge').className = 'pvp-badge off';
+    $('statTarget').disabled = false;
+  }
+  if (statStats && (statStats.attack > 0 || statStats.defense > 0 || statStats.stamina > 0)) {
+    $('statDisplay').textContent = 'ATK:' + statStats.attack + ' DEF:' + statStats.defense + ' STA:' + statStats.stamina + ' | Unspent:' + statStats.unspent + (statStats.allocated > 0 ? ' | Allocated:' + statStats.allocated : '');
+  }
+}
+
+// ── Profiles ────────────────────────────────────────────────────────────────
 
 let backendProfiles = {};
 
@@ -297,7 +455,7 @@ async function fetchProfiles() {
     backendProfiles = await res.json();
     const s = $('profileSelect');
     const val = s.value;
-    s.innerHTML = '<option value="">-- Profiles --</option>';
+    s.innerHTML = '<option value="">Select profile...</option>';
     for (const name of Object.keys(backendProfiles)) {
       const opt = document.createElement('option');
       opt.value = name; opt.textContent = name;
@@ -308,7 +466,7 @@ async function fetchProfiles() {
 }
 
 async function saveProfile() {
-  const name = prompt('Enter profile name to save current configuration:');
+  const name = prompt('Profile name:');
   if (!name || !name.trim()) return;
   const cards = document.querySelectorAll('.mc');
   const conf = {};
@@ -327,13 +485,13 @@ async function saveProfile() {
   if (res.ok) {
     await fetchProfiles();
     $('profileSelect').value = name.trim();
-    alert('Profile "' + name.trim() + '" saved!');
+    toast('Profile "' + name.trim() + '" saved', 'success');
   }
 }
 
 function loadProfile() {
   const name = $('profileSelect').value;
-  if (!name) return alert('Select a profile first.');
+  if (!name) return toast('Select a profile first', 'warning');
   const conf = backendProfiles[name];
   if (!conf) return;
   const cards = document.querySelectorAll('.mc');
@@ -353,13 +511,13 @@ function loadProfile() {
       loaded++;
     }
   });
-  if (loaded > 0) alert('Profile "' + name + '" loaded.');
-  else alert('Profile loaded, but no matching monsters in currently visible waves.');
+  if (loaded > 0) toast('Profile "' + name + '" loaded', 'success');
+  else toast('No matching monsters in visible waves', 'warning');
 }
 
 async function deleteProfile() {
   const name = $('profileSelect').value;
-  if (!name) return alert('Select a profile first.');
+  if (!name) return toast('Select a profile first', 'warning');
   if (!confirm('Delete profile "' + name + '"?')) return;
   const res = await fetch('/api/profiles', {
     method: 'DELETE', headers: {'Content-Type': 'application/json'},
@@ -367,17 +525,14 @@ async function deleteProfile() {
   });
   if (res.ok) {
     await fetchProfiles();
+    toast('Profile deleted', 'info');
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Restore saved credentials
-  const savedEmail = localStorage.getItem('veyra_email');
-  const savedPass = localStorage.getItem('veyra_password');
-  if (savedEmail) $('email').value = savedEmail;
-  if (savedPass) $('password').value = savedPass;
+// ── Init ────────────────────────────────────────────────────────────────────
 
-  fetchProfiles();
-  startPolling();
+document.addEventListener('DOMContentLoaded', () => {
   $('pvpBadge').className = 'pvp-badge off';
+  $('statBadge').className = 'pvp-badge off';
+  checkSession();
 });
