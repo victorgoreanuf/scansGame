@@ -1,0 +1,16 @@
+services:
+  bot:
+    build: .
+    ports:
+      - "5678:5678"
+    volumes:
+      - data:/app/data
+    env_file:
+      - .env
+    environment:
+      - VEYRA_DATABASE_URL=sqlite+aiosqlite:///./data/veyra.db
+      - VEYRA_HOST=0.0.0.0
+    restart: unless-stopped
+
+volumes:
+  data:
