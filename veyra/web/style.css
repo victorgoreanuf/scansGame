@@ -360,6 +360,17 @@ input::placeholder { color: var(--text-muted); }
 }
 .f-stat-target:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ─── Quest Panel ─── */
+.panel-quest { grid-column: 1 / -1; }
+.quest-panel-body { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.quest-info { font-size: 11px; color: var(--text-dim); font-variant-numeric: tabular-nums; flex: 1; min-width: 0; }
+.quest-controls { display: flex; gap: 6px; margin-left: auto; }
+.btn-quest { background: linear-gradient(135deg, #6366f1, #818cf8); color: white; }
+.btn-quest:hover { box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4); }
+.quest-current { color: var(--text); font-weight: 600; }
+.quest-progress { color: var(--green); }
+.quest-fallback { color: var(--amber); font-style: italic; }
+
 /* ─── Action Bar (fixed bottom) ─── */
 .action-bar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
@@ -396,6 +407,7 @@ input::placeholder { color: var(--text-muted); }
 .log-box .l-p { color: var(--blue); }
 .log-box .l-skip { color: var(--text-muted); font-style: italic; }
 .log-box .l-pvp { color: var(--amber); }
+.log-box .l-quest { color: #818cf8; }
 
 /* ─── Toast Notifications ─── */
 .toast-container {

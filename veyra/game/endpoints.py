@@ -22,6 +22,12 @@ USE_ITEM_URL = f"{BASE_URL}/use_item.php"
 STATS_URL = f"{BASE_URL}/stats.php"
 ALLOCATE_STAT_URL = f"{BASE_URL}/stats_ajax.php"
 
+# Guild / Quests
+GUILD_URL = f"{BASE_URL}/adventurers_guild.php"
+GUILD_ACCEPT_URL = f"{BASE_URL}/adventurers_accept_quest.php"
+GUILD_FINISH_URL = f"{BASE_URL}/adventurers_finish_quest.php"
+GUILD_GIVEUP_URL = f"{BASE_URL}/adventurers_giveup_quest.php"
+
 STAMINA_PER_REACTION = 2
 FARMED_DAILY_CAP = 1000
 
@@ -29,6 +35,7 @@ WAVE_MAP: dict[int, str] = {
     1: f"{BASE_URL}/active_wave.php?gate=3&wave=3",
     2: f"{BASE_URL}/active_wave.php?gate=3&wave=5",
     3: f"{BASE_URL}/active_wave.php?gate=3&wave=8",
+    4: f"{BASE_URL}/active_wave.php?gate=5&wave=9",
 }
 
 STAMINA_OPTIONS = [

@@ -1,11 +1,28 @@
 """HTML/JSON parsing — ported from slasher_app.py:117-286."""
 
+import logging
 import re
 
 from bs4 import BeautifulSoup, Tag
 
 from veyra.game.endpoints import BASE_URL
-from veyra.game.types import AttackResult, CharacterStats, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
+
+logger = logging.getLogger("veyra.parser")
+from veyra.game.types import (
+    ActiveQuest,
+    AttackResult,
+    CharacterStats,
+    DeadMonster,
+    LootItem,
+    Monster,
+    MonsterGroup,
+    PlayerStats,
+    Quest,
+    QuestObjective,
+    QuestStatus,
+    QuestType,
+    StaminaPotion,
+)
 
 
 def parse_monsters(html: str) -> list[Monster]:
@@ -109,6 +126,7 @@ def parse_damage_response(data: dict, prev_hp: int | None = None) -> AttackResul
         return AttackResult(status="success", damage=dmg, monster_hp=hp, message=msg, raw=data)
 
     # Unknown / error
+    logger.warning("Unhandled damage response: %s", data)
     return AttackResult(status="error", message=msg or "Unknown response", raw=data)
 
 
@@ -548,6 +566,115 @@ def parse_character_stats(html: str) -> CharacterStats:
     return stats
 
 
+def parse_monster_loot(html: str) -> tuple[str, list[LootItem]]:
+    """Parse the 'Possible Loot' section from a battle.php page.
+
+    Real HTML structure:
+      <div class="panel">
+        <strong>🎁 Possible Loot</strong>
+        <div class="loot-grid">
+          <h4 class="tier-head tier-LEGENDARY">LEGENDARY</h4>
+          <div class="loot-row">
+            <div class="loot-card locked|unlocked">
+              <div class="loot-img-wrap">
+                <img alt="..." src="images/items/..."/>
+                <div class="lock-badge">Locked</div>
+              </div>
+              <div class="loot-meta">
+                <div class="loot-name">Goblin Essence</div>
+                <div class="loot-desc">A swirling green vial...</div>
+                <div class="loot-stats">
+                  <span class="chip">Drop: 6%</span>
+                  <span class="chip">DMG req: 70,000</span>
+                  <span class="chip tierchip legendary">LEGENDARY</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    Returns (monster_name, list_of_loot_items).
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[LootItem] = []
+
+    # Extract monster name from .card-title
+    monster_name = ""
+    card_title = soup.select_one(".card-title")
+    if card_title:
+        # Strip leading emoji: "🧟 Goblin Skirmisher" → "Goblin Skirmisher"
+        monster_name = re.sub(r"^[^\w]+", "", card_title.get_text(strip=True)).strip()
+        # Remove any trailing chip text (stop at first tag boundary)
+        # card-title may contain child <span> chips — only take direct text
+        direct_texts = [t for t in card_title.strings]
+        if direct_texts:
+            monster_name = re.sub(r"^[^\w]+", "", direct_texts[0].strip()).strip()
+
+    # Find loot-grid container
+    loot_grid = soup.select_one(".loot-grid")
+    if not loot_grid:
+        return monster_name, items
+
+    # Parse each .loot-card
+    for card in loot_grid.select(".loot-card"):
+        # Name
+        name_el = card.select_one(".loot-name")
+        name = name_el.get_text(strip=True) if name_el else ""
+        if not name:
+            continue
+
+        # Description
+        desc_el = card.select_one(".loot-desc")
+        desc = desc_el.get_text(strip=True) if desc_el else ""
+
+        # Image
+        image = ""
+        img_el = card.select_one(".loot-img-wrap img")
+        if img_el:
+            src = img_el.get("src", "")
+            if src:
+                if not src.startswith("http"):
+                    src = f"{BASE_URL}/{src.lstrip('/')}"
+                image = src
+
+        # Parse chips for drop rate, DMG req, rarity
+        drop_rate = ""
+        dmg_required = 0
+        rarity = ""
+
+        for chip in card.select(".chip"):
+            chip_text = chip.get_text(strip=True)
+
+            dm = re.match(r"Drop:\s*([\d.]+%?)", chip_text)
+            if dm:
+                drop_rate = dm.group(1)
+                if "%" not in drop_rate:
+                    drop_rate += "%"
+                continue
+
+            dmg_m = re.match(r"DMG\s*req:\s*([\d,]+)", chip_text)
+            if dmg_m:
+                dmg_required = int(dmg_m.group(1).replace(",", ""))
+                continue
+
+            # Rarity chip (has class "tierchip")
+            classes = chip.get("class", [])
+            if "tierchip" in classes:
+                rarity = chip_text.upper()
+
+        items.append(LootItem(
+            name=name,
+            description=desc,
+            image=image,
+            drop_rate=drop_rate,
+            dmg_required=dmg_required,
+            rarity=rarity,
+        ))
+
+    return monster_name, items
+
+
 def parse_chapter_id(html: str) -> str | None:
     """Extract the internal chapterid from a chapter page.
 
@@ -570,5 +697,236 @@ def parse_chapter_id(html: str) -> str | None:
     m = re.search(r"chapterid['\"]?\s*[:=]\s*['\"]?(\d+)", html, re.IGNORECASE)
     if m:
         return m.group(1)
+
+    return None
+
+
+# ── Class skill detection ────────────────────────────────────────────────────
+
+
+def parse_class_skills(html: str) -> list[dict]:
+    """Parse class skills from a battle page (must have joined the battle).
+
+    Returns list of dicts: [{"id": "8", "name": "Heal", "mp_cost": 20}, ...]
+    Empty list means no class / no skills.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    bar = soup.select_one(".class-skill-bar")
+    if not bar:
+        return []
+
+    skills = []
+    for btn in bar.select(".skill-slot.attack-btn"):
+        skill_id = btn.get("data-skill-id", "")
+        name = btn.get("data-skill-name", "")
+        cost_el = btn.select_one(".skill-cost")
+        mp_cost = 0
+        if cost_el:
+            m = re.search(r"(\d+)\s*MP", cost_el.get_text())
+            if m:
+                mp_cost = int(m.group(1))
+        if skill_id:
+            skills.append({"id": skill_id, "name": name, "mp_cost": mp_cost})
+
+    return skills
+
+
+# ── Quest board parsing ──────────────────────────────────────────────────────
+
+
+def parse_quest_objective(text: str) -> QuestObjective:
+    """Parse an objective string into a QuestObjective.
+
+    Known formats:
+      "Kill 5 monster(s) · Monster: Lizardman Shadowclaw · min 3m dmg"
+      "Gather 2x item(s) · Item: Goblin Essence"
+      "Use 20 skills against monsters"
+    """
+    text = text.strip()
+
+    # Kill quest
+    m = re.match(
+        r"Kill\s+(\d+)\s+monster\(s\)\s*·\s*Monster:\s*(.+?)(?:\s*·\s*min\s+([\d.]+)([mk])?\s*dmg)?\s*$",
+        text, re.IGNORECASE,
+    )
+    if m:
+        count = int(m.group(1))
+        name = m.group(2).strip()
+        raw_dmg = float(m.group(3)) if m.group(3) else 0
+        suffix = (m.group(4) or "").lower()
+        if suffix == "m":
+            min_dmg = int(raw_dmg * 1_000_000)
+        elif suffix == "k":
+            min_dmg = int(raw_dmg * 1_000)
+        else:
+            min_dmg = int(raw_dmg)
+        return QuestObjective(QuestType.KILL, count, name, min_dmg)
+
+    # Gather quest
+    m = re.match(
+        r"Gather\s+(\d+)x?\s+item\(s\)\s*·\s*Item:\s*(.+)",
+        text, re.IGNORECASE,
+    )
+    if m:
+        return QuestObjective(QuestType.GATHER, int(m.group(1)), m.group(2).strip())
+
+    # Skill quest
+    m = re.match(r"Use\s+(\d+)\s+skills?\s+against", text, re.IGNORECASE)
+    if m:
+        return QuestObjective(QuestType.SKILL, int(m.group(1)))
+
+    return QuestObjective(QuestType.UNKNOWN)
+
+
+def _parse_quest_number(s: str) -> int:
+    """Parse a comma-formatted number string like '10,000' -> 10000."""
+    return int(s.replace(",", "").strip())
+
+
+def parse_quest_board(html: str) -> list[Quest]:
+    """Parse all quest cards from the adventurers guild page."""
+    soup = BeautifulSoup(html, "html.parser")
+    quests: list[Quest] = []
+
+    for row in soup.select(".quest-row"):
+        # Title
+        title_el = row.select_one(".quest-main-title")
+        title = title_el.get_text(strip=True) if title_el else ""
+
+        # Description
+        desc_el = row.select_one(".quest-main-desc")
+        description = desc_el.get_text(strip=True) if desc_el else ""
+
+        # Rank
+        tag_el = row.select_one(".quest-tag")
+        rank = tag_el.get_text(strip=True) if tag_el else ""
+        if rank.lower().startswith("rank:"):
+            rank = rank[5:].strip()
+
+        # Objective (structured, from .quest-req-text)
+        req_el = row.select_one(".quest-req-text")
+        if req_el:
+            objective = parse_quest_objective(req_el.get_text(strip=True))
+        else:
+            # Skill quests have no .quest-requirements — try parsing from description
+            objective = parse_quest_objective(description)
+
+        # Reward: "100 AP • 10,000 Gold • 0"
+        reward_ap = 0
+        reward_gold = 0
+        reward_el = row.select_one(".quest-reward")
+        if reward_el:
+            reward_text = reward_el.get_text(strip=True)
+            ap_m = re.search(r"([\d,]+)\s*AP", reward_text)
+            gold_m = re.search(r"([\d,]+)\s*Gold", reward_text)
+            if ap_m:
+                reward_ap = _parse_quest_number(ap_m.group(1))
+            if gold_m:
+                reward_gold = _parse_quest_number(gold_m.group(1))
+
+        # Status: check for accept button vs cooldown timer vs active
+        accept_btn = row.select_one(".quest-accept-btn")
+        cooldown_el = row.select_one(".quest-cooldown-timer")
+        progress_el = row.select_one(".quest-progress")
+        finish_btn = row.select_one(".quest-finish-btn")
+
+        quest_id = 0
+        status = QuestStatus.AVAILABLE
+        cooldown_ts = 0
+
+        if finish_btn or progress_el:
+            status = QuestStatus.ACTIVE
+            onclick = (finish_btn or row.select_one(".quest-giveup-btn") or {}).get("onclick", "")
+            id_m = re.search(r"(?:finishQuest|giveUpQuest)\((\d+)", onclick)
+            if id_m:
+                quest_id = int(id_m.group(1))
+        elif accept_btn:
+            status = QuestStatus.AVAILABLE
+            onclick = accept_btn.get("onclick", "")
+            id_m = re.search(r"acceptQuest\((\d+)", onclick)
+            if id_m:
+                quest_id = int(id_m.group(1))
+        elif cooldown_el:
+            status = QuestStatus.COOLDOWN
+            cooldown_ts = int(cooldown_el.get("data-cooldown-ts", "0"))
+
+        quests.append(Quest(
+            title=title,
+            quest_id=quest_id,
+            description=description,
+            rank=rank,
+            reward_ap=reward_ap,
+            reward_gold=reward_gold,
+            objective=objective,
+            status=status,
+            cooldown_ts=cooldown_ts,
+        ))
+
+    return quests
+
+
+def parse_active_quest(html: str) -> ActiveQuest | None:
+    """Parse the currently active quest with progress from the guild page.
+
+    Active quests show a .quest-progress element with text like "3 / 5" and
+    optionally a .quest-finish-btn when completed.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    for row in soup.select(".quest-row"):
+        progress_el = row.select_one(".quest-progress")
+        finish_btn = row.select_one(".quest-finish-btn")
+        giveup_btn = row.select_one(".quest-giveup-btn")
+
+        if not progress_el and not finish_btn and not giveup_btn:
+            continue
+
+        # This is the active quest
+        title_el = row.select_one(".quest-main-title")
+        title = title_el.get_text(strip=True) if title_el else ""
+
+        req_el = row.select_one(".quest-req-text")
+        desc_el = row.select_one(".quest-main-desc")
+        if req_el:
+            objective = parse_quest_objective(req_el.get_text(strip=True))
+        elif desc_el:
+            objective = parse_quest_objective(desc_el.get_text(strip=True))
+        else:
+            objective = QuestObjective()
+
+        quest_id = 0
+        for btn in [finish_btn, giveup_btn]:
+            if btn:
+                onclick = btn.get("onclick", "")
+                id_m = re.search(r"\((\d+)", onclick)
+                if id_m:
+                    quest_id = int(id_m.group(1))
+                    break
+
+        quest = Quest(
+            title=title,
+            quest_id=quest_id,
+            objective=objective,
+            status=QuestStatus.ACTIVE,
+        )
+
+        # Parse progress: "3 / 5" or similar
+        progress = 0
+        target_count = objective.target_count
+        if progress_el:
+            prog_text = progress_el.get_text(strip=True)
+            prog_m = re.search(r"(\d+)\s*/\s*(\d+)", prog_text)
+            if prog_m:
+                progress = int(prog_m.group(1))
+                target_count = int(prog_m.group(2))
+
+        completed = finish_btn is not None and not finish_btn.get("disabled")
+
+        return ActiveQuest(
+            quest=quest,
+            progress=progress,
+            target_count=target_count,
+            completed=completed,
+        )
 
     return None

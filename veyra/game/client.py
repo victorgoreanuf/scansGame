@@ -1,9 +1,12 @@
 """Async game client — one instance per account, wraps all game HTTP calls."""
 
 import asyncio
+import logging
 from typing import Callable
 
 import httpx
+
+logger = logging.getLogger("veyra.client")
 
 from veyra.game.auth import do_login
 from veyra.game.endpoints import (
@@ -12,6 +15,10 @@ from veyra.game.endpoints import (
     BATTLE_URL,
     CHAPTER_URL,
     DAMAGE_URL,
+    GUILD_ACCEPT_URL,
+    GUILD_FINISH_URL,
+    GUILD_GIVEUP_URL,
+    GUILD_URL,
     HEADERS,
     ATTACK_EXTRA_HEADERS,
     INVENTORY_URL,
@@ -31,21 +38,25 @@ from veyra.game.endpoints import (
 from veyra.game.parser import (
     extract_user_id,
     group_monsters,
+    parse_active_quest,
     parse_chapter_id,
     parse_chapter_list,
     parse_character_stats,
+    parse_class_skills,
     parse_damage_response,
     parse_dead_monsters,
     parse_exp_per_dmg,
     parse_farmed_today,
     parse_manga_links,
+    parse_monster_loot,
     parse_monsters,
     parse_player_stats,
     parse_pvp_solo_tokens,
+    parse_quest_board,
     parse_stamina_potions,
     parse_unclaimed_kills,
 )
-from veyra.game.types import AttackResult, CharacterStats, DeadMonster, Monster, MonsterGroup, PlayerStats, StaminaPotion
+from veyra.game.types import AttackResult, CharacterStats, DeadMonster, LootItem, Monster, MonsterGroup, PlayerStats, StaminaPotion
 
 
 SITE_DOWN_THRESHOLD = 3        # consecutive failures before declaring site down
@@ -178,7 +189,11 @@ class GameClient:
             headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": f"{BASE_URL}/battle.php?id={monster_id}"},
             timeout=15,
         )
-        data = resp.json()
+        try:
+            data = resp.json()
+        except Exception:
+            logger.error("attack: non-JSON response (HTTP %s): %s", resp.status_code, resp.text[:300])
+            return AttackResult(is_success=False, damage=0, message=f"Non-JSON response: {resp.text[:100]}")
         return parse_damage_response(data, prev_hp)
 
     # ── Loot / EXP methods ────────────────────────────────────────────────
@@ -234,6 +249,7 @@ class GameClient:
         try:
             return resp.json()
         except Exception:
+            logger.warning("loot_monster(%s): non-JSON response (HTTP %s): %s", monster_id, resp.status_code, resp.text[:300])
             return {"status": "error", "message": resp.text[:200]}
 
     # ── Stamina potions ────────────────────────────────────────────────────
@@ -362,6 +378,7 @@ class GameClient:
         try:
             return resp.json()
         except Exception:
+            logger.warning("pvp_find_match: non-JSON response (HTTP %s): %s", resp.status_code, resp.text[:300])
             return {"error": resp.text[:300]}
 
     async def pvp_set_auto(self, match_id: str, since_log_id: int = 0) -> dict:
@@ -413,6 +430,92 @@ class GameClient:
             return resp.json()
         except Exception:
             return {"status": "error", "message": resp.text[:300]}
+
+    # ── Guild / Quest methods ───────────────────────────────────────────────
+
+    async def fetch_quest_board_raw(self) -> str:
+        """Fetch the adventurers guild quest board and return raw HTML."""
+        return await self.fetch_page(GUILD_URL)
+
+    async def fetch_quest_board(self) -> list:
+        """Fetch and parse quest board. Returns list of Quest objects."""
+        html = await self.fetch_page(GUILD_URL)
+        return parse_quest_board(html)
+
+    async def fetch_active_quest(self):
+        """Check for an active quest with progress. Returns ActiveQuest or None."""
+        html = await self.fetch_page(GUILD_URL)
+        return parse_active_quest(html)
+
+    async def accept_quest(self, quest_id: int) -> dict:
+        """Accept a quest from the board. Returns server response dict."""
+        resp = await self._client.post(
+            GUILD_ACCEPT_URL,
+            data={"quest_id": str(quest_id)},
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": GUILD_URL},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"status": "error", "message": resp.text[:300]}
+
+    async def finish_quest(self, quest_id: int) -> dict:
+        """Turn in a completed quest. Returns server response dict."""
+        resp = await self._client.post(
+            GUILD_FINISH_URL,
+            data={"quest_id": str(quest_id)},
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": GUILD_URL},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"status": "error", "message": resp.text[:300]}
+
+    async def giveup_quest(self, quest_id: int) -> dict:
+        """Abandon an active quest. Returns server response dict."""
+        resp = await self._client.post(
+            GUILD_GIVEUP_URL,
+            data={"quest_id": str(quest_id)},
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": GUILD_URL},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"status": "error", "message": resp.text[:300]}
+
+    async def fetch_class_skills(self, monster_id: str) -> list[dict]:
+        """Fetch class skills from a battle page (must have joined the battle).
+
+        Returns list of dicts with id, name, mp_cost. Empty = no class.
+        """
+        html = await self.fetch_page(f"{BATTLE_URL}?id={monster_id}")
+        return parse_class_skills(html)
+
+    async def use_class_skill(self, monster_id: str, skill_id: str) -> AttackResult:
+        """Use a class skill against a monster. Costs MP, 1 stamina."""
+        resp = await self._client.post(
+            DAMAGE_URL,
+            data={
+                "monster_id": monster_id,
+                "skill_id": skill_id,
+                "stamina_cost": "1",
+            },
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": f"{BASE_URL}/battle.php?id={monster_id}"},
+            timeout=15,
+        )
+        data = resp.json()
+        return parse_damage_response(data, None)
+
+    async def fetch_monster_loot(self, monster_id: str) -> tuple[str, list[LootItem]]:
+        """Fetch the battle page for a monster and parse its possible loot.
+
+        Returns (monster_name, list_of_loot_items).
+        """
+        html = await self.fetch_page(f"{BATTLE_URL}?id={monster_id}")
+        return parse_monster_loot(html)
 
     def get_cookies_json(self) -> str:
         """Serialize current cookies to JSON for persistence."""

@@ -109,6 +109,7 @@ function showApp(data) {
   }
   updatePvPStatus(data.pvp_running, data.pvp_stats);
   updateStatStatus(data.stat_running, data.stat_stats);
+  updateQuestStatus(data.quest_running, data.quest_stats);
 
   startSSE();
   startPolling();
@@ -292,6 +293,7 @@ function startSSE() {
     else if (m.includes('Skipping')||m.includes('Skipped')||m.includes('Already dead')) div.classList.add('l-skip');
     else if (m.includes('%]')) div.classList.add('l-p');
     else if (m.startsWith('[PvP]')) div.classList.add('l-pvp');
+    else if (m.startsWith('[Quest]')) div.classList.add('l-quest');
     div.textContent = m;
     $('logBox').appendChild(div);
     while ($('logBox').childElementCount > 200) {
@@ -333,6 +335,7 @@ function startPolling() {
       }
       updatePvPStatus(s.pvp_running, s.pvp_stats);
       updateStatStatus(s.stat_running, s.stat_stats);
+      updateQuestStatus(s.quest_running, s.quest_stats);
     } catch(e){}
   }, 1000);
 }
@@ -445,6 +448,100 @@ function updateStatStatus(statRunning, statStats) {
   }
 }
 
+// ── Quests ──────────────────────────────────────────────────────────────────
+
+async function startQuest() {
+  $('questStartBtn').disabled = true;
+  startSSE();
+
+  // Collect enabled farming targets for fallback mode
+  const cards = document.querySelectorAll('.mc');
+  const targets = [];
+  cards.forEach(card => {
+    if (!card.querySelector('.switch input').checked) return;
+    targets.push({
+      name: card.dataset.name,
+      wave: parseInt(card.dataset.wave),
+      ids: JSON.parse(card.dataset.ids),
+      priority: parseInt(card.querySelector('.f-priority').value),
+      stamina: card.querySelector('.f-stamina').value,
+      damage_goal: parseGoal(card.querySelector('.f-goal').value),
+    });
+  });
+
+  try {
+    const res = await fetch('/api/quest/start', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({targets}),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      $('questStartBtn').style.display = 'none';
+      $('questStopBtn').style.display = '';
+      $('questBadge').textContent = 'RUNNING';
+      $('questBadge').className = 'pvp-badge on';
+      // Disable wave farmer start while quest is running
+      $('startBtn').disabled = true;
+    } else {
+      toast(data.error || 'Failed to start quests', 'error');
+      $('questStartBtn').disabled = false;
+    }
+  } catch(e) {
+    toast('Quest error: ' + e.message, 'error');
+    $('questStartBtn').disabled = false;
+  }
+}
+
+async function stopQuest() {
+  await fetch('/api/quest/stop', {method: 'POST'});
+  $('questStartBtn').style.display = '';
+  $('questStartBtn').disabled = false;
+  $('questStopBtn').style.display = 'none';
+  $('questBadge').textContent = 'OFF';
+  $('questBadge').className = 'pvp-badge off';
+  $('startBtn').disabled = false;
+}
+
+function updateQuestStatus(questRunning, questStats) {
+  if (questRunning) {
+    $('questStartBtn').style.display = 'none';
+    $('questStopBtn').style.display = '';
+    $('questBadge').className = 'pvp-badge on';
+    $('startBtn').disabled = true;
+
+    if (questStats && questStats.fallback) {
+      $('questBadge').textContent = 'FARMING';
+    } else {
+      $('questBadge').textContent = 'RUNNING';
+    }
+  } else {
+    $('questStartBtn').style.display = '';
+    $('questStartBtn').disabled = false;
+    $('questStopBtn').style.display = 'none';
+    $('questBadge').textContent = 'OFF';
+    $('questBadge').className = 'pvp-badge off';
+  }
+
+  const display = $('questDisplay');
+  if (!questStats) { display.textContent = ''; return; }
+
+  let parts = [];
+  if (questStats.current) {
+    parts.push(questStats.current);
+  }
+  if (questStats.progress) {
+    parts.push(questStats.progress);
+  }
+  if (questStats.completed > 0) {
+    parts.push(questStats.completed + ' completed');
+  }
+  if (questStats.fallback) {
+    parts.push('(wave farming)');
+  }
+  display.textContent = parts.join(' \u00b7 ');
+}
+
 // ── Profiles ────────────────────────────────────────────────────────────────
 
 let backendProfiles = {};
@@ -534,5 +631,6 @@ async function deleteProfile() {
 document.addEventListener('DOMContentLoaded', () => {
   $('pvpBadge').className = 'pvp-badge off';
   $('statBadge').className = 'pvp-badge off';
+  $('questBadge').className = 'pvp-badge off';
   checkSession();
 });

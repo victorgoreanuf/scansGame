@@ -103,10 +103,26 @@
             <select id="statTarget" class="f-stat-target">
               <option value="attack">Attack</option>
               <option value="defense">Defense</option>
-              <option value="stamina">Stamina</option>
+              <option value="stamina" selected>Stamina</option>
             </select>
             <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start</button>
             <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-quest" id="questSection">
+        <div class="panel-header">
+          <span class="panel-title">
+            Quests
+            <span class="pvp-badge off" id="questBadge">OFF</span>
+          </span>
+        </div>
+        <div class="panel-body quest-panel-body">
+          <span class="quest-info" id="questDisplay"></span>
+          <div class="quest-controls">
+            <button class="btn btn-sm btn-quest" id="questStartBtn" onclick="startQuest()">Start Quests</button>
+            <button class="btn btn-sm btn-red" id="questStopBtn" onclick="stopQuest()" style="display:none">Stop</button>
           </div>
         </div>
       </div>

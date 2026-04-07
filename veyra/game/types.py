@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from enum import Enum
 
 
 @dataclass
@@ -117,6 +118,71 @@ class CharacterStats:
     attack: int = 0
     defense: int = 0
     stamina: int = 0
+
+
+@dataclass
+class LootItem:
+    """A possible loot drop from a monster."""
+    name: str
+    description: str = ""
+    image: str = ""
+    drop_rate: str = ""       # e.g. "6%", "90%"
+    dmg_required: int = 0     # e.g. 70000, 10000
+    rarity: str = ""          # LEGENDARY, RARE, COMMON, etc.
+
+
+@dataclass
+class MonsterLoot:
+    """All possible loot for a specific monster type."""
+    monster_name: str
+    items: list[LootItem] = field(default_factory=list)
+    scraped_from_id: str = ""  # monster instance ID used to scrape
+
+
+# ── Quest types ──────────────────────────────────────────────────────────────
+
+
+class QuestType(Enum):
+    KILL = "kill"
+    GATHER = "gather"
+    SKILL = "skill"       # requires class skills (MP) — skip if no class
+    UNKNOWN = "unknown"
+
+
+class QuestStatus(Enum):
+    AVAILABLE = "available"
+    COOLDOWN = "cooldown"
+    ACTIVE = "active"      # currently accepted, shown with progress
+
+
+@dataclass
+class QuestObjective:
+    quest_type: QuestType = QuestType.UNKNOWN
+    target_count: int = 0          # Kill 5, Gather 2, Use 20
+    target_name: str = ""          # "Lizardman Shadowclaw", "Goblin Essence", ""
+    min_damage: int = 0            # "min 3m dmg" -> 3_000_000
+
+
+@dataclass
+class Quest:
+    title: str
+    quest_id: int = 0              # from acceptQuest(ID, this) onclick
+    description: str = ""
+    rank: str = ""                 # "F – E"
+    reward_ap: int = 0
+    reward_gold: int = 0
+    objective: QuestObjective = field(default_factory=QuestObjective)
+    status: QuestStatus = QuestStatus.AVAILABLE
+    cooldown_ts: int = 0           # unix timestamp when cooldown expires
+
+
+@dataclass
+class ActiveQuest:
+    """Currently accepted quest with progress tracking."""
+    quest: Quest = field(default_factory=Quest)
+    progress: int = 0              # current count toward objective
+    target_count: int = 0          # total needed
+    completed: bool = False
 
 
 @dataclass

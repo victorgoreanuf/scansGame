@@ -1,0 +1,820 @@
+{
+  "goblin skirmisher": {
+    "monster_name": "Goblin Skirmisher",
+    "scraped_from_id": "40396393",
+    "items": [
+      {
+        "name": "Goblin Essence",
+        "description": "A swirling green vial containing the raw life force of a goblin. It smells faintly of moss and iron, and hums with chaotic energy.",
+        "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp",
+        "drop_rate": "6%",
+        "dmg_required": 70000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Goblin Ear",
+        "description": "A grisly trophy favored by bounty hunters in Veyra.",
+        "image": "https://demonicscans.org/images/items/1755224533_Goblin ears.webp",
+        "drop_rate": "30%",
+        "dmg_required": 15000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Rusty Shortsword",
+        "description": "A dull, pitted blade stolen from some unlucky traveler. Barely sharp, but quick to wield.",
+        "image": "https://demonicscans.org/images/items/1755223589_rusty_shortsword.webp",
+        "drop_rate": "90%",
+        "dmg_required": 10000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Torn Leather Armor",
+        "description": "A strip of worn leather armor, reeking of goblin sweat and smoke.",
+        "image": "https://demonicscans.org/images/items/1755224068_Torn Leather Armor.webp",
+        "drop_rate": "60%",
+        "dmg_required": 10000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Worn Leather Boots",
+        "description": "A rough leather boots,it smells of goblin's dirty feets, yikes.",
+        "image": "https://demonicscans.org/images/items/1755224174_Worn Leather Boots.webp",
+        "drop_rate": "60%",
+        "dmg_required": 10000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Worn Leather Gloves",
+        "description": "Are you really going to wear this ?!",
+        "image": "https://demonicscans.org/images/items/1755224230_Worn Leather Gloves.webp",
+        "drop_rate": "60%",
+        "dmg_required": 10000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "goblin slinger": {
+    "monster_name": "Goblin Slinger",
+    "scraped_from_id": "40396072",
+    "items": [
+      {
+        "name": "Goblin Essence",
+        "description": "A swirling green vial containing the raw life force of a goblin. It smells faintly of moss and iron, and hums with chaotic energy.",
+        "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp",
+        "drop_rate": "6%",
+        "dmg_required": 70000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Goblin Ear",
+        "description": "A grisly trophy favored by bounty hunters in Veyra.",
+        "image": "https://demonicscans.org/images/items/1755224533_Goblin ears.webp",
+        "drop_rate": "30%",
+        "dmg_required": 15000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Chipped Goblin Ring",
+        "description": "Can we even call this a ring ?",
+        "image": "https://demonicscans.org/images/items/1755225870_ddd.webp",
+        "drop_rate": "60%",
+        "dmg_required": 15000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Goblin Amulet",
+        "description": "A weird looking amulet,goblins are weird like that",
+        "image": "https://demonicscans.org/images/items/1755226287_0_0.webp",
+        "drop_rate": "60%",
+        "dmg_required": 20000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Goblin Leather Helmet",
+        "description": "A torn leather helmet but its better than nothing.",
+        "image": "https://demonicscans.org/images/items/1755226658_d.webp",
+        "drop_rate": "60%",
+        "dmg_required": 15000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "orc grunt": {
+    "monster_name": "Orc Grunt",
+    "scraped_from_id": "40394505",
+    "items": [
+      {
+        "name": "Orc Essence",
+        "description": "A dense, green aura sealed within a crystal vial, radiating heat and the pulse of raw aggression. Said to carry the strength and fury of the orc it was taken from, itâ€™s valued by blacksmiths.",
+        "image": "https://demonicscans.org/images/items/1755228798_da.webp",
+        "drop_rate": "6%",
+        "dmg_required": 70000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Orc Fang",
+        "description": "A thick, curved fang taken from the jaw of a fallen orc. Its surface is stained from years of battle, and warriors sometimes wear them as trophies to show victory over the savage clans.",
+        "image": "https://demonicscans.org/images/items/1755228671_0_2.webp",
+        "drop_rate": "30%",
+        "dmg_required": 25000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Goblin Amulet",
+        "description": "A weird looking amulet,goblins are weird like that",
+        "image": "https://demonicscans.org/images/items/1755226287_0_0.webp",
+        "drop_rate": "60%",
+        "dmg_required": 20000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Iron Axe",
+        "description": "A brutal weapon of crude craftsmanship,nicked from countless battles, it relies on raw strength over finesse, capable of splitting both shields and bone in a single swing.",
+        "image": "https://demonicscans.org/images/items/1755227460_dd.webp",
+        "drop_rate": "60%",
+        "dmg_required": 20000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Worn Leather Boots",
+        "description": "A rough leather boots,it smells of goblin's dirty feets, yikes.",
+        "image": "https://demonicscans.org/images/items/1755224174_Worn Leather Boots.webp",
+        "drop_rate": "60%",
+        "dmg_required": 15000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "orc bonecrusher": {
+    "monster_name": "Orc Bonecrusher",
+    "scraped_from_id": "40393376",
+    "items": [
+      {
+        "name": "Orc Essence",
+        "description": "A dense, green aura sealed within a crystal vial, radiating heat and the pulse of raw aggression. Said to carry the strength and fury of the orc it was taken from, itâ€™s valued by blacksmiths.",
+        "image": "https://demonicscans.org/images/items/1755228798_da.webp",
+        "drop_rate": "6%",
+        "dmg_required": 70000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Orc Fang",
+        "description": "A thick, curved fang taken from the jaw of a fallen orc. Its surface is stained from years of battle, and warriors sometimes wear them as trophies to show victory over the savage clans.",
+        "image": "https://demonicscans.org/images/items/1755228671_0_2.webp",
+        "drop_rate": "30%",
+        "dmg_required": 25000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Orc Fang",
+        "description": "A thick, curved fang taken from the jaw of a fallen orc. Its surface is stained from years of battle, and warriors sometimes wear them as trophies to show victory over the savage clans.",
+        "image": "https://demonicscans.org/images/items/1755228671_0_2.webp",
+        "drop_rate": "30%",
+        "dmg_required": 25000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Chipped Goblin Ring",
+        "description": "Can we even call this a ring ?",
+        "image": "https://demonicscans.org/images/items/1755225870_ddd.webp",
+        "drop_rate": "60%",
+        "dmg_required": 20000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Stone Hammer",
+        "description": "A heavy warhammer carved from solid rock and bound with crude iron bands. Though lacking in elegance, each swing delivers crushing force capable of shattering shields, bones, and even thin stone walls.",
+        "image": "https://demonicscans.org/images/items/1755230001_0_2 (1).webp",
+        "drop_rate": "60%",
+        "dmg_required": 25000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "hobgoblin spearman": {
+    "monster_name": "Hobgoblin Spearman",
+    "scraped_from_id": "40396369",
+    "items": [
+      {
+        "name": "Goblin Essence",
+        "description": "A swirling green vial containing the raw life force of a goblin. It smells faintly of moss and iron, and hums with chaotic energy.",
+        "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp",
+        "drop_rate": "6%",
+        "dmg_required": 70000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Goblin Ear",
+        "description": "A grisly trophy favored by bounty hunters in Veyra.",
+        "image": "https://demonicscans.org/images/items/1755224533_Goblin ears.webp",
+        "drop_rate": "50%",
+        "dmg_required": 35000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Hobgoblin Copper Armor",
+        "description": "Sturdy plate armor forged from hammered copper, polished to a warm, reddish sheen. While heavier than leather, it offers reliable protection and is often engraved with simple war markings to signify rank within the hobgoblin legions.",
+        "image": "https://demonicscans.org/images/items/1755235164_dadad.webp",
+        "drop_rate": "50%",
+        "dmg_required": 35000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Hobgoblin Copper boots",
+        "description": "Heavy copper-plated boots reinforced with leather straps, designed to endure long marches and brutal combat. Their weight makes each step thunderous, a sound meant to unnerve enemies before the fight begins.",
+        "image": "https://demonicscans.org/images/items/1755235360_ddd.webp",
+        "drop_rate": "50%",
+        "dmg_required": 40000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Hobgoblin Copper Gloves",
+        "description": "Thick leather gloves reinforced with copper plating across the knuckles and forearms. Built for both protection and crushing blows, they allow hobgoblin soldiers to strike with punishing force in close combat.",
+        "image": "https://demonicscans.org/images/items/1755235407_adada.webp",
+        "drop_rate": "50%",
+        "dmg_required": 40000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Hobgoblin Copper helmet",
+        "description": "A solid copper helm with a ridged crest and narrow eye slits, built for both protection and intimidation.",
+        "image": "https://demonicscans.org/images/items/1755235216_zzz.webp",
+        "drop_rate": "50%",
+        "dmg_required": 35000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Hobgoblin Copper Spear",
+        "description": "A long, disciplined weapon with a polished copper spearhead mounted on a sturdy iron shaft. Balanced for both thrusting and formation fighting, it gleams in the sunlight as a symbol of the hobgoblin legionsâ€™ precision and order.",
+        "image": "https://demonicscans.org/images/items/1755235456_eee.webp",
+        "drop_rate": "50%",
+        "dmg_required": 50000,
+        "rarity": "RARE"
+      }
+    ]
+  },
+  "troll ravager": {
+    "monster_name": "Troll Ravager",
+    "scraped_from_id": "40394110",
+    "items": [
+      {
+        "name": "Troll Blood Essence",
+        "description": "A vial filled with the thick, dark green blood of a troll. Its foul stench lingers, but highly sought after by alchemists and blacksmiths alike.",
+        "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp",
+        "drop_rate": "5%",
+        "dmg_required": 3000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Crude Chain Amulet",
+        "description": "A crude necklace made from heavy iron chain links. Too large and heavy for most mortals to wear comfortably, but trolls prize it as both ornament and symbol of strength. It radiates a raw, savage power.",
+        "image": "https://demonicscans.org/images/items/1756328770_compressed_iron_necklace.webp",
+        "drop_rate": "50%",
+        "dmg_required": 1000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Stone Hammer",
+        "description": "A heavy warhammer carved from solid rock and bound with crude iron bands. Though lacking in elegance, each swing delivers crushing force capable of shattering shields, bones, and even thin stone walls.",
+        "image": "https://demonicscans.org/images/items/1755230001_0_2 (1).webp",
+        "drop_rate": "50%",
+        "dmg_required": 100000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman flamecaster": {
+    "monster_name": "Lizardman Flamecaster",
+    "scraped_from_id": "40395654",
+    "items": [
+      {
+        "name": "Lizzardmen blood",
+        "description": "A swirling vial containing the distilled essence of a fallen Lizardman. The liquid shifts between red and black, shimmering like scales under moonlight. It carries the cold-blooded vitality of its origin, a key ingredient in crafting weapons meant to slay reptilian foes.",
+        "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp",
+        "drop_rate": "5%",
+        "dmg_required": 3000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Ember thread Robe",
+        "description": "A robe woven with threads that glow like fading embers. Though the fabric feels light, faint warmth radiates from within, protecting its wearer from flames while amplifying their own fiery magic.",
+        "image": "https://demonicscans.org/images/items/1756331258_compressed_magic_robe.webp",
+        "drop_rate": "30%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Lizardman Scales",
+        "description": "Tough scales pried from the hide of a Lizardman. Their surface gleams faintly in the light, shifting between shades of green and black. Lightweight yet resilient, these scales are prized by armorers for crafting gear that balances protection with mobility.",
+        "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp",
+        "drop_rate": "10%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      }
+    ]
+  },
+  "troll brawler": {
+    "monster_name": "Troll Brawler",
+    "scraped_from_id": "40395023",
+    "items": [
+      {
+        "name": "Trollish Iron",
+        "description": "A dense chunk of black iron carried by trolls, scavenged from ruins and reforged with brute strength rather than skill. Its surface is jagged and scorched, yet it holds unnatural durability. Blacksmiths prize it as a core material for heavy weapons and unbreakable armor.",
+        "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp",
+        "drop_rate": "5%",
+        "dmg_required": 3000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Ember-thread Gloves",
+        "description": "Gloves threaded with ember-infused fibers, their seams glowing faintly like smoldering ash. They are cool to the touch, yet flare with heat when channeling magic. Worn by flamecasters.",
+        "image": "https://demonicscans.org/images/items/1756342628_compressed_magical_gloves.webp",
+        "drop_rate": "30%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ember-tread Boots",
+        "description": "Boots woven from the same ember-infused threads as the robe. Each step leaves behind a faint trace of warmth, as if embers smoldered beneath the wearerâ€™s feet. Light and flexible.",
+        "image": "https://demonicscans.org/images/items/1756342518_compressed_magical_boots.webp",
+        "drop_rate": "30%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Stone Hammer",
+        "description": "A heavy warhammer carved from solid rock and bound with crude iron bands. Though lacking in elegance, each swing delivers crushing force capable of shattering shields, bones, and even thin stone walls.",
+        "image": "https://demonicscans.org/images/items/1755230001_0_2 (1).webp",
+        "drop_rate": "50%",
+        "dmg_required": 10000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman shadowclaw": {
+    "monster_name": "Lizardman Shadowclaw",
+    "scraped_from_id": "40391938",
+    "items": [
+      {
+        "name": "Lizardman Heart",
+        "description": "A still-beating heart ripped from a fallen Lizardman. Even in death, it pulses with cold-blooded vitality, exuding a faint aura of venom and swamp magic. Alchemists whisper that such hearts hold the key to forging weapons designed to slay scaled foes.",
+        "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Ring of Ashen Sparks",
+        "description": "A ring forged from volcanic iron, etched with faint ember runes. Tiny sparks flicker from its surface, warming the air around it. Worn by firecasters to amplify their flames and protect them from being consumed by their own magic.",
+        "image": "https://demonicscans.org/images/items/1756332376_magic_ring.webp",
+        "drop_rate": "10%",
+        "dmg_required": 2000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Ember thread Robe",
+        "description": "A robe woven with threads that glow like fading embers. Though the fabric feels light, faint warmth radiates from within, protecting its wearer from flames while amplifying their own fiery magic.",
+        "image": "https://demonicscans.org/images/items/1756331258_compressed_magic_robe.webp",
+        "drop_rate": "30%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Lizardman Scales",
+        "description": "Tough scales pried from the hide of a Lizardman. Their surface gleams faintly in the light, shifting between shades of green and black. Lightweight yet resilient, these scales are prized by armorers for crafting gear that balances protection with mobility.",
+        "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp",
+        "drop_rate": "10%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Serpentfang Sword",
+        "description": "A jagged sword wielded by Lizardman warriors.",
+        "image": "https://demonicscans.org/images/items/1756346840_compressed_lizzsword.webp",
+        "drop_rate": "30%",
+        "dmg_required": 1000000,
+        "rarity": "RARE"
+      }
+    ]
+  },
+  "lizardman vanguard": {
+    "monster_name": "Lizardman Vanguard",
+    "scraped_from_id": "40392606",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Vanguard Heartforge Core",
+        "description": "A dense molten core forged within the heart of the strongest vanguard. It contains the essence of unwavering defense.",
+        "image": "https://demonicscans.org/images/items/1762791528_Heartforge Core.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Scorched Scale Boots",
+        "description": "Durable boots used by Lizardman foot soldiers. The soles are layered with volcanic rock for grip and heat resistance.",
+        "image": "https://demonicscans.org/images/items/1762800100_boots.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Scorched Scale Gloves",
+        "description": "Thick gloves woven from lizard hide and hardened with ash resin. Designed to withstand molten weapons.",
+        "image": "https://demonicscans.org/images/items/1762800010_gloves.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman warmage": {
+    "monster_name": "Lizardman Warmage",
+    "scraped_from_id": "40392844",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Runic Ember Focus",
+        "description": "An ancient rune infused crystal that channels molten arcana through living metal.",
+        "image": "https://demonicscans.org/images/items/1762795976_Runic Ember Focus.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Scorched Scale Gloves",
+        "description": "Thick gloves woven from lizard hide and hardened with ash resin. Designed to withstand molten weapons.",
+        "image": "https://demonicscans.org/images/items/1762800010_gloves.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Scorched Scale Helm",
+        "description": "A heavy helmet of fused scales and bronze, warm to the touch and reeking faintly of smoke.",
+        "image": "https://demonicscans.org/images/items/1762799964_helmet.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman dreadblade": {
+    "monster_name": "Lizardman Dreadblade",
+    "scraped_from_id": "40394336",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Shadefang Catalyst",
+        "description": "A blade core that feeds on its wielder's fear and bloodlust.",
+        "image": "https://demonicscans.org/images/items/1762810458_Shadefang Catalyst.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Scorched Scale Armor",
+        "description": "Rough plates of darkened scale fastened with crude iron bands. Its interior is lined with fire resistant hide.",
+        "image": "https://demonicscans.org/images/items/1762799931_chestplate.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Scorched Scale Helm",
+        "description": "A heavy helmet of fused scales and bronze, warm to the touch and reeking faintly of smoke.",
+        "image": "https://demonicscans.org/images/items/1762799964_helmet.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman juggernaut": {
+    "monster_name": "Lizardman Juggernaut",
+    "scraped_from_id": "40392338",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Dracite Pressure Plate",
+        "description": "A relic plate taken from an ancient Juggernautâ€™s chest. It pulses with compressed volcanic power.",
+        "image": "https://demonicscans.org/images/items/1762806045_Dracite Pressure Plate.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ember Stained Band",
+        "description": "Forged from reclaimed Lizardman armor rings, this band bears scorch marks that never cool. Its warmth steadies the hand of any who wear it.",
+        "image": "https://demonicscans.org/images/items/1762800195_ring.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Scorched Scale Armor",
+        "description": "Rough plates of darkened scale fastened with crude iron bands. Its interior is lined with fire resistant hide.",
+        "image": "https://demonicscans.org/images/items/1762799931_chestplate.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman bloodpriest": {
+    "monster_name": "Lizardman Bloodpriest",
+    "scraped_from_id": "40396061",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Crimson Reliquary",
+        "description": "A sanctified heart reliquary dripping eternal blood.",
+        "image": "https://demonicscans.org/images/items/1762810810_Crimson Reliquary.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ember Stained Band",
+        "description": "Forged from reclaimed Lizardman armor rings, this band bears scorch marks that never cool. Its warmth steadies the hand of any who wear it.",
+        "image": "https://demonicscans.org/images/items/1762800195_ring.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Smoldering Lizard Talisman",
+        "description": "A small amulet from a fallen Lizard warrior, hung on a charred leather cord. The edges pulse with residual heat, as though the beast's spirit still breathes through it.",
+        "image": "https://demonicscans.org/images/items/1762800328_amulet.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "lizardman guardian": {
+    "monster_name": "Lizardman Guardian",
+    "scraped_from_id": "40392145",
+    "items": [
+      {
+        "name": "Sealed Lizard Essence",
+        "description": "An ancient essence bound in draconic sigils, pulsing faintly beneath layers of hardened magma. Within it sleeps the will of a forgotten Lizard King's kin, waiting to be unbound by fire and blood. Breaking the seal releases both power and wrath.",
+        "image": "https://demonicscans.org/images/items/1762798007_sealed_lizard_essence.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Small fire essence",
+        "description": "A faint fragment of elemental flame captured from fallen fire-touched beasts. Its warmth never fades, even in water. When gathered in great numbers, these embers can rekindle the forges of the ancients.",
+        "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Elite Scale Shard",
+        "description": "sharp elite lizardman scale fragment glowing with faint magma veins.",
+        "image": "https://demonicscans.org/images/items/1762795823_Elite-Scale-Shard.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Lizard King Sigil",
+        "description": "A holy Sigil from the Guardian's divine armor. It radiates commanding power.",
+        "image": "https://demonicscans.org/images/items/1762811272_lizard_king_sigil.webp",
+        "drop_rate": "10%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Scorched Scale Boots",
+        "description": "Durable boots used by Lizardman foot soldiers. The soles are layered with volcanic rock for grip and heat resistance.",
+        "image": "https://demonicscans.org/images/items/1762800100_boots.webp",
+        "drop_rate": "40%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Smoldering Lizard Talisman",
+        "description": "A small amulet from a fallen Lizard warrior, hung on a charred leather cord. The edges pulse with residual heat, as though the beast's spirit still breathes through it.",
+        "image": "https://demonicscans.org/images/items/1762800328_amulet.webp",
+        "drop_rate": "80%",
+        "dmg_required": 7000000,
+        "rarity": "COMMON"
+      }
+    ]
+  }
+}

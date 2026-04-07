@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from veyra.engine.account_manager import manager
+from veyra.engine.loot_database import loot_db
 from veyra.game.types import MonsterGroup, TargetConfig
 
 router = APIRouter(prefix="/api")
@@ -85,6 +86,8 @@ async def session(request: Request):
         "pvp_stats": manager.get_pvp_stats(),
         "stat_running": manager.is_stat_running,
         "stat_stats": manager.get_stat_stats(),
+        "quest_running": manager.is_quest_running,
+        "quest_stats": manager.get_quest_stats(),
     }
 
 
@@ -171,6 +174,8 @@ async def status():
         "pvp_stats": manager.get_pvp_stats(),
         "stat_running": manager.is_stat_running,
         "stat_stats": manager.get_stat_stats(),
+        "quest_running": manager.is_quest_running,
+        "quest_stats": manager.get_quest_stats(),
     }
 
 
@@ -221,6 +226,7 @@ async def logs():
         last_id = 0
         pvp_last_id = 0
         stat_last_id = 0
+        quest_last_id = 0
         while True:
             state = manager.get_state()
             if state:
@@ -244,6 +250,14 @@ async def logs():
                     stat_last_id = new[-1]["id"]
                 for entry in new:
                     yield f"data: {json.dumps(entry)}\n\n"
+            quest_state = manager.get_quest_state()
+            if quest_state:
+                new = [l for l in quest_state.logs if l["id"] > quest_last_id]
+                if new:
+                    quest_last_id = new[-1]["id"]
+                for entry in new:
+                    tagged = {"id": entry["id"], "msg": f"[Quest] {entry['msg']}"}
+                    yield f"data: {json.dumps(tagged)}\n\n"
             await asyncio.sleep(1)
 
     return StreamingResponse(
@@ -269,6 +283,159 @@ async def save_profile(request: Request):
     profiles[name] = profile
     _write_profiles(profiles)
     return {"ok": True}
+
+
+# ── Loot Database ──────────────────────────────────────────────────────────────
+
+
+@router.get("/loot")
+async def loot_list():
+    """List all cached monster loot tables."""
+    return {"ok": True, "monsters": loot_db.list_all(), "count": loot_db.count}
+
+
+@router.get("/loot/monster/{monster_name}")
+async def loot_by_monster(monster_name: str):
+    """Get loot table for a specific monster."""
+    ml = loot_db.get_monster_loot(monster_name)
+    if not ml:
+        return {"ok": False, "error": f"No loot data for '{monster_name}'"}
+    from dataclasses import asdict
+    return {
+        "ok": True,
+        "monster_name": ml.monster_name,
+        "items": [asdict(it) for it in ml.items],
+    }
+
+
+@router.get("/loot/item/{item_name}")
+async def loot_find_item(item_name: str):
+    """Find which monsters drop a specific item (partial match)."""
+    results = loot_db.find_item(item_name)
+    return {"ok": True, "results": results, "count": len(results)}
+
+
+@router.post("/loot/scrape")
+async def loot_scrape(request: Request):
+    """Scrape loot using the server-side dev account (no user auth needed).
+
+    Body (optional): {"monster_id": "12345"} or {"wave": 1}
+    Empty body or no body = scrape all 3 waves.
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+
+    try:
+        if "monster_id" in body:
+            ml = await loot_db.scrape_monster(body["monster_id"])
+            if not ml:
+                return {"ok": False, "error": "Failed to scrape loot"}
+            from dataclasses import asdict
+            return {
+                "ok": True,
+                "monster_name": ml.monster_name,
+                "items": [asdict(it) for it in ml.items],
+            }
+
+        if "wave" in body:
+            results = await loot_db.scrape_wave(int(body["wave"]))
+            return {
+                "ok": True,
+                "scraped": len(results),
+                "monsters": [r.monster_name for r in results],
+            }
+
+        # Default: scrape all waves
+        results = await loot_db.scrape_all_waves()
+        return {
+            "ok": True,
+            "scraped": len(results),
+            "monsters": [r.monster_name for r in results],
+        }
+    except RuntimeError as e:
+        return {"ok": False, "error": str(e)}
+
+
+# ── Quest board (debug) ────────────────────────────────────────────────────
+
+@router.get("/quest/board/raw")
+async def quest_board_raw():
+    """Fetch raw HTML from the quest board using dev account and save to debug_quest_html.txt."""
+    from veyra.game.client import GameClient
+    from veyra.config import settings
+
+    if not settings.dev_email or not settings.dev_password:
+        return {"ok": False, "error": "Set VEYRA_DEV_EMAIL and VEYRA_DEV_PASSWORD in .env"}
+    try:
+        client = GameClient()
+        ok = await client.login(settings.dev_email, settings.dev_password)
+        if not ok:
+            await client.close()
+            return {"ok": False, "error": "Dev account login failed"}
+        html = await client.fetch_quest_board_raw()
+        await client.close()
+        Path("debug_quest_html.txt").write_text(html, encoding="utf-8")
+        return {"ok": True, "length": len(html), "saved_to": "debug_quest_html.txt"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+@router.get("/quest/board")
+async def quest_board():
+    """Fetch and parse the current quest board."""
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    try:
+        quests = await manager._worker.game.fetch_quest_board()
+        from dataclasses import asdict
+        return {
+            "ok": True,
+            "quests": [asdict(q) for q in quests],
+        }
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+@router.post("/quest/start")
+async def quest_start(request: Request):
+    """Start the quest runner. Optionally pass targets for fallback wave farming."""
+    if manager.is_quest_running:
+        return {"ok": False, "error": "Quest runner already running"}
+    if manager.is_running:
+        return {"ok": False, "error": "Wave farmer is running — stop it first"}
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+
+    # Parse optional farming targets for fallback mode
+    targets = []
+    try:
+        body = await request.json()
+        raw_targets = body.get("targets", [])
+        targets = [TargetConfig(**t) for t in raw_targets]
+    except Exception:
+        pass
+
+    ok = await manager.start_quest_runner(targets)
+    return {"ok": ok}
+
+
+@router.post("/quest/stop")
+async def quest_stop():
+    """Stop the quest runner."""
+    manager.stop_quest_runner()
+    return {"ok": True}
+
+
+@router.get("/quest/status")
+async def quest_status():
+    """Get current quest runner status."""
+    return {
+        "ok": True,
+        "running": manager.is_quest_running,
+        "stats": manager.get_quest_stats(),
+    }
 
 
 @router.delete("/profiles")

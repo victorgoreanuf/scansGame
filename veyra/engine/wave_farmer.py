@@ -353,49 +353,48 @@ async def worker(
 
                 fresh = [m for m in wave_cache[t.wave] if m.name == t.name]
 
-                # Skip already-joined
-                joined_count = sum(1 for m in fresh if m.joined)
-                fresh = [m for m in fresh if not m.joined]
+                # Separate joined vs new monsters
+                joined = [m for m in fresh if m.joined]
+                new_monsters = [m for m in fresh if not m.joined]
 
-                # Skip monsters with HP below goal
+                # Skip new monsters with HP below goal
                 if t.damage_goal > 0:
-                    before = len(fresh)
-                    fresh = [
-                        m for m in fresh
+                    before = len(new_monsters)
+                    new_monsters = [
+                        m for m in new_monsters
                         if m.current_hp == 0 or m.current_hp >= t.damage_goal
                     ]
-                    skipped_hp = before - len(fresh)
+                    skipped_hp = before - len(new_monsters)
                 else:
                     skipped_hp = 0
 
-                fresh.sort(key=lambda x: x.current_hp, reverse=True)
+                # Combine: joined first (continue fighting), then new
+                fresh = joined + sorted(new_monsters, key=lambda x: x.current_hp, reverse=True)
 
-                if not fresh and not joined_count:
+                if not fresh:
                     continue
 
                 mode = "hit once" if t.damage_goal <= 0 else f"{t.damage_goal:,} dmg"
                 state.log("")
-                state.log(f"[{ti}/{len(targets)}] {t.name}  ({len(fresh)} new, {mode})")
-                if joined_count:
-                    state.log(f"  Skipped {joined_count} (already joined)")
+                state.log(f"[{ti}/{len(targets)}] {t.name}  ({len(new_monsters)} new, {len(joined)} joined, {mode})")
                 if skipped_hp:
                     state.log(f"  Skipped {skipped_hp} (HP < {t.damage_goal:,})")
-
-                if not fresh:
-                    continue
 
                 for ii, inst in enumerate(fresh, 1):
                     if not state.running:
                         break
 
-                    state.log(f"  ({ii}/{len(fresh)}) ID {inst.id}  HP: {inst.current_hp:,}")
+                    tag = " (continuing)" if inst.joined else ""
+                    state.log(f"  ({ii}/{len(fresh)}) ID {inst.id}  HP: {inst.current_hp:,}{tag}")
 
                     try:
                         await game.join_battle(inst.id)
                         await asyncio.sleep(1)
                     except Exception as e:
-                        state.log(f"    Join failed: {e}")
-                        continue
+                        if not inst.joined:
+                            state.log(f"    Join failed: {e}")
+                            continue
+                        # Already joined — continue anyway
 
                     if t.damage_goal <= 0:
                         r = await single_attack(game, inst.id, t.stamina, state, limiter)
@@ -426,6 +425,7 @@ async def worker(
                             state.log("Stamina potion used! Continuing farming...")
                             break
                         else:
+                            logger.warning("Farming stopped: stamina exhausted, no recovery available")
                             state.log("No stamina potions available — stopping.")
                             state.stop()
                             return
@@ -453,6 +453,7 @@ async def worker(
         state.log("")
         state.log(f"=== STOPPED  ({total_attacked} monsters in {rounds} rounds) ===")
     except Exception as e:
+        logger.error("Farming worker fatal error: %s", e, exc_info=True)
         state.log(f"Fatal: {e}")
     finally:
         reaction_task.cancel()

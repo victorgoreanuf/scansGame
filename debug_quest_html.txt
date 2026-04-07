@@ -1,0 +1,5019 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Adventurer's Guild</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-main: #0f1115;
+            --bg-card: #181b22;
+            --bg-card-alt: #1f242d;
+            --accent: #e1b65b;
+            --accent-soft: rgba(225, 182, 91, 0.15);
+            --border-soft: #2a303b;
+            --text-main: #f4f4f4;
+            --text-muted: #9ca3af;
+            --danger: #b91c1c;
+            --success: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #202436 0, #05060a 55%, #020308 100%);
+            color: var(--text-main);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page-wrap {
+            min-height: 100vh;
+        }
+
+        .page-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 16px 40px;
+        }
+
+        /* Back button */
+        .back-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        }
+
+        .back-btn:hover {
+            background: rgba(15, 23, 42, 1);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .back-btn span.icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Banner */
+        .banner {
+            position: relative;
+            border-radius: 18px;
+            padding: 26px 24px;
+            margin-bottom: 22px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.12), transparent 60%),
+                radial-gradient(circle at 100% 0, rgba(254, 215, 170, 0.25), transparent 55%),
+                linear-gradient(135deg, #020617 0%, #111827 50%, #020617 100%);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        .banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url('/images/ui/adventurers_guild_banner.jpg') center/cover no-repeat;
+            opacity: 0.18;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+
+        .banner-content {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 24px;
+            align-items: center;
+        }
+
+        .banner-main {
+            flex: 1 1 260px;
+        }
+
+        .banner-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            gap: 6px;
+        }
+
+        .banner-label-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+        }
+
+        .banner-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin: 0 0 6px;
+        }
+
+        .banner-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 520px;
+        }
+
+        .banner-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .banner-pill {
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-muted);
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .banner-pill strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .banner-badge {
+            flex: 0 0 auto;
+            min-width: 180px;
+            max-width: 220px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: radial-gradient(circle at 0 0, rgba(250, 250, 250, 0.08), transparent 60%),
+                        rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .banner-badge-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .banner-badge-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .banner-badge-note {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Layout sections */
+        .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: flex-start;
+}
+
+
+        @media (max-width: 960px) {
+            .grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .section {
+            background: rgba(15, 23, 42, 0.92);
+            border-radius: 16px;
+            border: 1px solid var(--border-soft);
+            padding: 14px 16px 10px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .section + .section {
+            margin-top: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Quests board */
+        .quest-list {
+            border-radius: 10px;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            overflow: hidden;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98));
+        }
+
+        .quest-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+            gap: 8px 14px;
+            padding: 9px 11px;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+        }
+
+        .quest-row:nth-child(odd) {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .quest-row:nth-child(even) {
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .quest-row:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 720px) {
+            .quest-row {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .quest-main-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quest-main-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .quest-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .quest-tag {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.55);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .quest-tag.repeatable {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .quest-side {
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 720px) {
+            .quest-side {
+                text-align: left;
+            }
+        }
+
+        .quest-reward {
+            font-size: 12px;
+            color: #e5e7eb;
+        }
+        .quest-cooldown-box {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.12);
+            border: 1px solid rgba(96, 165, 250, 0.6);
+        }
+        .quest-cooldown-label {
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #bfdbfe;
+        }
+        .quest-cooldown-timer {
+            margin-top: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #eff6ff;
+            font-variant-numeric: tabular-nums;
+        }
+        .quest-status-note {
+            margin-top: 8px;
+            color: #cbd5e1;
+        }
+        .quest-refresh-pill {
+            font-variant-numeric: tabular-nums;
+        }
+        .quest-refresh-inline {
+            font-variant-numeric: tabular-nums;
+            color: #f8fafc;
+        }
+
+        .quest-reward-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+        }
+
+        /* Ranks list */
+        .rank-list {
+            margin-top: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            overflow: hidden;
+        }
+
+        .rank-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1.1fr;
+            gap: 8px 12px;
+            padding: 8px 11px;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+            background: rgba(15, 23, 42, 0.96);
+        }
+
+        .rank-row:nth-child(odd) {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .rank-row:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 720px) {
+            .rank-row {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .rank-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .rank-exp-range {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .rank-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Leaderboard */
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .leaderboard-table thead {
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 7px 9px;
+            text-align: left;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+        }
+
+        .leaderboard-table th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .leaderboard-table tr:nth-child(even) td {
+            background: rgba(15, 23, 42, 0.92);
+        }
+
+        .leaderboard-rank {
+            width: 30px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .leaderboard-name {
+            font-weight: 500;
+        }
+
+        .leaderboard-tag-rank {
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .empty-message {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 2px 4px;
+        }
+
+        .muted-inline {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+/* Panel + banner (same style as Legendary Forge) */
+.panel {
+    background: #1A1B25;
+    border: 1px solid #232437;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    padding: 14px;
+    margin: 12px 0 18px; /* a bit of bottom space before the text banner */
+}
+
+/* Image banner inside panel */
+.panel--banner {
+    padding: 0;
+    overflow: hidden;
+}
+
+.banner-img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #232437;
+    display: block;
+}
+
+/* Classes section (clickable cream card) */
+.classes-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    margin-top: 16px;
+}
+
+.section-classes {
+    background: linear-gradient(135deg, #f5ecd9 0%, #fdf8ee 40%, #f6e7d1 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(212, 163, 66, 0.5);
+    padding: 14px 16px 12px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+.section-classes:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+    border-color: rgba(234, 179, 8, 0.85);
+}
+
+.section-classes .section-header {
+    margin-bottom: 6px;
+}
+
+.section-classes .section-title {
+    color: #b88924;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.section-classes .section-title span {
+    color: #d9a441;
+}
+
+.section-classes .section-subtitle {
+    color: #4b5563;
+}
+
+.section-classes-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    font-size: 11px;
+    color: #374151;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.section-classes-pill span.icon {
+    font-size: 14px;
+}
+
+/* Sub Classes section (necromancer themed clickable card) */
+.section-subclasses {
+    margin-top: 14px;
+    background:
+        radial-gradient(circle at top right, rgba(168, 85, 247, 0.24), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(76, 29, 149, 0.32), transparent 42%),
+        linear-gradient(135deg, #120f1f 0%, #1b1430 42%, #24163f 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    padding: 14px 16px 12px;
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.48),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 0 26px rgba(168, 85, 247, 0.08);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out, filter 0.12s ease-out;
+}
+
+.section-subclasses::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(120deg, transparent 0%, rgba(196, 181, 253, 0.08) 38%, transparent 62%);
+    transform: translateX(-100%);
+    transition: transform 0.45s ease;
+    pointer-events: none;
+}
+
+.section-subclasses:hover {
+    transform: translateY(-1px);
+    border-color: rgba(192, 132, 252, 0.9);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.62),
+        0 0 26px rgba(168, 85, 247, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 30px rgba(168, 85, 247, 0.12);
+    filter: saturate(1.06);
+}
+
+.section-subclasses:hover::before {
+    transform: translateX(100%);
+}
+
+.section-subclasses .section-header {
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.section-subclasses .section-title {
+    color: #c4b5fd;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.16);
+}
+
+.section-subclasses .section-title span {
+    color: #a855f7;
+}
+
+.section-subclasses .section-subtitle {
+    color: #d8ccf7;
+}
+
+.section-subclasses-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(192, 132, 252, 0.45);
+    font-size: 11px;
+    color: #efe7ff;
+    background: linear-gradient(135deg, rgba(91, 33, 182, 0.42), rgba(31, 15, 54, 0.72));
+    box-shadow: inset 0 0 14px rgba(168, 85, 247, 0.12);
+    position: relative;
+    z-index: 1;
+}
+
+.section-subclasses-pill span.icon {
+    font-size: 14px;
+    color: #c084fc;
+}
+.quest-accept-btn {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(250, 204, 21, 0.85);
+    background: radial-gradient(circle at 0 0, rgba(250, 250, 250, 0.15), transparent 55%),
+                linear-gradient(135deg, #facc15, #f97316);
+    color: #1f2933;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.quest-accept-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.5);
+    filter: brightness(1.03);
+}
+
+.quest-accept-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    filter: none;
+}
+/* Quests board header with big NPC image */
+.quests-section {
+    /* just in case we want to style this section differently later */
+}
+
+.quests-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.quests-header-img {
+    flex: 0 0 260px;          /* nice big width on desktop */
+    max-width: 260px;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid #2f3543;
+    background: #020617;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.75);
+}
+
+.quests-header-text {
+    flex: 1 1 auto;
+}
+
+/* Mobile: stack image on top, full width */
+@media (max-width: 720px) {
+    .quests-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .quests-header-img {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+
+.adv-shop-list {
+    margin-top: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(55, 65, 81, 0.9);
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.96);
+}
+
+.adv-shop-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr);
+    gap: 8px 14px;
+    padding: 8px 11px;
+    border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.adv-shop-row:nth-child(odd) {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.adv-shop-row:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 720px) {
+    .adv-shop-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.adv-shop-item-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.adv-shop-item-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.adv-shop-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+.adv-shop-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    color: var(--text-muted);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.adv-shop-side {
+    text-align: right;
+    font-size: 11px;
+}
+
+@media (max-width: 720px) {
+    .adv-shop-side {
+        text-align: left;
+    }
+}
+
+.adv-shop-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.adv-shop-limit {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.adv-shop-buy-btn {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(56, 189, 248, 0.85);
+    background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.15), transparent 55%),
+                linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #020617;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.adv-shop-buy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+    filter: brightness(1.03);
+}
+
+.adv-shop-buy-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    filter: none;
+}
+/* Generic section banner (reusable) */
+.section-banner {
+    margin: 0 0 10px;
+}
+
+.section-banner-img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #2f3543;
+    display: block;
+    background: #020617;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.75);
+}
+.quest-progress {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.quest-progress strong {
+    color: #e5e7eb;
+}
+
+/* Finish button */
+.quest-finish-btn {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 197, 94, 0.85);
+    background: radial-gradient(circle at 0 0, rgba(240, 253, 250, 0.18), transparent 55%),
+                linear-gradient(135deg, #22c55e, #16a34a);
+    color: #022c22;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.quest-finish-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(34, 197, 94, 0.55);
+    filter: brightness(1.03);
+}
+
+.quest-finish-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    filter: none;
+}
+
+/* Give up button */
+.quest-giveup-btn {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(248, 113, 113, 0.85);
+    background: radial-gradient(circle at 0 0, rgba(254, 242, 242, 0.18), transparent 55%),
+                linear-gradient(135deg, #f97373, #ef4444);
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.quest-giveup-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(248, 113, 113, 0.55);
+    filter: brightness(1.03);
+}
+
+.quest-giveup-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    filter: none;
+}
+.adv-shop-item-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.adv-shop-thumb-wrap {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(55, 65, 81, 0.9);
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.adv-shop-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.adv-shop-item-text {
+    flex: 1 1 auto;
+}
+.promotion-strip {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: radial-gradient(circle at 0 0, rgba(250, 250, 250, 0.14), transparent 55%),
+                linear-gradient(135deg, rgba(34, 197, 94, 0.16), rgba(16, 185, 129, 0.08));
+    border: 1px solid rgba(52, 211, 153, 0.7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.promotion-strip-main {
+    font-size: 13px;
+    color: #bbf7d0;
+}
+
+.promotion-strip-main strong {
+    color: #6ee7b7;
+}
+
+.promotion-strip-desc {
+    font-size: 11px;
+    color: #a7f3d0;
+    margin-top: 2px;
+}
+
+.promotion-strip-btn {
+    padding: 6px 14px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 197, 94, 0.95);
+    background: radial-gradient(circle at 0 0, rgba(240, 253, 250, 0.25), transparent 55%),
+                linear-gradient(135deg, #22c55e, #16a34a);
+    color: #022c22;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.promotion-strip-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    filter: brightness(1.03);
+}
+.quest-rule {
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(234, 179, 8, 0.10); /* soft gold */
+    border: 1px solid rgba(234, 179, 8, 0.7);
+    font-size: 11px;
+    color: #facc15;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.quest-rule-icon {
+    font-size: 13px;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.quest-rule strong {
+    color: #fef9c3;
+}
+.quest-requirements {
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.12); /* soft blue */
+    border: 1px solid rgba(96, 165, 250, 0.85);
+    font-size: 11px;
+    color: #dbeafe;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.quest-req-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: #e5edff;
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
+.quest-req-text {
+    flex: 1 1 auto;
+}
+.adv-shop-stats {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.adv-shop-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: rgba(15, 23, 42, 0.95);
+}
+
+.adv-shop-stat .icon {
+    font-size: 13px;
+    line-height: 1;
+}
+
+.adv-shop-stat.atk,
+.adv-shop-stat.def {
+    border-color: rgba(148, 163, 184, 0.45); /* neutral, softer */
+    background: rgba(15, 23, 42, 0.92);      /* same style as other tags */
+}
+
+/* optional: *very* subtle tint just via text color */
+.adv-shop-stat.atk span:last-child {
+    color: #fca5a5; /* soft red text */
+}
+
+.adv-shop-stat.def span:last-child {
+    color: #6ee7b7; /* soft green text */
+}
+.quest-donate-btn {
+    margin-top: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 130, 246, 0.9);
+    background: radial-gradient(circle at 0 0, rgba(239, 246, 255, 0.18), transparent 55%),
+                linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #0b1120;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+}
+
+.quest-donate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.55);
+    filter: brightness(1.03);
+}
+
+.quest-donate-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    filter: none;
+}
+
+
+    </style>
+</head>
+<body>
+    <style>
+  /* Push page content below fixed bar */
+  body { padding-top: 74px; }
+
+  .game-topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: rgba(18,18,18,0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  }
+  .gtb-inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    color: #f1f1f1;
+    font-family: Arial, sans-serif;
+  }
+  .gtb-left, .gtb-right{
+    display: flex; align-items: center; gap: 12px;
+  }
+  .gtb-stat{
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 6px 7px;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .gtb-icon{ opacity: 0.9 }
+  .gtb-label{ color:#cfcfcf; margin-right: 4px }
+  .gtb-value{ font-weight: 700 }
+
+  .gtb-level{
+    background:#262626; border:1px solid #2f2f2f;
+    padding: 6px 10px; border-radius: 10px; font-weight: 700; font-size:14px;
+  }
+  .gtb-exp{ display:flex; flex-direction: column; gap: 6px; min-width: 240px }
+  .gtb-exp-top{ display:flex; justify-content: space-between; font-size:12px; color:#cfcfcf }
+  .gtb-exp-bar{
+    height: 10px; border-radius: 999px; overflow: hidden;
+    background: #2a2a2a; border: 1px solid #333;
+    width: 100%;
+  }
+  .gtb-exp-fill{
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Mobile */
+  @media (max-width: 600px){
+    body { padding-top: 100px; }
+    .gtb-inner{ flex-direction: column; align-items: stretch; gap: 8px }
+    .gtb-left{ justify-content: space-between; flex-wrap: wrap }
+    .gtb-exp{ min-width: 100% }
+  }
+  /* --- Mobile EXP bar fix (place after existing CSS) --- */
+.gtb-right { min-width: 0; }           /* allow shrinking */
+.gtb-exp   { min-width: 0; flex: 1; }  /* let bar use available space */
+.gtb-inner { box-sizing: border-box; } /* accurate width calc */
+
+@media (max-width: 600px){
+  .gtb-inner { gap: 8px; padding: 8px 10px; }
+  .gtb-left  { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+  .gtb-right { width: 100%; gap: 8px; align-items: stretch; }
+  .gtb-level { flex: 0 0 auto; }       /* size to content */
+  .gtb-exp   { width: 100%; }          /* bar spans full width */
+  .gtb-exp-top { font-size: 11px; }    /* tighter label on small screens */
+}
+
+/* optional: keep large numbers from stretching stat chips */
+.gtb-stat .gtb-value { white-space: nowrap; }
+.gtb-timer {
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: #243b1f;
+  border: 1px solid #2f5d28;
+  font-size: 11px;
+  color: #cfeccc;
+  white-space: nowrap;
+}
+@media (max-width: 600px){
+  .gtb-left { gap: 1px; }         /* tighter spacing */
+  .gtb-stat {
+    font-size: 11.5px;
+    padding: 3px 3px;
+  }
+
+}
+
+.gtb-value.mono { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+/* Mobile: add vertical space between wrapped rows and center the time chip */
+
+@media (max-width: 600px){
+  .gtb-left{
+    /* vertical space between wrapped rows */
+    row-gap: 10px;
+    /* keep horizontal spacing tidy (override any previous gap) */
+    column-gap: 6px;
+  }
+
+  .gtb-stat.time-chip{
+    flex: 0 0 auto !important; /* don't stretch / no 100% width */
+    width: auto !important;
+    /* optional: small left/right auto-margins won't force full width */
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+/* --- Compact one-line stats on small phones --- */
+.gtb-stat { white-space: nowrap; }          /* prevent internal wrapping */
+
+@media (max-width: 600px){
+  .gtb-left{
+    justify-content: flex-start !important; /* don't space-between; we need tight packing */
+    flex-wrap: nowrap !important;           /* force one line */
+    gap: 8px;                               /* slightly tighter */
+  }
+}
+
+@media (max-width: 420px){
+  .gtb-left{ gap: 3px; }
+  .gtb-stat{
+    padding: 2px 3px;
+    font-size: 11px;
+  }
+  /* Hide labels to save width; icons + numbers are enough */
+  .gtb-left .gtb-label{ display: none; }
+  /* Slim timer styling to fit */
+  .gtb-timer{
+    padding: 0 4px;
+    font-size: 10px;
+    background: transparent;
+    border: 0;
+  }
+}
+
+@media (max-width: 340px){
+  .gtb-stat{
+    padding: 1px 2px;
+    font-size: 10px;
+  }
+  /* If you STILL see wrapping on ultra-narrow devices,
+     uncomment the next line to hide the timer text entirely */
+  /* #stamina_timer{ display:none; } */
+}
+
+/* Buffs button (compact) */
+.gtb-buffs-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  background:#1e1e1e; border:1px solid #2a2a2a; color:#fff;
+  border-radius:10px; padding:6px 8px; font-size:12px; cursor:pointer;
+}
+.gtb-badge{
+  background:#2f6f2f; border:1px solid #3b8a3b; color:#cfeccc;
+  border-radius:999px; padding:0 6px; font-size:11px; line-height:16px;
+}
+
+@media (max-width: 420px){
+ 
+  .gtb-buffs-btn{
+    padding: 2px 3px;
+    font-size: 10px;
+  }
+  .gtb-badge{
+    padding: 0px 3px;
+    font-size: 10px;
+  }
+}
+  @media (max-width: 340px){
+  .gtb-buffs-btn{
+    padding: 1px 2px;
+    font-size: 9px;
+  }
+  .gtb-badge{
+    padding: 0px 6px;  
+    font-size: 9px;
+  }
+}
+/* Buffs modal */
+.buffs-modal{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  display: none;                /* default hidden */
+  align-items: center;          /* vertical center */
+  justify-content: center;      /* horizontal center */
+  min-height: 100dvh;           /* mobile-safe viewport height */
+  padding: 16px;                /* keep dialog off screen edges */
+  z-index: 10000;
+}
+.buffs-modal.open{ display:flex; }
+.buffs-dialog{
+  width:min(560px, 92vw); background:#171923; color:#E0E0E0; border:1px solid #2B2D44;
+  border-radius:12px; padding:14px; box-shadow:0 10px 30px rgba(0,0,0,.4);max-height: 90dvh;
+}
+.buffs-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.buffs-close{ background:#2a2d44; border:0; color:#fff; padding:6px 10px; border-radius:8px; cursor:pointer; }
+.buff-list{ display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow:auto; }
+.buff-row{ display:flex; align-items:center; gap:10px; background:#12131a; border:1px solid #232437; border-radius:10px; padding:10px; }
+.buff-ico{ font-size:18px; }
+.buff-info{ flex:1; min-width:0; }
+.buff-name{ font-weight:600; color:#F1F2FA; }
+.buff-desc{ color:#B9BBD1; font-size:12px; }
+.buff-ends{ font-size:12px; color:#9ad39a; white-space:nowrap; }
+@media (max-width: 600px){
+  .gtb-buffs-btn{
+    padding:2px 2px;
+  }
+}
+
+/* === SIDE DRAWER === */
+.side-drawer{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  z-index:10001; /* just under topbar (9999) so topbar sits above */
+  display:flex;
+  pointer-events:none;          /* closed by default */
+  font-family:Arial,sans-serif;
+}
+.side-drawer[data-open="true"]{
+  pointer-events:auto;
+}
+
+/* overlay for mobile */
+.side-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  opacity:0;
+  transition:opacity .18s ease;
+  display:none;
+}
+.side-drawer[data-open="true"] .side-overlay{
+  display:block;
+  opacity:1;
+}
+
+/* panel */
+.side-drawer-inner{
+  background:#0f1017;
+  border-right:1px solid rgba(255,255,255,0.06);
+  box-shadow:8px 0 24px rgba(0,0,0,.6);
+  color:#fff;
+  width:220px;
+  max-width:80vw;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  transform:translateX(-240px);
+  transition:transform .18s ease;
+  position:relative;
+  z-index:1;
+  padding:12px;
+}
+.side-drawer[data-open="true"] .side-drawer-inner{
+  transform:translateX(0);
+}
+
+/* header */
+.side-head{
+  margin-bottom:16px;
+}
+.side-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:14px;
+  font-weight:700;
+  color:#f1f1f1;
+  margin-bottom:12px;
+}
+.side-close-btn{
+  background:#1e1f2c;
+  border:1px solid #2b2d44;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 8px;
+  font-size:12px;
+  cursor:pointer;
+}
+@media(min-width:801px){
+  /* On desktop we keep drawer always open and hide the X */
+  .side-close-btn{ display:none; }
+}
+
+/* user mini card */
+.small-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#1a1b25;
+  border:1px solid #2b2d44;
+  border-radius:10px;
+  padding:8px 10px;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+  font-size:12px;
+}
+.small-ava{
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  overflow:hidden;
+  background:#232437;
+  border:1px solid rgba(255,255,255,.08);
+  flex-shrink:0;
+}
+.small-ava img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.small-user-meta{
+  min-width:0;
+  color:#f1f1f1;
+  line-height:1.2;
+}
+.small-name{
+  font-weight:700;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.small-level{
+  font-size:11px;
+  color:#9aa0b8;
+}
+
+/* nav list */
+.side-nav{
+  flex:1 1 auto;
+  overflow-y:auto;
+  margin-bottom:16px;
+  padding-right:4px;
+}
+.side-nav::-webkit-scrollbar{
+  width:4px;
+}
+.side-nav::-webkit-scrollbar-track{
+  background:#0f1017;
+}
+.side-nav::-webkit-scrollbar-thumb{
+  background:#2b2d44;
+  border-radius:3px;
+}
+
+.side-nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:#d5d9f5;
+  background:#1a1b25;
+  border:1px solid #2b2d44;
+  border-radius:10px;
+  padding:9px 10px;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.3;
+  margin-bottom:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  transition:background .12s ease, box-shadow .12s ease;
+}
+.side-nav-item:hover{
+  background:#22233a;
+  box-shadow:0 6px 16px rgba(0,0,0,.6);
+}
+.side-nav-item.active{
+  background:linear-gradient(180deg,#5562ff,#3b48ee);
+  border-color:rgba(255,255,255,.18);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(59,72,238,.4);
+}
+.side-icon{
+  font-size:14px;
+  line-height:1;
+  width:18px;
+  text-align:center;
+}
+.side-label{
+  flex:1;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* footer stats */
+.side-footer{
+  border-top:1px solid #2b2d44;
+  padding-top:12px;
+  font-size:12px;
+  color:#cfcfe6;
+}
+.side-stats-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+.side-chip{
+  background:#1e1f2c;
+  border:1px solid #2b2d44;
+  border-radius:8px;
+  padding:4px 6px;
+  font-weight:700;
+  font-size:11px;
+  color:#fff;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.side-exp-row{}
+.side-exp-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:#9aa0b8;
+  margin-bottom:4px;
+}
+.side-exp-bar{
+  height:8px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#2a2a2a;
+  border:1px solid #333;
+}
+.side-exp-fill{
+  height:100%;
+  background:linear-gradient(90deg,#4caf50,#8bc34a);
+  width:0%;
+}
+
+/* hamburger button in topbar */
+.nav-toggle-btn{
+  background:#1e1e1e;
+  border:1px solid #2a2a2a;
+  border-radius:8px;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  padding:6px 10px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+}
+
+/* ===== Responsive behavior ===== */
+
+
+@media(min-width:801px){
+  .side-overlay{
+    display:block !important;    /* keep it in the DOM so it can catch clicks */
+    background:transparent !important; /* no dark dimmer on desktop */
+    cursor:default;
+  }
+}
+
+
+@media(max-width:800px){
+  body{
+    padding-left:0;
+  }
+}
+/* ✅ QUICK SETS DRAWER (similar to battle drawer) */
+.quickset-drawer-trigger {
+  position:fixed;
+  right:120px;             /* horizontally aligned with potions button */
+  bottom:17px;             /* same vertical as potions */
+  z-index:10001;
+  background:#24263a;
+  border:1px solid #2f324d;
+  box-shadow:0 10px 24px rgba(0,0,0,.6);
+  border-radius:12px;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  cursor:pointer;
+  font-weight:700;
+  font-size:14px;
+  line-height:1.2;
+  padding:10px 12px;
+  gap:6px;
+}
+.quickset-drawer-trigger:active { transform:scale(.97); }
+
+#qsDrawerBackdrop {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:10000;
+  display:none;
+}
+
+/* slide-out panel */
+#qsDrawer {
+  position:fixed;
+  top:0;
+  right:-280px; /* hidden by default */
+  width:260px;
+  max-width:80vw;
+  height:100vh;
+  background:#1a1b25;
+  border-left:1px solid #2f324d;
+  box-shadow:0 0 30px rgba(0,0,0,.8);
+  z-index:10002;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  transition:right .25s ease;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+
+body.qsdrawer-open #qsDrawer {
+  right:0;
+}
+body.qsdrawer-open #qsDrawerBackdrop {
+  display:block;
+}
+
+.qs-drawer-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.qs-drawer-head .title {
+  font-size:15px;
+  font-weight:800;
+  color:#fff;
+}
+.qs-drawer-head .subtitle {
+  font-size:12px;
+  color:#9aa0b8;
+  line-height:1.4;
+}
+.qs-drawer-close {
+  background:none;
+  border:none;
+  color:#cfd4ff;
+  font-size:18px;
+  padding:4px 6px;
+  cursor:pointer;
+  line-height:1;
+}
+.qs-drawer-close:hover { color:#fff; }
+
+.qs-list {
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1 1 auto;
+  overflow-y:auto;
+}
+
+/* Each list item is a horizontal row with two buttons */
+.qs-item {
+  padding:0;
+  margin:0;
+  display:flex;
+  gap:6px;
+}
+
+/* Each button grows evenly */
+.qs-set-btn {
+  flex:1 1 0;
+  background:#171923;
+  border:1px solid #24263a;
+  border-radius:10px;
+  padding:10px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:13px;
+  font-weight:700;
+  color:#e0e4ff;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+.qs-set-btn:hover {
+  background:#1f2130;
+}
+
+/* Optional slight color nuance for types */
+.qs-set-btn.qs-set-eq {
+  border-color:#3d4d7a;
+}
+.qs-set-btn.qs-set-pets {
+  border-color:#3a6b3a;
+}
+
+.qs-set-icon {
+  font-size:16px;
+}
+.qs-set-number {
+  font-size:13px;
+}
+
+
+/* ✅ Modal for choosing attack/defense/cancel */
+.qs-modal-backdrop {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:10020;
+  display:none;
+}
+.qs-modal {
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10021;
+}
+body.qsmodal-open #qsModalBackdrop,
+body.qsmodal-open #qsModal {
+  display:flex;
+}
+
+.qs-modal-dialog {
+  width:min(360px, 92vw);
+  background:#171923;
+  border:1px solid #232437;
+  border-radius:12px;
+  padding:16px 18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5);
+  color:#e0e4ff;
+  font-family:Arial,sans-serif;
+}
+.qs-modal-title {
+  font-size:15px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.qs-modal-text {
+  font-size:13px;
+  color:#c0c4e4;
+  margin-bottom:14px;
+}
+.qs-modal-actions {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.qs-modal-btn {
+  width:100%;
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  border:1px solid transparent;
+}
+.qs-modal-attack {
+  background:#4b5ef5;
+  border-color:#4b5ef5;
+  color:#fff;
+}
+.qs-modal-defense {
+  background:#2a2b3a;
+  border-color:#3b3d55;
+  color:#e0e4ff;
+}
+.qs-modal-cancel {
+  background:#191a23;
+  border-color:#2a2b3a;
+  color:#c0c4e4;
+}
+.qs-modal-btn:disabled {
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+
+
+</style>
+<!-- === SIDE NAV DRAWER === -->
+<div class="side-drawer" id="sideDrawer" data-open="false">
+  <div class="side-drawer-inner">
+    <div class="side-head">
+      <div class="side-title">
+        <span class="side-game-title">⚡ Veyra Game</span>
+        <button class="side-close-btn" id="sideCloseBtn" aria-label="Close menu">✕</button>
+      </div>
+      <a href="player.php?pid=150996" style="text-decoration:none;"><div class="small-user">
+        <div class="small-ava">
+          <img src="uploads/avatars/user_150996_1775455614.jpg" alt="" />
+        </div>
+        <div class="small-user-meta">
+          <div class="small-name">Gravewalker</div>
+          <div class="small-level">LV 419</div>
+        </div>
+      </div></a>
+    </div>
+
+    <nav class="side-nav">
+              <a
+          class="side-nav-item"
+          href="/game_dash.php"
+        >
+          <span class="side-icon">🏠</span>
+          <span class="side-label">Home</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/event_page.php?event=7"
+        >
+          <span class="side-icon">🔥</span>
+          <span class="side-label">Emberfall Event</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/pvp.php"
+        >
+          <span class="side-icon">⚔️</span>
+          <span class="side-label">PvP</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/inventory.php"
+        >
+          <span class="side-icon">🎒</span>
+          <span class="side-label">Inventory</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/power_crystals.php"
+        >
+          <span class="side-icon">💎</span>
+          <span class="side-label">Power Crystals</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/pets.php"
+        >
+          <span class="side-icon">🐾</span>
+          <span class="side-label">Pets</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/stats.php"
+        >
+          <span class="side-icon">📊</span>
+          <span class="side-label">Stats</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/guild_dash.php"
+        >
+          <span class="side-icon">🏰</span>
+          <span class="side-label">Guild</span>
+        </a>
+              <a
+          class="side-nav-item active"
+          href="/adventurers_guild.php"
+        >
+          <span class="side-icon">✨</span>
+          <span class="side-label">Adventure Guild</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/merchant.php"
+        >
+          <span class="side-icon">🛒</span>
+          <span class="side-label">Merchant</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/blacksmith.php"
+        >
+          <span class="side-icon">⚒️</span>
+          <span class="side-label">Blacksmith</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/collections.php"
+        >
+          <span class="side-icon">📚</span>
+          <span class="side-label">Collections</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/achievements.php"
+        >
+          <span class="side-icon">🏆</span>
+          <span class="side-label">Achievements</span>
+        </a>
+              <a
+          class="side-nav-item"
+          href="/battle_pass.php"
+        >
+          <span class="side-icon">🎟️</span>
+          <span class="side-label">Battle Pass</span>
+        </a>
+          </nav>
+
+    <div class="side-footer">
+      <div class="side-stats-row">
+        <div class="side-chip">
+          💪 <span>1,710</span>/<span>1,860</span>
+        </div>
+        <div class="side-chip">
+          🪙 <span>1393.98K</span>
+        </div>
+        <div class="side-chip">
+          💎 <span>1.417K</span>
+        </div>
+      </div>
+      <div class="side-exp-row">
+        <div class="side-exp-top">
+          <span>LV 419</span>
+          <span>38,569/1,102,600</span>
+        </div>
+        <div class="side-exp-bar">
+          <div class="side-exp-fill" style="width: 3%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- tap-to-close overlay for mobile -->
+  <div class="side-overlay" id="sideOverlay"></div>
+</div>
+<!-- === /SIDE NAV DRAWER === -->
+
+<div class="game-topbar">
+  <div class="gtb-inner">
+    <div class="gtb-left">
+      <div class="gtb-stat">
+  <span class="gtb-icon">💪</span>
+  <span class="gtb-label">Stamina</span>
+  <span class="gtb-value">
+    <span id="stamina_span">1,710</span> / 1,860  </span>
+  <span id="stamina_timer" class="gtb-timer" title="Next +53 at the top of the hour"></span>
+
+</div>
+
+      <div class="gtb-stat"><span class="gtb-icon">🪙</span><span class="gtb-label">Gold</span><span class="gtb-value">1393.98K</span></div>
+      <div class="gtb-stat"><span class="gtb-icon">💎</span><span class="gtb-label">Gems</span><span class="gtb-value">1.417K</span></div>
+      <div class="gtb-stat time-chip"><span class="gtb-icon">🕒</span><span class="gtb-label">Server</span><span class="gtb-value mono" id="server_time" data-epoch="1775550243" data-tzoff="19800" title="Server time">01:54:03 PM</span>
+</div>
+
+<!-- Buffs button (compact) -->
+<button class="gtb-buffs-btn" id="buffs_btn" title="Active Buffs">
+  🧪 <span class="gtb-label">Buffs</span>
+</button>
+    </div>
+
+    <div class="gtb-right">
+      <div class="gtb-level">LV 419</div>
+      <div class="gtb-exp">
+        <div class="gtb-exp-top">
+          <span>EXP&nbsp;</span>
+          <span>38,569 / 1,102,600</span>
+        </div>
+        <div class="gtb-exp-bar">
+          <div class="gtb-exp-fill" style="width: 3%;"></div>
+        </div>
+      </div>
+    </div>
+  
+
+  </div>
+    
+
+  <!-- Buffs Modal -->
+<div class="buffs-modal" id="buffs_modal" aria-hidden="true">
+  <div class="buffs-dialog" role="dialog" aria-modal="true" aria-labelledby="buffs_title">
+    <div class="buffs-head">
+      <h3 id="buffs_title" style="margin:0">Active Buffs</h3>
+      <button class="buffs-close" id="buffs_close">Close ✕</button>
+    </div>
+    <div class="buff-list" id="buffs_list">
+              <div class="buff-row"><div class="buff-info">
+          <div class="buff-name">No active buffs</div>
+          <div class="buff-desc">Use items to activate temporary bonuses.</div>
+        </div></div>
+          </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+(function(){
+  let secs = 357;
+  const refillAmt = 53;
+  const maxStam = 1860;
+
+  const tEl = document.getElementById('stamina_timer');
+  const sEl = document.getElementById('stamina_span');
+
+  function fmt(n){ return n.toLocaleString(); }
+  function mmss(total){
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return (m<10?'0':'')+m+':' + (s<10?'0':'')+s;
+  }
+
+  function tick(){
+    tEl.textContent = '⏳ ' + mmss(secs);
+
+    if (secs <= 0){
+      // Apply +10 stamina visually (server already did at HH:00:00)
+      const current = parseInt((sEl.textContent || '0').replace(/[^0-9]/g,''), 10) || 0;
+      const next = Math.min(maxStam, current + refillAmt);
+      if (next !== current){
+        sEl.textContent = fmt(next);
+      }
+      secs = 3600;
+    }
+    secs--;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+<script>
+(function(){
+  const el = document.getElementById('server_time');
+  if (!el) return;
+
+  let epoch  = parseInt(el.getAttribute('data-epoch'), 10) || Math.floor(Date.now()/1000);
+  const offS = parseInt(el.getAttribute('data-tzoff'), 10) || 0; // server offset (seconds from UTC)
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+
+  function render(){
+    // Shift by server offset, then read UTC fields => server-local time
+    const d = new Date((epoch + offS) * 1000);
+    let h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    const s = d.getUTCSeconds();
+    const am = h < 12;
+    let h12 = h % 12; if (h12 === 0) h12 = 12;
+    el.textContent = h12 + ':' + pad2(m) + ':' + pad2(s) + ' ' + (am ? 'AM' : 'PM');
+  }
+
+  render();
+  setInterval(function(){ epoch++; render(); }, 1000);
+})();
+</script>
+
+<script>
+(function(){
+  const btn   = document.getElementById('buffs_btn');
+  const modal = document.getElementById('buffs_modal');
+  const close = document.getElementById('buffs_close');
+  const list  = document.getElementById('buffs_list');
+
+  if (!btn || !modal || !list) return;
+
+  // Open / close
+  btn.addEventListener('click', () => { modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); });
+  close.addEventListener('click', () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');
+    }
+  });
+
+  // Countdown: align to server time to avoid client skew
+  const serverStartMs = (parseInt(document.getElementById('server_time')?.getAttribute('data-epoch') || '0', 10)) * 1000;
+  const offsetMs = serverStartMs ? (serverStartMs - Date.now()) : 0; // server - client
+
+  function nowServerSec(){ return Math.floor((Date.now() + offsetMs) / 1000); }
+  function fmtLeft(secs){
+    if (secs < 0) secs = 0;
+    const h = Math.floor(secs/3600);
+    const m = Math.floor((secs%3600)/60);
+    const s = secs%60;
+    return (h>0 ? (h+':'+String(m).padStart(2,'0')+':') : (m+':')) + String(s).padStart(2,'0');
+  }
+
+  function tick(){
+    const now = nowServerSec();
+    list.querySelectorAll('.buff-row').forEach(row => {
+      const ends = parseInt(row.getAttribute('data-ends') || '0', 10);
+      const left = Math.max(0, ends - now);
+      const label = row.querySelector('[data-ends-text]');
+      if (label) label.textContent = left > 0 ? (fmtLeft(left) + ' left') : 'expired';
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+
+
+
+
+<style>
+/* ===== Global Chat Widget (gcw) ===== */
+#gcw_container{position:fixed; right:14px; bottom:14px; z-index:10050; font-family:'Segoe UI',Arial,sans-serif;}
+#gcw_toggle{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:46px; height:46px; border-radius:50%;
+  background:#2a2b3a; color:#fff; border:1px solid #2b2d44;
+  box-shadow:0 8px 24px rgba(0,0,0,.35); cursor:pointer; font-size:20px;
+}
+#gcw_toggle:hover{background:#343648}
+#gcw_panel{
+  position:absolute; right:0; bottom:56px; width:min(360px, 92vw);
+  max-height:80vh; display:flex; flex-direction:column; gap:0;
+  background:#1A1B25; border:1px solid #232437; border-radius:12px;
+  box-shadow:0 16px 40px rgba(0,0,0,.45); overflow:hidden;
+  transform:translateY(12px); opacity:0; pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease;
+}
+#gcw_panel.gcw-open{opacity:1; transform:translateY(0); pointer-events:auto;}
+.gcw_head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:10px 12px; background:#171923; border-bottom:1px solid #232437; color:#EDEFF6
+}
+.gcw_title{font-weight:700}
+.gcw_actions{display:flex; gap:6px}
+.gcw_btn{background:#2a2b3a; color:#fff; border:1px solid #2b2d44; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px}
+.gcw_btn:hover{background:#343648}
+#gcw_log{
+  background:#12131A; padding:8px 8px; overflow-y:auto; min-height:160px; max-height:52vh;
+}
+#gcw_log .msg{
+  display:flex; align-items:flex-start; gap:10px; padding:8px 10px;
+  border-bottom:1px solid #232437;
+}
+#gcw_log .msg:last-child{border-bottom:none}
+#gcw_log .avatar{width:30px; height:30px; border-radius:50%; object-fit:cover; background:#2b2d44; flex-shrink:0}
+#gcw_log .content{flex:1; min-width:0}
+#gcw_log .u{color:#FFD369; font-weight:600; margin-right:6px}
+#gcw_log .t{color:#9aa0be; font-size:12px; margin-left:6px}
+#gcw_log .text{margin-top:4px; color:#EDEFF6; word-wrap:break-word}
+
+.gcw_foot{padding:8px; background:#171923; border-top:1px solid #232437}
+#gcw_form{display:flex; gap:8px}
+#gcw_input{flex:1; padding:10px; border-radius:8px; border:1px solid #2B2D44; background:#12131A; color:#EDEFF6}
+#gcw_send{padding:10px 14px; border-radius:8px; border:1px solid #2B2D44; background:#2a2b3a; color:#fff; cursor:pointer}
+#gcw_send:disabled{opacity:.6; cursor:not-allowed}
+
+/* Small screens: keep panel usable */
+@media (max-width: 420px){
+  #gcw_panel{width:min(96vw, 360px); max-height:75vh}
+  #gcw_toggle{width:44px; height:44px}
+}
+/* --- Chat room tabs --- */
+.gcw_tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+.gcw_tab{
+  background:#2a2b3a; color:#fff; border:1px solid #2b2d44;
+  border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px;
+}
+.gcw_tab[aria-selected="true"]{ background:#343648; border-color:#3a3d5a; }
+.gcw_tab[disabled]{ opacity:.55; cursor:not-allowed; }
+.gcw_room_hint{ font-size:12px; color:#cfcfe6; margin-left:8px }
+/* === Floating Nav FAB (bottom-left opener) === */
+#nav_fab.nav-fab-btn{
+  position:fixed;
+  left:14px;
+  bottom:14px;
+  z-index:10050; /* match or beat chat button */
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#2a2b3a;
+  color:#fff;
+  border:1px solid #2b2d44;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  cursor:pointer;
+  font-size:20px;
+  line-height:1;
+  font-weight:700;
+}
+
+#nav_fab.nav-fab-btn:hover{
+  background:#343648;
+}
+
+body{padding-bottom: 8px}
+
+
+
+/* ✅ ADD HERE: Battle Consumable Drawer */
+.battle-drawer-trigger {
+  position:fixed;
+  right:65px;
+  bottom:17px;
+  z-index:10001;
+  background:#24263a;
+  border:1px solid #2f324d;
+  box-shadow:0 10px 24px rgba(0,0,0,.6);
+  border-radius:12px;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  line-height:1.2;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.battle-drawer-trigger .qtybubble{
+  background:#3a3d66;
+  border:1px solid #4d5096;
+  border-radius:999px;
+  padding:2px 6px;
+  font-size:11px;
+  font-weight:700;
+  color:#cfd4ff;
+}
+.battle-drawer-trigger:active { transform:scale(.97); }
+
+/* backdrop when drawer open */
+#battleDrawerBackdrop {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:10000;
+  display:none;
+}
+
+/* the sliding drawer */
+#battleDrawer {
+  position:fixed;
+  top:0;
+  right:-300px; /* hidden by default */
+  width:260px;
+  max-width:80vw;
+  height:100vh;
+  background:#1a1b25;
+  border-left:1px solid #2f324d;
+  box-shadow:0 0 30px rgba(0,0,0,.8);
+  z-index:10002;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  transition:right .25s ease;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow-y: scroll;
+}
+
+body.drawer-open #battleDrawer {
+  right:0;
+}
+body.drawer-open #battleDrawerBackdrop {
+  display:block;
+}
+
+.battle-drawer-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.battle-drawer-head .title {
+  font-size:15px;
+  font-weight:800;
+  color:#fff;
+  line-height:1.3;
+}
+.battle-drawer-head .subtitle {
+  font-size:12px;
+  color:#9aa0b8;
+  line-height:1.3;
+}
+.battle-drawer-close {
+  background:none;
+  border:none;
+  color:#cfd4ff;
+  font-size:18px;
+  padding:4px 6px;
+  cursor:pointer;
+  line-height:1;
+}
+.battle-drawer-close:hover { color:#fff; }
+
+/* potion item card */
+.potion-card {
+  background:#171923;
+  border:1px solid #24263a;
+  border-radius:10px;
+  padding:12px;
+  display:flex;
+  gap:10px;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+  position:relative;
+}
+.potion-card img {
+  width:60px;
+  height:60px;
+  border-radius:8px;
+  object-fit:cover;
+  border:1px solid #2b2e49;
+  background:#22263a;
+}
+.potion-main {
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.potion-name {
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:4px;
+  line-height:1.2;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.potion-name .qtyleft {
+  font-size:11px;
+  font-weight:700;
+  background:#202235;
+  border:1px solid #2b2e49;
+  color:#cfd4ff;
+  border-radius:999px;
+  padding:2px 6px;
+}
+.potion-desc {
+  font-size:12px;
+  color:#9aa0b8;
+  line-height:1.4;
+  max-height:3.2em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.potion-actions {
+  margin-top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
+.potion-actions input[type="number"] {
+  width:60px;
+  padding:6px 8px;
+  font-size:13px;
+  border-radius:6px;
+  border:1px solid #2b2e49;
+  background:#1b1f30;
+  color:#e9ecff;
+  font-weight:600;
+}
+.potion-use-btn {
+  flex:1 1 auto;
+  min-width:0;
+  background:#4b5ef5;
+  border:none;
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+  cursor:pointer;
+  text-align:center;
+  box-shadow:0 4px 10px rgba(0,0,0,.4);
+}
+.potion-use-btn:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+
+.gcw_reply_btn{
+  margin-left:8px;
+  font-size:12px;
+  padding:2px 8px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#d8dcff;
+  cursor:pointer;
+}
+.gcw_reply_btn:hover{
+  background:rgba(255,255,255,.10);
+}
+/* ===== Thin, drawer-colored scrollbar (desktop) ===== */
+#battleDrawer{
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.18) #1a1b25; /* thumb, track */
+}
+
+/* Chrome / Edge / Safari */
+#battleDrawer::-webkit-scrollbar{
+  width: 6px;              /* extremely thin */
+}
+#battleDrawer::-webkit-scrollbar-track{
+  background: #1a1b25;     /* match drawer bg */
+}
+#battleDrawer::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.16);
+  border-radius: 999px;
+  border: 2px solid #1a1b25;  /* creates “gap” so it feels embedded */
+}
+#battleDrawer::-webkit-scrollbar-thumb:hover{
+  background: rgba(255,255,255,.26);
+}
+#battleDrawer::-webkit-scrollbar-corner{
+  background: #1a1b25;
+}
+
+/* Optional: hide arrows on some Windows setups */
+#battleDrawer::-webkit-scrollbar-button{
+  width: 0;
+  height: 0;
+}
+
+
+
+
+</style>
+
+<div id="gcw_container" aria-live="polite">
+  <button id="gcw_toggle" aria-expanded="false" aria-controls="gcw_panel" title="Open chat" style="position:relative;">
+  💬
+  <span id="gcw_badge" style="
+    position:absolute; top:-6px; right:-6px;
+    min-width:18px; height:18px; padding:0 5px;
+    border-radius:999px;
+    background:#e74c3c; color:#fff;
+    font-size:12px; line-height:18px;
+    text-align:center;
+    display:none;
+    font-weight:700;
+    box-shadow:0 2px 8px rgba(0,0,0,.35);
+  ">0</span>
+</button>
+
+
+  <div id="gcw_panel" role="dialog" aria-modal="false" aria-label="Global Chat">
+    <div class="gcw_head">
+  <div class="gcw_tabs" role="tablist" aria-label="Chat rooms">
+    <button class="gcw_tab" id="tab_global" role="tab" aria-selected="true" data-room="global">Global</button>
+    <button class="gcw_tab" id="tab_guild"  role="tab"
+                        aria-selected="false" data-room="guild">
+      Guild        <span class="gcw_room_hint">[DLU]</span>
+          </button>
+      </div>
+  <div class="gcw_actions">
+    <button class="gcw_btn" id="gcw_popout" title="Open full chat page">⤢</button>
+    <button class="gcw_btn" id="gcw_close" title="Close">✕</button>
+  </div>
+</div>
+
+
+    <div id="gcw_log">
+      <!-- filled by update on open -->
+      <div class="msg"><div class="content"><span class="u">System</span><span class="t">now</span><div class="text">Loading…</div></div></div>
+    </div>
+
+    <div class="gcw_foot">
+            <form id="gcw_form" autocomplete="off">
+        <input type="hidden" id="gcw_reply_to" value="0">
+        <input id="gcw_input" type="text" maxlength="300" placeholder="Type a message…"/>
+        <button id="gcw_send" type="submit">Send</button>
+      </form>
+          </div>
+  </div>
+</div>
+<!-- === NAV FLOAT BUTTON (bottom-left) === -->
+<button id="nav_fab"
+        class="nav-fab-btn"
+        aria-label="Open menu"
+        title="Menu">
+  ☰
+</button>
+
+
+<!-- === /NAV FLOAT BUTTON === -->
+    <!-- floating trigger button bottom-right -->
+    <button id="openBattleDrawerBtn"
+            class="battle-drawer-trigger"
+            type="button"
+            title="Battle Consumables">
+        🧪
+       
+    </button>
+
+    <!-- dark backdrop when drawer is open -->
+    <div id="battleDrawerBackdrop"></div>
+
+    <!-- slide-out drawer -->
+    <aside id="battleDrawer">
+        <div class="battle-drawer-head">
+            <div>
+                <div class="title">Battle Consumables</div>
+                <div class="subtitle">Use stamina potions without leaving the fight.</div>
+            </div>
+            <button class="battle-drawer-close" id="closeBattleDrawerBtn" aria-label="Close">✕</button>
+        </div>
+
+                <div class="potion-card" data-inv-id="553415583" data-item-id="35">
+            <img src="images/items/1755909636_full_stamina_potion.webp" alt="Full Stamina Potion">
+            <div class="potion-main">
+                <div class="potion-name">
+                    <span>Full Stamina Potion</span>
+                    <span class="qtyleft">
+                        x<span class="potion-qty-left" id="pqty_553415583">79</span>
+                    </span>
+                </div>
+                <div class="potion-desc">A magic Potion that Fully Refills Your Stamina .</div>
+
+                <div class="potion-actions">
+                    <input
+                        type="number"
+                        min="1"
+                        max="79"
+                        value="1"
+                        id="puse_553415583" readonly                    >
+                    <button
+                        class="potion-use-btn"
+                        data-inv="553415583"
+                        data-item="35"
+                        data-name="Full Stamina Potion"
+                        data-max="79"
+                        type="button"
+                    >Use</button>
+                </div>
+            </div>
+        </div>
+                <div class="potion-card" data-inv-id="553444234" data-item-id="162">
+            <img src="images/items/1764082355_-a2e1-05414364e2f1_3.webp" alt="Mana Potion S">
+            <div class="potion-main">
+                <div class="potion-name">
+                    <span>Mana Potion S</span>
+                    <span class="qtyleft">
+                        x<span class="potion-qty-left" id="pqty_553444234">100</span>
+                    </span>
+                </div>
+                <div class="potion-desc">A magic Potion that Refills 20 Mana.</div>
+
+                <div class="potion-actions">
+                    <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value="1"
+                        id="puse_553444234"                     >
+                    <button
+                        class="potion-use-btn"
+                        data-inv="553444234"
+                        data-item="162"
+                        data-name="Mana Potion S"
+                        data-max="100"
+                        type="button"
+                    >Use</button>
+                </div>
+            </div>
+        </div>
+                <div class="potion-card" data-inv-id="576176589" data-item-id="163">
+            <img src="images/items/1764083491_glowing_blue_li_6814e714-df8a-4b81-9125-e55e91ecf27b_3.webp" alt="Mana Potion L">
+            <div class="potion-main">
+                <div class="potion-name">
+                    <span>Mana Potion L</span>
+                    <span class="qtyleft">
+                        x<span class="potion-qty-left" id="pqty_576176589">2</span>
+                    </span>
+                </div>
+                <div class="potion-desc">A magic Potion that Refills 200 Mana.</div>
+
+                <div class="potion-actions">
+                    <input
+                        type="number"
+                        min="1"
+                        max="2"
+                        value="1"
+                        id="puse_576176589"                     >
+                    <button
+                        class="potion-use-btn"
+                        data-inv="576176589"
+                        data-item="163"
+                        data-name="Mana Potion L"
+                        data-max="2"
+                        type="button"
+                    >Use</button>
+                </div>
+            </div>
+        </div>
+                <div class="potion-card" data-inv-id="578681225" data-item-id="251">
+            <img src="images/items/1768627855_stamina_xl.webp" alt="Large Stamina Potion">
+            <div class="potion-main">
+                <div class="potion-name">
+                    <span>Large Stamina Potion</span>
+                    <span class="qtyleft">
+                        x<span class="potion-qty-left" id="pqty_578681225">2</span>
+                    </span>
+                </div>
+                <div class="potion-desc">A magic Potion that Refills 5000 Stamina(Or 50% max stamina).</div>
+
+                <div class="potion-actions">
+                    <input
+                        type="number"
+                        min="1"
+                        max="2"
+                        value="1"
+                        id="puse_578681225"                     >
+                    <button
+                        class="potion-use-btn"
+                        data-inv="578681225"
+                        data-item="251"
+                        data-name="Large Stamina Potion"
+                        data-max="2"
+                        type="button"
+                    >Use</button>
+                </div>
+            </div>
+        </div>
+                <div class="potion-card" data-inv-id="564356703" data-item-id="108">
+            <img src="images/items/1760475550_hp_dungeon_portion.webp" alt="Full Hp Potion">
+            <div class="potion-main">
+                <div class="potion-name">
+                    <span>Full Hp Potion</span>
+                    <span class="qtyleft">
+                        x<span class="potion-qty-left" id="pqty_564356703">66</span>
+                    </span>
+                </div>
+                <div class="potion-desc">A magic Potion that Heals You To Full Hp.</div>
+
+                <div class="potion-actions">
+                    <input
+                        type="number"
+                        min="1"
+                        max="66"
+                        value="1"
+                        id="puse_564356703"                     >
+                    <button
+                        class="potion-use-btn"
+                        data-inv="564356703"
+                        data-item="108"
+                        data-name="Full Hp Potion"
+                        data-max="66"
+                        type="button"
+                    >Use</button>
+                </div>
+            </div>
+        </div>
+            </aside>
+<div id="notification"
+     style="position:fixed; top:20px; right:20px; background:#2ecc71; color:white;
+            padding:12px 20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.4);
+            font-size:15px; display:none; z-index:99999;">
+</div>
+
+<!-- Quick Set choice modal -->
+<div id="qsModalBackdrop" class="qs-modal-backdrop"></div>
+<div id="qsModal" class="qs-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="qs-modal-dialog">
+    <div class="qs-modal-title">
+      Apply Quick Set <span id="qsModalSetNum"></span>
+    </div>
+    <div class="qs-modal-text">
+      Choose where to equip this quick set. It will overwrite your current items for that team.
+    </div>
+    <div class="qs-modal-actions">
+      <button type="button"
+              class="qs-modal-btn qs-modal-attack"
+              data-target="attack">
+        Main Attack Set
+      </button>
+      <button type="button"
+              class="qs-modal-btn qs-modal-defense"
+              data-target="defense">
+        Main Defense Set
+      </button>
+      <button type="button"
+              class="qs-modal-btn qs-modal-cancel"
+              data-target="cancel">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const isLoggedIn  = true;
+  const guildId     = 6;
+  const hasCouncil = false;
+  const tabCouncil = document.getElementById('tab_council');
+
+  const elToggle = document.getElementById('gcw_toggle');
+  const elPanel  = document.getElementById('gcw_panel');
+  const elLog    = document.getElementById('gcw_log');
+  const elClose  = document.getElementById('gcw_close');
+  const elPopout = document.getElementById('gcw_popout');
+
+  const elForm   = document.getElementById('gcw_form');
+  const elInput  = document.getElementById('gcw_input');
+  const elSend   = document.getElementById('gcw_send');
+
+  const tabGlobal = document.getElementById('tab_global');
+  const tabGuild  = document.getElementById('tab_guild');
+
+  let pollTimer  = null;
+  let lastHTML   = '';
+  let openedOnce = false;
+  let isOpen     = false;
+
+
+
+  const elBadge = document.getElementById('gcw_badge');
+
+  function setBadge(n){
+    if (!elBadge) return;
+    n = parseInt(n, 10) || 0;
+    if (n > 0){
+      elBadge.textContent = (n > 99 ? '99+' : String(n));
+      elBadge.style.display = 'inline-block';
+    } else {
+      elBadge.style.display = 'none';
+    }
+  }
+
+  async function refreshUnseenBadge(){
+    if (!isLoggedIn) { setBadge(0); return; }
+    try{
+      const r = await fetch('chat_unseen_count.php', { cache:'no-store' });
+      const d = await r.json().catch(()=>null);
+      if (d && (''+d.status).trim() === 'success') setBadge(d.count);
+    }catch(_){}
+  }
+
+  async function markRepliesSeenIfAny(){
+    if (!isLoggedIn) return;
+    // only hit server if badge already shows >0 (cheap)
+    const current = elBadge && elBadge.style.display !== 'none'
+      ? parseInt(elBadge.textContent, 10) || 1
+      : 0;
+    if (!current) return;
+
+    try{
+      const r = await fetch('chat_mark_seen.php', { method:'POST', cache:'no-store' });
+      const d = await r.json().catch(()=>null);
+      if (d && (''+d.status).trim() === 'success'){
+        setBadge(0);
+      }
+    }catch(_){}
+  }
+
+
+// Reply button -> set reply_to + insert @username into chat input
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.gcw_reply_btn');
+  if (!btn) return;
+
+  const replyUid = parseInt(btn.getAttribute('data-uid') || '0', 10) || 0;
+  const u = (btn.getAttribute('data-username') || '').trim();
+  if (!u) return;
+
+  // store reply target
+  const replyHidden = document.getElementById('gcw_reply_to');
+  if (replyHidden) replyHidden.value = String(replyUid);
+
+  const input = document.getElementById('gcw_input');
+  if (!input) return;
+
+  const tag = '@' + u;
+  const start = input.selectionStart ?? input.value.length;
+  const end   = input.selectionEnd ?? input.value.length;
+
+  const before = input.value.slice(0, start);
+  const after  = input.value.slice(end);
+
+  const needsSpaceBefore = before.length && !/\s$/.test(before);
+  const insert = (needsSpaceBefore ? ' ' : '') + tag + ' ';
+
+  input.value = before + insert + after;
+
+  const newPos = (before + insert).length;
+  input.focus();
+  input.setSelectionRange(newPos, newPos);
+});
+
+
+  // ---- rooms
+  const LS_KEY_ROOM = 'gcw_room';
+  function getSavedRoom(){
+  const r = (localStorage.getItem(LS_KEY_ROOM) || 'global').toLowerCase();
+  if (r === 'guild'   && !guildId)   return 'global';
+  if (r === 'council' && !hasCouncil) return 'global';
+  return (r === 'guild' || r === 'council' || r === 'global') ? r : 'global';
+}
+  function saveRoom(r){ try{ localStorage.setItem(LS_KEY_ROOM, r); }catch(_){ } }
+
+  let room = getSavedRoom(); // 'global' | 'guild'
+
+  function setActiveTab(){
+  if (tabGlobal)  tabGlobal.setAttribute('aria-selected', room === 'global'  ? 'true':'false');
+  if (tabGuild)   tabGuild .setAttribute('aria-selected', room === 'guild'   ? 'true':'false');
+  if (tabCouncil) tabCouncil.setAttribute('aria-selected', room === 'council' ? 'true':'false');
+}
+
+  function currentEndpoints(){
+  if (room === 'guild') {
+    // Use your real guild endpoints, channel fixed to "general"
+    return {
+      update: 'guild_updatechat.php?channel=general',
+      send:   'guild_chat_send.php'
+    };
+  }
+  if (room === 'council') {
+    return {
+      update: 'council_updatechat.php',
+      send:   'council_chat_send.php'
+    };
+  }
+  // global
+  return {
+    update: 'updatechat.php',
+    send:   'chat_send.php'
+  };
+}
+
+
+  function renderRoomHeader(){
+    // Optional: you can reflect the title somewhere if desired
+    // (we kept title in the tabs; nothing else needed here)
+  }
+
+  function saveOpenState(open){
+    try{ localStorage.setItem('gcw_open', open ? '1' : '0'); }catch(_){}
+  }
+  function loadOpenState(){
+    try{ return localStorage.getItem('gcw_open') === '1'; }catch(_){ return false; }
+  }
+
+  function openPanel(){
+    if (isOpen) return;
+    isOpen = true;
+    elPanel.classList.add('gcw-open');
+    elToggle.setAttribute('aria-expanded','true');
+    saveOpenState(true);
+    if (!openedOnce){ fetchAndRender(true); openedOnce = true; }
+    startPolling();
+    setTimeout(() => { elLog.scrollTop = elLog.scrollHeight; }, 50);
+    markRepliesSeenIfAny();
+  }
+  function closePanel(){
+    if (!isOpen) return;
+    isOpen = false;
+    elPanel.classList.remove('gcw-open');
+    elToggle.setAttribute('aria-expanded','false');
+    saveOpenState(false);
+    stopPolling();
+  }
+
+  elToggle.addEventListener('click', () => { isOpen ? closePanel() : openPanel(); });
+  elClose .addEventListener('click', closePanel);
+  elPopout.addEventListener('click', () => {
+  if (room === 'guild' && guildId){
+    window.location.href = 'guild_chat.php?channel=general';
+  } else if (room === 'council' && hasCouncil){
+    window.location.href = 'council_chat.php';
+  } else {
+    window.location.href = 'chat.php';
+  }
+});
+
+  // Switch tabs
+  if (tabGlobal) tabGlobal.addEventListener('click', () => switchRoom('global'));
+  if (tabGuild)  tabGuild .addEventListener('click', () => { if (guildId) switchRoom('guild'); });
+  if (tabCouncil) tabCouncil.addEventListener('click', () => { if (hasCouncil) switchRoom('council'); });
+
+  function switchRoom(next){
+  if (next === room) return;
+  room = next;
+  saveRoom(room);
+  setActiveTab();
+  lastHTML = '';
+
+  // Handle access
+  if (room === 'guild' && !guildId){
+    stopPolling();
+    elLog.innerHTML = `
+      <div class="msg"><div class="content">
+        <span class="u">System</span>
+        <span class="t">now</span>
+        <div class="text">You are not in a guild yet. Join or create a guild to use Guild Chat.</div>
+      </div></div>`;
+    if (elForm){ elInput.disabled = true; elSend.disabled = true; }
+    return;
+  }
+  if (room === 'council' && !hasCouncil){
+    stopPolling();
+    elLog.innerHTML = `
+      <div class="msg"><div class="content">
+        <span class="u">System</span>
+        <span class="t">now</span>
+        <div class="text">Council Chat is restricted to guild leaders and vice leaders.</div>
+      </div></div>`;
+    if (elForm){ elInput.disabled = true; elSend.disabled = true; }
+    return;
+  }
+
+  if (elForm){ elInput.disabled = false; elSend.disabled = false; }
+  fetchAndRender(true);
+  if (isOpen) startPolling();
+}
+
+
+  function startPolling(){
+    stopPolling();
+    if (room === 'guild' && !guildId) return; // nothing to poll
+    if (room === 'council' && !hasCouncil) return; 
+    pollTimer = setInterval(fetchAndRender, 1500);
+  }
+  function stopPolling(){
+    if (pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !isOpen) { stopPolling(); }
+    else { startPolling(); fetchAndRender(); }
+  });
+
+  async function fetchAndRender(first=false){
+  try{
+    if (room === 'guild'   && !guildId)   return;
+    if (room === 'council' && !hasCouncil) return; // ← add
+    const logEl = elLog;
+    const wasNearBottom = (logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight) < 120;
+    const { update } = currentEndpoints();
+    const r = await fetch(update, { method:'POST', cache:'no-store' });
+    if (!r.ok) return;
+    const html = await r.text();
+    if (html !== lastHTML){
+      lastHTML = html;
+      elLog.innerHTML = html;
+      if (first || wasNearBottom) logEl.scrollTop = logEl.scrollHeight;
+    }
+  }catch(e){ /* silent */ }
+}
+
+
+  if (isLoggedIn && elForm){
+    elForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (room === 'guild' && !guildId){
+        alert('Join a guild to chat in Guild channel.');
+        return;
+      }
+      const text = (elInput.value || '').trim();
+      if (!text) return;
+      if (text.length > 300) { alert('Message too long.'); return; }
+      elSend.disabled = true;
+      try{
+        const { send } = currentEndpoints();
+const replyTo = document.getElementById('gcw_reply_to')?.value || '0';
+
+const body = 'message=' + encodeURIComponent(text)
+           + '&reply_to=' + encodeURIComponent(replyTo)
+           + (room === 'guild' ? '&channel=general' : '');
+
+const r = await fetch(send, {
+  method:'POST',
+  headers:{'Content-Type':'application/x-www-form-urlencoded'},
+  body
+});
+
+        const data = await r.json().catch(()=>null);
+        if (data && (''+data.status).trim() === 'success'){
+          elInput.value = '';
+const rt = document.getElementById('gcw_reply_to');
+if (rt) rt.value = '0';
+await fetchAndRender();     // <-- make it await
+  refreshUnseenBadge();       // <-- add this
+
+        }else{
+          alert((data && data.message) || 'Failed to send.');
+        }
+      }catch(_){
+        alert('Server error.');
+      }
+      elSend.disabled = false;
+      elInput.focus();
+    });
+  }
+
+  // init
+  setActiveTab();
+  renderRoomHeader();
+  refreshUnseenBadge();
+  setInterval(refreshUnseenBadge, 30000);
+  if (loadOpenState()) { openPanel(); }
+  else {
+    // lazy-load the first selected room once user opens the panel
+  }
+})();
+</script>
+
+<script>
+// Announcement dismiss logic
+(function(){
+  const bar   = document.getElementById('globalAnnouncementBar');
+  const btn   = document.getElementById('dismissAnnouncementBtn');
+  if (!bar || !btn) return;
+
+  btn.addEventListener('click', function(){
+    const annId = bar.getAttribute('data-ann-id') || '0';
+
+
+    bar.style.display = 'none';
+
+    const fd = new URLSearchParams();
+    fd.set('ann_id', annId);
+
+    fetch('announcement_seen.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: fd.toString()
+    })
+    .then(r => r.json())
+    .then(data => {
+ 
+    })
+    .catch(()=>{  });
+  });
+})();
+</script>
+<script>
+// side nav open/close logic
+(function(){
+  const drawer   = document.getElementById('sideDrawer');
+  const fabOpen  = document.getElementById('nav_fab');       // 👈 bottom-left button
+  const closeBtn = document.getElementById('sideCloseBtn');  // ✕ inside drawer header
+  const overlay  = document.getElementById('sideOverlay');   // dark backdrop on mobile
+
+  if (!drawer) return;
+
+  function openDrawer(){
+    drawer.setAttribute('data-open','true');
+  }
+  function closeDrawer(){
+    drawer.setAttribute('data-open','false');
+  }
+
+  if (fabOpen){
+    fabOpen.addEventListener('click', openDrawer);
+  }
+  if (closeBtn){
+    closeBtn.addEventListener('click', closeDrawer);
+  }
+  if (overlay){
+    overlay.addEventListener('click', closeDrawer);
+  }
+
+  // ESC closes only on mobile view (doesn't really matter to check width though)
+  window.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape'){
+      closeDrawer();
+    }
+  });
+})();
+
+
+(function(){
+    const bodyEl = document.body;
+    const openBtn    = document.getElementById('openBattleDrawerBtn');
+    const closeBtnn   = document.getElementById('closeBattleDrawerBtn');
+    const backdrop   = document.getElementById('battleDrawerBackdrop');
+
+    function openDrawerr(){
+        bodyEl.classList.add('drawer-open');
+    }
+    function closeDrawerr(){
+        bodyEl.classList.remove('drawer-open');
+    }
+
+    if (openBtn)    openBtn.addEventListener('click', openDrawerr);
+    if (closeBtnn)   closeBtnn.addEventListener('click', closeDrawerr);
+    if (backdrop)   backdrop.addEventListener('click', closeDrawerr);
+})();
+// Quick Sets drawer open/close
+(function(){
+    const bodyEl   = document.body;
+    const openBtn  = document.getElementById('openQuickSetDrawerBtn');
+    const closeBtn = document.getElementById('closeQuickSetDrawerBtn');
+    const backdrop = document.getElementById('qsDrawerBackdrop');
+
+    if (!openBtn && !closeBtn && !backdrop) return;
+
+    function openDrawer() {
+        bodyEl.classList.add('qsdrawer-open');
+    }
+    function closeDrawer() {
+        bodyEl.classList.remove('qsdrawer-open');
+    }
+
+    if (openBtn)  openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeDrawer();
+        }
+    });
+})();
+
+function showNotification(msg, type = 'success') {
+  const note = document.getElementById('notification');
+  if (!note) return;
+  note.innerHTML = msg;
+  note.style.background = (type === 'error') ? '#e74c3c' : '#2ecc71';
+  note.style.display = 'block';
+  setTimeout(() => { note.style.display = 'none'; }, 3000);
+}
+(function(){
+    document.addEventListener('click', async function(e){
+        const btn = e.target.closest('.potion-use-btn');
+        if (!btn) return;
+
+        const invId   = btn.getAttribute('data-inv');
+        const itemId  = btn.getAttribute('data-item');
+        const itemNm  = btn.getAttribute('data-name') || 'Item';
+        const maxQty  = parseInt(btn.getAttribute('data-max'), 10) || 1;
+        const qtyInput= document.getElementById('puse_'+invId);
+        const qtyLeftSpan = document.getElementById('pqty_'+invId);
+
+        let useQty = 1;
+        if (qtyInput) {
+            useQty = parseInt(qtyInput.value,10) || 1;
+            if (useQty < 1) useQty = 1;
+            if (useQty > maxQty) useQty = maxQty;
+        }
+
+        if (!confirm(`Use ${useQty}x ${itemNm}? This will consume the item(s).`)) {
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        const params = new URLSearchParams();
+        params.set('inv_id', invId);
+        if (useQty > 1) params.set('qty', useQty);
+
+        try {
+            const endpoint = (parseInt(itemId, 10) === 108) ? 'user_heal_potion.php' : 'use_item.php';
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: params.toString()
+            });
+
+            const raw = await res.text();
+            const lower = raw.trim().toLowerCase();
+
+            if (lower.includes('success')) {
+                showNotification('Used ' + itemNm + '!', 'success');
+
+                // update qty inside drawer
+                let leftNow = parseInt(qtyLeftSpan.textContent,10) || 0;
+                leftNow = leftNow - useQty;
+                if (leftNow < 0) leftNow = 0;
+                qtyLeftSpan.textContent = leftNow;
+
+                // update btn / input max
+                btn.setAttribute('data-max', leftNow);
+                if (qtyInput) {
+                    qtyInput.setAttribute('max', leftNow);
+                    if (leftNow === 0) qtyInput.value = 0;
+                }
+
+                // update the bubble on trigger
+                const totalBubble = document.getElementById('drawerTotalQty');
+                if (totalBubble) {
+                    let totalAll = 0;
+                    document.querySelectorAll('.potion-qty-left').forEach(sp => {
+                        totalAll += (parseInt(sp.textContent,10) || 0);
+                    });
+                    totalBubble.textContent = totalAll;
+                }
+
+                // if out of stock disable button
+                if (leftNow <= 0) {
+                    btn.disabled = true;
+                    btn.textContent = 'None';
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Use';
+                }
+
+                // optional refresh to sync stamina/HP/etc
+                location.reload();
+            } else {
+                showNotification(raw.slice(0,200) || 'Failed to use item.', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Use';
+            }
+        } catch (err) {
+            showNotification('Server error.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Use';
+        }
+    });
+})();
+
+
+(function(){
+    let selectedSetNum   = null;
+    let selectedApplyType = 'equipments';
+
+
+    const bodyEl        = document.body;
+    const modalBackdrop = document.getElementById('qsModalBackdrop');
+    const modal         = document.getElementById('qsModal');
+    const setSpan       = document.getElementById('qsModalSetNum');
+
+        function openModal(setNum, applyType) {
+        selectedSetNum    = setNum;
+        selectedApplyType = (applyType === 'pets') ? 'pets' : 'equipments';
+
+        if (setSpan) {
+            // Example: "#3 – Gear" or "#3 – Pets"
+            const labelSuffix = (selectedApplyType === 'pets') ? ' – Pets' : ' – Gear';
+            setSpan.textContent = '#' + setNum + labelSuffix;
+        }
+
+        bodyEl.classList.add('qsmodal-open');
+        if (modal)  modal.setAttribute('aria-hidden', 'false');
+    }
+
+
+    function closeModal() {
+        selectedSetNum = null;
+        bodyEl.classList.remove('qsmodal-open');
+        if (modal)  modal.setAttribute('aria-hidden', 'true');
+    }
+
+
+    document.addEventListener('click', function(e){
+        // Click on a quick set button inside the drawer
+        const setBtn = e.target.closest('.qs-set-btn');
+        if (setBtn) {
+            const setNum    = parseInt(setBtn.getAttribute('data-set-number') || '0', 10);
+            const applyType = (setBtn.getAttribute('data-apply-type') || 'equipments').toLowerCase();
+
+            if (setNum > 0) {
+                openModal(setNum, applyType);
+            }
+            return;
+        }
+
+        if (!bodyEl.classList.contains('qsmodal-open')) return;
+
+        // Click outside dialog on the dark backdrop
+        if (e.target === modalBackdrop) {
+            closeModal();
+            return;
+        }
+
+        const actionBtn = e.target.closest('.qs-modal-btn');
+        if (!actionBtn) return;
+
+        const target = actionBtn.getAttribute('data-target');
+        if (target === 'cancel') {
+            closeModal();
+            return;
+        }
+
+        if (!selectedSetNum || (target !== 'attack' && target !== 'defense')) {
+            closeModal();
+            return;
+        }
+
+        applyQuickSet(selectedSetNum, target, actionBtn);
+    });
+
+    async function applyQuickSet(setNum, target, actionBtn) {
+        const originalText = actionBtn.textContent;
+        actionBtn.disabled = true;
+        actionBtn.textContent = 'Applying...';
+
+        const params = new URLSearchParams();
+        params.set('set_number', String(setNum));
+        params.set('target_set', target);          // "attack" or "defense"
+        params.set('apply_type', selectedApplyType); // "equipment" or "pets"
+
+        try {
+            const res = await fetch('quick_sets_apply.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
+            });
+            const raw   = await res.text();
+            const lower = raw.trim().toLowerCase();
+
+            if (lower.includes('success')) {
+                showNotification(
+                    `Quick Set #${setNum} equipped as your main ${target.toUpperCase()} set.`,
+                    'success'
+                );
+                closeModal();
+                // If you want immediate refresh to reflect new stats/gear:
+                setTimeout(() => { location.reload(); }, 600);
+            } else {
+                showNotification(raw.slice(0, 200) || 'Failed to apply quick set.', 'error');
+                actionBtn.disabled = false;
+                actionBtn.textContent = originalText;
+            }
+        } catch (err) {
+            showNotification('Server error while applying quick set.', 'error');
+            actionBtn.disabled = false;
+            actionBtn.textContent = originalText;
+        }
+    }
+
+    // ESC closes modal
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && bodyEl.classList.contains('qsmodal-open')) {
+            closeModal();
+        }
+    });
+})();
+
+
+</script>
+<script>
+// Guild announcement dismiss logic
+(function(){
+  const bar = document.getElementById('guildAnnouncementBar');
+  const btn = document.getElementById('dismissGuildAnnouncementBtn');
+  if (!bar || !btn) return;
+
+  btn.addEventListener('click', function(){
+    const annId = bar.getAttribute('data-ann-id') || '0';
+    bar.style.display = 'none';
+
+    const fd = new URLSearchParams();
+    fd.set('ann_id', annId);
+
+    fetch('announcement_guild_seen.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: fd.toString(),
+      cache: 'no-store'
+    }).catch(()=>{});
+  });
+})();
+</script>
+<div class="page-wrap">
+    <div class="page-inner">
+
+        <!-- Back Button -->
+        <div class="back-row">
+            <button class="back-btn" type="button" onclick="window.location.href='/game_dash.php';">
+                <span class="icon">&#8592;</span>
+                <span>Back</span>
+            </button>
+        </div>
+        <div class="panel panel--banner">
+    <img
+        class="banner-img"
+        src="/images/pages/compressed_adv_guild_banner.webp"
+        alt="Adventurer's Guild"
+        loading="lazy"
+        decoding="async"
+    >
+</div>
+
+
+        <!-- Banner -->
+        <section class="banner">
+            <div class="banner-content">
+                <div class="banner-main">
+                    <div class="banner-label">
+                        <span class="banner-label-dot"></span>
+                        GUILD HUB
+                    </div>
+                    <h1 class="banner-title">The Adventurer's Guild</h1>
+                    <p class="banner-subtitle">
+                        Register your exploits, climb through the ranks, and claim quests posted by kingdoms,
+                        merchants, and desperate souls. Glory, gold, and danger await.
+                    </p>
+                    <div class="banner-pill-row">
+    <div class="banner-pill">
+        <strong>Quests:</strong>
+        <span>6 available</span>
+    </div>
+    <div class="banner-pill">
+        <strong>Ranks:</strong>
+        <span>11</span>
+    </div>
+    <div class="banner-pill">
+        <strong>Hall of Fame:</strong>
+        <span>20 heroes</span>
+    </div>
+    <div class="banner-pill">
+        <strong>Your Rank:</strong>
+        <span>
+            E            • 1,600 pts
+        </span>
+    </div>
+</div>
+
+                    
+
+                </div>
+                <aside class="banner-badge">
+                    <div class="banner-badge-title">Guild Notice</div>
+                    <div class="banner-badge-value">Adventurer Registry</div>
+                    <div class="banner-badge-note">
+                        All contracts taken through the Guild must be fulfilled or formally abandoned.
+                        Failure to report results in rank penalties.
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="grid">
+            <!-- Left column: Quests + Ranks -->
+            <div>
+                
+<!-- Quests Board -->
+<section class="section quests-section">
+    <div class="section-banner">
+        <img
+            src="/images/pages/adv_guild_receptionist.webp"
+            alt="Adventurer's Guild receptionist"
+            class="section-banner-img"
+            loading="lazy"
+            decoding="async"
+        >
+    </div>
+
+    <div class="quests-header">
+    <div class="quests-header-text">
+        <div class="section-title"><span>Quests</span> Board</div>
+        <div class="section-subtitle">
+            Active contracts currently posted on the Guild board.
+        </div>
+
+        <div class="quest-rule">
+            <span class="quest-rule-icon">⚠️</span>
+            <span>
+                You can only have <strong>one active quest</strong> at a time.<br>
+                If you <strong>abandon</strong> a quest, you cannot accept it again.<br>
+                Quest rotation: <strong>2 days after completing it.</strong>
+            </span>
+        </div>
+
+        <div class="banner-pill" style="margin-top:8px; display:inline-flex;">
+            <strong>Available:</strong>
+            <span style="margin-left:4px;">6 quests</span>
+        </div>
+                <div class="banner-pill quest-refresh-pill" style="margin-top:8px; display:inline-flex;">
+            <strong>Next refresh:</strong>
+            <span id="questRefreshCountdown" data-unlock-ts="1775566182" style="margin-left:4px;">--:--:--</span>
+        </div>
+            </div>
+</div>
+
+
+
+
+                                            <div class="quest-list">
+                     
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Shadowclaw Swarm                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Huge numbers of Lizardman Shadowclaws are pouring out of the gate, overwhelming the area and threatening everyone nearby. We can’t hold them back on our own.
+
+Join the fight and help wipe out as many Shadowclaws as possible before they overrun us.
+
+Kill 5 Lizardman Shadowclaws while dealing at least 3m damage to each                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Kill 5 monster(s) · Monster: Lizardman Shadowclaw · min 3m dmg        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775566182">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Skill Warm Up                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Use 20 skills against monsters.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(4, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Essence of the Goblinkin                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Goblin Essence carries faint traces of their cunning and chaotic magic. Collect 1 vial of Goblin Essence from a defeated Goblin to support the Guild’s research efforts.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 2x item(s) · Item: Goblin Essence        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(5, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Lizardheart Harvest                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Gather 2x Lizardman Heart                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 2x item(s) · Item: Lizardman Heart        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775634962">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Ravager Rampage                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Troll Ravagers have begun harassing travelers along the outer trails. Their brute strength makes them dangerously unpredictable. Slay 5 Troll Ravagers and restore safety to the nearby routes.
+
+Kill 5 Ravager Rampage while dealing at least 3m damage to each                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Kill 5 monster(s) · Monster: Troll Ravager · min 3m dmg        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(7, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Brawler Breakdown                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Troll Brawlers have been causing chaos near the village outskirts. Their reckless fistfighting and destructive strength put civilians at risk. Defeat 5 Troll Brawlers to secure the area.
+
+Kill 5 Troll Brawlers while dealing at least 3m damage to each                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Kill 5 monster(s) · Monster: Troll Brawler · min 3m dmg        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 5,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775635946">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Blood of the Scaled Ones                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                The Guild requires fresh samples of Lizardmen Blood for alchemical research. Venture into their territory, collect 2 vials, and return safely with the reagents intact.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 2x item(s) · Item: Lizzardmen blood        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775591085">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Scales of the Lizardkin                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Lizardman Scales are prized for their toughness and durability. Collect 10 Lizardman Scales from defeated Lizardmen so the Guild&#039;s artisans can craft new protective gear.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 10x item(s) · Item: Lizardman Scales        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(10, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Essence of the Orcish Horde                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Orc Essence contains traces of their raw battle-fury. The Guild requires 2 vials of Orc Essence for combat studies. Retrieve a sample from a defeated Orc and deliver it safely.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 2x item(s) · Item: Orc Essence        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(11, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Troll-Forged Iron                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Trollish Iron is known for its unnatural density and durability. Collect 4 pieces of Trollish Iron from defeated Troll warriors so the Guild’s smiths can reinforce their weapon stock.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 4x item(s) · Item: Trollish Iron        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775721751">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Silencing the Flamecasters                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Lizardman Flamecasters have begun ambushing travelers with bursts of searing fire. Their magic poses a serious threat. Defeat 5 Flamecasters to restore safety to the region.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Kill 5 monster(s) · Monster: Lizardman Flamecaster · min 3m dmg        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <button
+            class="quest-accept-btn"
+            type="button"
+            onclick="acceptQuest(13, this);"
+        >
+            Accept quest
+        </button>
+    </div>
+
+                                </div>
+                                
+
+                                <div class="quest-row">
+                                    <div>
+                                        <div class="quest-main-title">
+                                            Essence of the Trollblood                                        </div>
+                                                                                    <div class="quest-main-desc">
+                                                Troll Blood Essence is infused with potent regenerative magic. Collect 3 vials from defeated Trolls so the Guild’s healers can continue their studies.                                            </div>
+                                           <div class="quest-tags">
+            <span class="quest-tag">
+            Rank: F – E        </span>
+    </div>
+
+    <div class="quest-requirements">
+        <span class="quest-req-label">Objective</span>
+        <span class="quest-req-text">
+            Gather 3x item(s) · Item: Troll Blood Essence        </span>
+    </div>
+
+
+
+                                    </div>
+                                    <div class="quest-side">
+    <div class="quest-reward-label">Reward</div>
+    <div class="quest-reward">
+        100 AP • 10,000 Gold • 0    </div>
+
+            <div class="quest-cooldown-box">
+            <div class="quest-cooldown-label">Available again in</div>
+            <div class="quest-cooldown-timer" data-cooldown-ts="1775713867">--:--:--</div>
+        </div>
+    </div>
+
+                                </div>
+                                                    </div>
+
+                </section>
+                             <!-- Classes CTA -->
+                <section
+                    class="section section-classes"
+                    onclick="window.location.href='/classes.php';"
+                >
+                    <div class="section-header">
+                        <div>
+                            <div class="section-title"><span>Classes</span></div>
+                            <div class="section-subtitle">
+                                Choose your path as a Warrior, Mage, Cleric, or Hunter and unlock unique skills.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-classes-pill">
+                        <span class="icon">✨</span>
+                        <span>Open Classes page</span>
+                    </div>
+                </section>
+                <section
+                    class="section section-subclasses"
+                    onclick="window.location.href='/secondary_classes.php';"
+                >
+                    <div class="section-header">
+                        <div>
+                            <div class="section-title"><span>Sub Classes</span></div>
+                            <div class="section-subtitle">
+                                Embrace darker paths like the Necromancer and unlock forbidden secondary powers.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-subclasses-pill">
+                        <span class="icon">☾</span>
+                        <span>Open Sub Classes page</span>
+                    </div>
+                </section>
+
+
+                <!-- Ranks -->
+                <section class="section">
+                    <div class="section-header">
+                        <div>
+                            <div class="section-title">Adventurer's <span>Ranks</span></div>
+                            <div class="section-subtitle">
+                                Progression ladder based on accumulated Adventurer Points.
+                            </div>
+                        </div>
+                    </div>
+
+                                            <div class="rank-list">
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">F</div>
+                                        <div class="rank-exp-range">
+                                           0                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Fresh meat. New adventurer with almost no accomplishments. Still learning how not to die to slimes.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">E</div>
+                                        <div class="rank-exp-range">
+                                           1,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Beginner.Cleared a few very easy quests and survived basic monster encounters                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">D</div>
+                                        <div class="rank-exp-range">
+                                           10,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Novice. Reliable for simple missions around town and nearby fields, still avoids real danger.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">C</div>
+                                        <div class="rank-exp-range">
+                                           50,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Competent. Can handle standard dungeon runs with a party and basic boss fights. Recognized in local guilds.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">B</div>
+                                        <div class="rank-exp-range">
+                                           200,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Skilled. Trusted with important regional requests, escort missions, and mid-tier dungeons.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">A</div>
+                                        <div class="rank-exp-range">
+                                           500,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Elite. Capable of soloing strong bosses and leading parties in high-risk areas, name known across multiple cities.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">S</div>
+                                        <div class="rank-exp-range">
+                                           1,000,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Special-class. Top adventurer in most guilds, takes on dragon-level threats and large-scale raids.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">SS</div>
+                                        <div class="rank-exp-range">
+                                           2,000,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Legendary-class. Few in number. Changes the outcome of wars, defeats calamity-class monsters, and is famous continent-wide.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">SSS</div>
+                                        <div class="rank-exp-range">
+                                           4,000,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Myth-class. Walking natural disaster in human form. Guilds and kingdoms negotiate for their help.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">EX</div>
+                                        <div class="rank-exp-range">
+                                           8,000,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Transcendent. Exceeds normal evaluation scales. Handles world-ending crises and singular “event” threats.                                            </div>
+                                                                            </div>
+                                </div>
+                                                                                            <div class="rank-row">
+                                    <div>
+                                        <div class="rank-name">LEGEND</div>
+                                        <div class="rank-exp-range">
+                                           16,000,000                                        </div>
+                                    </div>
+                                    <div>
+                                                                                    <div class="rank-desc">
+                                                Eternal Legend. Their deeds become myths, system tutorials, and loading screen stories. Almost nobody reaches this.                                            </div>
+                                                                            </div>
+                                </div>
+                                                    </div>
+                                    </section>
+            </div>
+
+ 
+            <aside>
+                                <!-- Adventurer's Shop -->
+<section class="section adv-shop-section">
+    <div class="section-banner">
+        <img
+            src="/images/pages/adv_guild_shop.webp"
+            alt="Adventurer's Guild shop"
+            class="section-banner-img"
+            loading="lazy"
+            decoding="async"
+        >
+    </div>
+
+    <div class="section-header">
+        <div>
+            <div class="section-title">Adventurer's <span>Shop</span></div>
+            <div class="section-subtitle">
+                Limited goods and curiosities sanctioned by the Guild.
+            </div>
+            <div class="banner-pill" style="margin-top:6px; display:inline-flex;">
+                <strong>Your Points:</strong>
+                <span style="margin-left:4px;">
+                    2,100 AP
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+
+        <div class="adv-shop-list">
+                                    <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764031247_basic_dagger.webp"
+                        alt="Basic Dagger"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Basic Dagger</div>
+
+            <div class="adv-shop-item-desc">A dagger forged for assassins and elite hunters.</div>
+    
+            <div class="adv-shop-item-desc">
+            <strong>Power:</strong> Increase Crit Rate by 2% and Crit damage by 5%.        </div>
+    
+        <div class="adv-shop-stats">
+        <div class="adv-shop-stat atk">
+            <span class="icon">⚔️</span>
+            <span>ATK 40</span>
+        </div>
+        <div class="adv-shop-stat def">
+            <span class="icon">🛡️</span>
+            <span>DEF 10</span>
+        </div>
+    </div>
+
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Lifetime limit</span>
+                    <span class="adv-shop-tag">
+                1 / 1 remaining (lifetime)            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            1,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                1 / 1 remaining (lifetime)            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(2, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764032047_basic_staff.webp"
+                        alt="Basic Staff"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Basic Staff</div>
+
+            <div class="adv-shop-item-desc">A staff that vibrates with condensed magical resonance.</div>
+    
+            <div class="adv-shop-item-desc">
+            <strong>Power:</strong> Increase Attack Stat By 3%        </div>
+    
+        <div class="adv-shop-stats">
+        <div class="adv-shop-stat atk">
+            <span class="icon">⚔️</span>
+            <span>ATK 40</span>
+        </div>
+        <div class="adv-shop-stat def">
+            <span class="icon">🛡️</span>
+            <span>DEF 10</span>
+        </div>
+    </div>
+
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Lifetime limit</span>
+                    <span class="adv-shop-tag">
+                1 / 1 remaining (lifetime)            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            1,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                1 / 1 remaining (lifetime)            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(4, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764032456_basic_shield.webp"
+                        alt="Basic Shield"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Basic Shield</div>
+
+            <div class="adv-shop-item-desc">Forged for elite vanguard fighters, this shield can withstand repeated heavy blows while remaining light enough for battlefield maneuvering.</div>
+    
+            <div class="adv-shop-item-desc">
+            <strong>Power:</strong> Increase Defense Stat By 5%        </div>
+    
+        <div class="adv-shop-stats">
+        <div class="adv-shop-stat atk">
+            <span class="icon">⚔️</span>
+            <span>ATK 10</span>
+        </div>
+        <div class="adv-shop-stat def">
+            <span class="icon">🛡️</span>
+            <span>DEF 40</span>
+        </div>
+    </div>
+
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Lifetime limit</span>
+                    <span class="adv-shop-tag">
+                1 / 1 remaining (lifetime)            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            1,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                1 / 1 remaining (lifetime)            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(3, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764033178_basic_holy_staff.webp"
+                        alt="Basic Holy Staff"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Basic Holy Staff</div>
+
+            <div class="adv-shop-item-desc">Blessed staff with silvered inscriptions that glow during healing or smiting.</div>
+    
+            <div class="adv-shop-item-desc">
+            <strong>Power:</strong> Increase Defense Stat By 5%        </div>
+    
+        <div class="adv-shop-stats">
+        <div class="adv-shop-stat atk">
+            <span class="icon">⚔️</span>
+            <span>ATK 30</span>
+        </div>
+        <div class="adv-shop-stat def">
+            <span class="icon">🛡️</span>
+            <span>DEF 20</span>
+        </div>
+    </div>
+
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Lifetime limit</span>
+                    <span class="adv-shop-tag">
+                1 / 1 remaining (lifetime)            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            1,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                1 / 1 remaining (lifetime)            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(5, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1755909636_full_stamina_potion.webp"
+                        alt="Full Stamina Potion"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Full Stamina Potion</div>
+
+            <div class="adv-shop-item-desc">A magic Potion that Fully Refills Your Stamina .</div>
+    
+    
+    
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Weekly limit</span>
+                    <span class="adv-shop-tag">
+                3 / 3 remaining this week            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            100 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                3 / 3 remaining this week            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(1, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1755909636_full_stamina_potion.webp"
+                        alt="Full Stamina Potion"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Full Stamina Potion</div>
+
+            <div class="adv-shop-item-desc">A magic Potion that Fully Refills Your Stamina .</div>
+    
+    
+    
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Weekly limit</span>
+                    <span class="adv-shop-tag">
+                3 / 3 remaining this week            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            1,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                3 / 3 remaining this week            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(8, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764083491_glowing_blue_li_6814e714-df8a-4b81-9125-e55e91ecf27b_3.webp"
+                        alt="Mana Potion L"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Mana Potion L</div>
+
+            <div class="adv-shop-item-desc">A magic Potion that Refills 200 Mana.</div>
+    
+    
+    
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Weekly limit</span>
+                    <span class="adv-shop-tag">
+                5 / 5 remaining this week            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            200 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                5 / 5 remaining this week            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(6, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1772950270_necromancer_core.webp"
+                        alt="Core of the Shadow Sovereign"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Core of the Shadow Sovereign</div>
+
+            <div class="adv-shop-item-desc">A forbidden necromantic core pulsing with dark mana and the whispers of the dead. Those who resonate with it awaken the hidden path of the Necromancer as a second class, gaining the power to extract fallen shadows, command an undead army, and bend death itself to their will.</div>
+    
+    
+    
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Lifetime limit</span>
+                    <span class="adv-shop-tag">
+                Limit reached            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            5,000 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                Limit reached            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(9, this);"
+            disabled        >
+            Sold out        </button>
+    </div>
+</div>
+
+                                        <div class="adv-shop-row">
+        <div>
+        <div class="adv-shop-item-main">
+                            <div class="adv-shop-thumb-wrap">
+                    <img
+                        src="images/items/1764082355_-a2e1-05414364e2f1_3.webp"
+                        alt="Mana Potion S"
+                        class="adv-shop-thumb"
+                        loading="lazy"
+                        decoding="async"
+                    >
+                </div>
+            
+         <div class="adv-shop-item-text">
+    <div class="adv-shop-item-name">Mana Potion S</div>
+
+            <div class="adv-shop-item-desc">A magic Potion that Refills 20 Mana.</div>
+    
+    
+    
+
+    <div class="adv-shop-tags">
+        <span class="adv-shop-tag">Weekly limit</span>
+                    <span class="adv-shop-tag">
+                10 / 10 remaining this week            </span>
+            </div>
+</div>
+
+
+        </div>
+    </div>
+    <div class="adv-shop-side">
+        <div class="adv-shop-price">
+            50 ADV Points
+        </div>
+                    <div class="adv-shop-limit">
+                10 / 10 remaining this week            </div>
+        
+        <button
+            class="adv-shop-buy-btn"
+            type="button"
+            onclick="buyShopItem(7, this);"
+                    >
+            Buy        </button>
+    </div>
+</div>
+
+                    </div>
+    </section>
+                <section class="section">
+                    <div class="section-header">
+                        <div>
+                            <div class="section-title"><span>Top</span> Adventurers</div>
+                            <div class="section-subtitle">
+                                Highest points earners registered in the Guild.
+                            </div>
+                        </div>
+                    </div>
+
+                                            <table class="leaderboard-table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Adventurer</th>
+                                <th>Rank</th>
+                                <th>Lifetime Points</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                                            <tr>
+                                    <td class="leaderboard-rank">1</td>
+                                    <td class="leaderboard-name">[FATE] MIHAWK [ I AM JIN ]</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>130,200</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">2</td>
+                                    <td class="leaderboard-name">[FATE] Huang</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>129,900</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">3</td>
+                                    <td class="leaderboard-name">[AHAB] Dirich</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,800</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">4</td>
+                                    <td class="leaderboard-name">[DEMON] Dread Knight XZero</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,800</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">5</td>
+                                    <td class="leaderboard-name">[EMP] Musashidon</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,800</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">6</td>
+                                    <td class="leaderboard-name">HODOR</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,700</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">7</td>
+                                    <td class="leaderboard-name">! Agito99</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,700</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">8</td>
+                                    <td class="leaderboard-name">[SMURF] Shadow Monarch</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,200</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">9</td>
+                                    <td class="leaderboard-name">[AHAB]  Felippe</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,200</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">10</td>
+                                    <td class="leaderboard-name">[HAVOC] Dip</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,100</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">11</td>
+                                    <td class="leaderboard-name">[Fate] Beebe008</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,100</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">12</td>
+                                    <td class="leaderboard-name">oasis817</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,000</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">13</td>
+                                    <td class="leaderboard-name">[AHAB] Maraca</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>128,000</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">14</td>
+                                    <td class="leaderboard-name">$$$MERCHAND[NUN]</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,600</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">15</td>
+                                    <td class="leaderboard-name">[DLU] Tremic</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,600</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">16</td>
+                                    <td class="leaderboard-name">Shinokai</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,600</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">17</td>
+                                    <td class="leaderboard-name">[EMP] NubyNuby Truck-kun backup driver</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,500</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">18</td>
+                                    <td class="leaderboard-name">[FATE] Dumy</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,300</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">19</td>
+                                    <td class="leaderboard-name">[FATE] skies2 dragcoon</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>126,100</td>
+                                </tr>
+                                                            <tr>
+                                    <td class="leaderboard-rank">20</td>
+                                    <td class="leaderboard-name">[EMP] Shin -The Wall- White</td>
+                                    <td>
+                                        <span class="leaderboard-tag-rank">
+                                            C                                        </span>
+                                    </td>
+                                    <td>125,100</td>
+                                </tr>
+                                                        </tbody>
+                        </table>
+                        <div class="empty-message" style="border-top:none;padding-top:6px;">
+                            <span class="muted-inline">
+                                Ranking is purely based on the total Points you have.
+                            </span>
+                        </div>
+                                    </section>
+            </aside>
+        </div>
+
+    </div>
+</div>
+<script>
+let questCooldownReloadQueued = false;
+
+function formatQuestCooldown(totalSeconds) {
+    totalSeconds = Math.max(0, Math.floor(totalSeconds));
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const pad = n => String(n).padStart(2, '0');
+
+    if (days > 0) {
+        return `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
+function startQuestCooldowns() {
+    const nodes = Array.from(document.querySelectorAll('[data-cooldown-ts]'));
+    if (!nodes.length) return;
+    let timer = null;
+
+    function tick() {
+        const now = Math.floor(Date.now() / 1000);
+        let hasFutureCooldown = false;
+
+        nodes.forEach(node => {
+            const unlockTs = parseInt(node.getAttribute('data-cooldown-ts') || '0', 10);
+            if (!unlockTs) return;
+
+            const remaining = unlockTs - now;
+            if (remaining <= 0) {
+                node.textContent = 'Ready now';
+                if (!questCooldownReloadQueued) {
+                    questCooldownReloadQueued = true;
+                    setTimeout(() => window.location.reload(), 1200);
+                }
+                return;
+            }
+
+            hasFutureCooldown = true;
+            node.textContent = formatQuestCooldown(remaining);
+        });
+
+        if (!hasFutureCooldown) {
+            clearInterval(timer);
+        }
+    }
+
+    tick();
+    timer = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', startQuestCooldowns);
+
+function acceptQuest(qid, btn) {
+    if (!confirm("Accept this quest from the Adventurer's Guild?")) return;
+    btn.disabled = true;
+
+    fetch('/adventurers_accept_quest.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ quest_id: qid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.status === 'ok') {
+            alert(data.message || 'Quest accepted!');
+            location.reload();
+        } else {
+            alert((data && data.message) ? data.message : 'Could not accept quest.');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Server error while accepting quest.');
+        btn.disabled = false;
+    });
+}
+function buyShopItem(shopId, btn) {
+    if (!confirm("Purchase this item from the Adventurer's Shop?")) return;
+    btn.disabled = true;
+
+    fetch('/adventurers_shop_buy.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ shop_item_id: shopId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.status === 'ok') {
+            alert(data.message || 'Purchase successful!');
+            location.reload();
+        } else {
+            alert((data && data.message) ? data.message : 'Could not complete purchase.');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Server error while buying item.');
+        btn.disabled = false;
+    });
+}
+function finishQuest(qid, btn) {
+    if (!confirm("Turn in this quest at the Adventurer's Guild?")) return;
+    btn.disabled = true;
+
+    fetch('/adventurers_finish_quest.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ quest_id: qid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.status === 'ok') {
+            alert(data.message || 'Quest finished!');
+            location.reload();
+        } else {
+            alert((data && data.message) ? data.message : 'Could not finish quest.');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Server error while finishing quest.');
+        btn.disabled = false;
+    });
+}
+
+function giveUpQuest(qid, btn) {
+    if (!confirm("Abandon this quest? Progress will be lost.")) return;
+    btn.disabled = true;
+
+    fetch('/adventurers_giveup_quest.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ quest_id: qid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.status === 'ok') {
+            alert(data.message || 'Quest abandoned.');
+            location.reload();
+        } else {
+            alert((data && data.message) ? data.message : 'Could not abandon quest.');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Server error while abandoning quest.');
+        btn.disabled = false;
+    });
+}
+function donateGatherItem(qid, itemId, btn) {
+    if (!confirm("Donate one of this item towards your quest? You must own more than one.")) return;
+    btn.disabled = true;
+
+    fetch('/adventurers_donate_gather.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            quest_id: qid,
+            item_id: itemId
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.status === 'ok') {
+            alert(data.message || 'Item donated successfully.');
+            location.reload();
+        } else {
+            alert((data && data.message) ? data.message : 'Could not donate item.');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Server error while donating item.');
+        btn.disabled = false;
+    });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 """Account worker lifecycle and orchestration."""
 
 import asyncio
+import logging
 import secrets
 import time
 from dataclasses import dataclass, field
@@ -11,6 +12,12 @@ from veyra.engine.rate_limiter import RateLimiter
 from veyra.engine.wave_farmer import FarmerState, worker
 from veyra.engine.pvp_fighter import PvPState, pvp_worker
 from veyra.engine.stat_allocator import StatAllocatorState, stat_allocator_worker
+from veyra.engine.quest_runner import QuestState, quest_worker
+
+
+logger = logging.getLogger("veyra.manager")
+
+PVP_CHECK_INTERVAL = 3600  # 1 hour
 
 
 @dataclass
@@ -27,9 +34,13 @@ class AccountWorker:
     # PvP
     pvp_state: PvPState = field(default_factory=PvPState)
     pvp_task: asyncio.Task | None = None
+    pvp_auto_task: asyncio.Task | None = None  # background hourly PvP check
     # Stat allocator
     stat_state: StatAllocatorState = field(default_factory=StatAllocatorState)
     stat_task: asyncio.Task | None = None
+    # Quest runner
+    quest_state: QuestState = field(default_factory=QuestState)
+    quest_task: asyncio.Task | None = None
 
 
 class AccountManager:
@@ -52,6 +63,10 @@ class AccountManager:
             self._worker.state.running = False
             return False
         return self._worker.state.running
+
+    @property
+    def game_client(self) -> GameClient | None:
+        return self._worker.game if self._worker else None
 
     @property
     def is_connected(self) -> bool:
@@ -108,12 +123,17 @@ class AccountManager:
             self._worker.state.stop()
             self._worker.pvp_state.stop()
             self._worker.stat_state.stop()
+            self._worker.quest_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
             if self._worker.pvp_task:
                 self._worker.pvp_task.cancel()
+            if self._worker.pvp_auto_task:
+                self._worker.pvp_auto_task.cancel()
             if self._worker.stat_task:
                 self._worker.stat_task.cancel()
+            if self._worker.quest_task:
+                self._worker.quest_task.cancel()
             await self._worker.game.close()
 
         game = GameClient()
@@ -143,7 +163,10 @@ class AccountManager:
         w.waves = waves
         w.user_id = game.user_id
         w.connected = True
-        w.state.log("Ready!")
+
+        # Start background hourly PvP check
+        w.pvp_auto_task = asyncio.create_task(self._pvp_auto_loop())
+        w.state.log("Ready! (Auto-PvP check every 1h)")
         return True, waves
 
     async def start(self, targets: list[TargetConfig]) -> bool:
@@ -200,6 +223,39 @@ class AccountManager:
         if self._worker and self._worker.pvp_state.running:
             self._worker.pvp_state.stop()
             self._worker.pvp_state.log("Stopping PvP...")
+
+    async def _pvp_auto_loop(self) -> None:
+        """Background loop: check for PvP tokens every hour and auto-fight."""
+        w = self._worker
+        if not w:
+            return
+        while w.connected:
+            # Wait 1 hour (in 1s ticks for responsive shutdown)
+            for _ in range(PVP_CHECK_INTERVAL):
+                if not w or not w.connected:
+                    return
+                await asyncio.sleep(1)
+
+            if not w or not w.connected:
+                return
+
+            # Skip if PvP is already running
+            if self.is_pvp_running:
+                logger.info("[Auto-PvP] PvP already running, skipping check")
+                continue
+
+            # Check for tokens
+            try:
+                tokens = await w.game.fetch_pvp_tokens()
+                logger.info(f"[Auto-PvP] Hourly check — {tokens} solo tokens")
+            except Exception as e:
+                logger.warning(f"[Auto-PvP] Failed to check tokens: {e}")
+                continue
+
+            if tokens > 0:
+                logger.info(f"[Auto-PvP] {tokens} tokens found, starting PvP")
+                w.state.log(f"[Auto-PvP] {tokens} tokens detected — auto-starting PvP")
+                await self.start_pvp()
 
     def get_pvp_state(self) -> PvPState | None:
         if self._worker:
@@ -269,6 +325,60 @@ class AccountManager:
             "stamina": s.current_stamina,
         }
 
+    # ── Quest Runner ─────────────────────────────────────────────────────────
+
+    @property
+    def is_quest_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.quest_task and self._worker.quest_task.done():
+            self._worker.quest_state.running = False
+            return False
+        return self._worker.quest_state.running
+
+    async def start_quest_runner(self, targets: list[TargetConfig] | None = None) -> bool:
+        """Start the quest runner. Mutually exclusive with wave farmer."""
+        if not self._worker or not self._worker.connected:
+            return False
+        # Block if wave farmer is running
+        if self.is_running:
+            return False
+        if self._worker.quest_task and not self._worker.quest_task.done():
+            return False
+
+        w = self._worker
+        w.quest_state = QuestState()
+        w.quest_state.running = True
+        w.limiter.reset()
+
+        from veyra.engine.loot_database import loot_db
+        w.quest_task = asyncio.create_task(
+            quest_worker(w.game, w.quest_state, loot_db, targets or [], w.limiter)
+        )
+        return True
+
+    def stop_quest_runner(self) -> None:
+        """Signal the quest runner to stop."""
+        if self._worker and self._worker.quest_state.running:
+            self._worker.quest_state.stop()
+            self._worker.quest_state.log("[Quest] Stopping...")
+
+    def get_quest_state(self) -> QuestState | None:
+        if self._worker:
+            return self._worker.quest_state
+        return None
+
+    def get_quest_stats(self) -> dict:
+        if not self._worker:
+            return {"completed": 0, "current": "", "progress": "", "fallback": False}
+        s = self._worker.quest_state
+        return {
+            "completed": s.quests_completed,
+            "current": s.current_quest,
+            "progress": s.current_progress,
+            "fallback": s.farming_fallback,
+        }
+
     def get_state(self) -> FarmerState | None:
         if self._worker:
             return self._worker.state
@@ -292,6 +402,7 @@ class AccountManager:
             self._worker.state.stop()
             self._worker.pvp_state.stop()
             self._worker.stat_state.stop()
+            self._worker.quest_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
                 try:
@@ -304,10 +415,22 @@ class AccountManager:
                     await self._worker.pvp_task
                 except (asyncio.CancelledError, Exception):
                     pass
+            if self._worker.pvp_auto_task:
+                self._worker.pvp_auto_task.cancel()
+                try:
+                    await self._worker.pvp_auto_task
+                except (asyncio.CancelledError, Exception):
+                    pass
             if self._worker.stat_task:
                 self._worker.stat_task.cancel()
                 try:
                     await self._worker.stat_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.quest_task:
+                self._worker.quest_task.cancel()
+                try:
+                    await self._worker.quest_task
                 except (asyncio.CancelledError, Exception):
                     pass
             await self._worker.game.close()

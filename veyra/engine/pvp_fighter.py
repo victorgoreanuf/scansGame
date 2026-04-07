@@ -175,6 +175,7 @@ async def pvp_worker(game: GameClient, state: PvPState) -> None:
             await _sleep(state, MATCH_COOLDOWN)
 
     except Exception as e:
+        logger.error("PvP worker fatal error: %s", e, exc_info=True)
         state.log(f"PvP fatal error: {e}")
     finally:
         state.log("")

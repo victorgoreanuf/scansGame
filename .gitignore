@@ -6,3 +6,4 @@ dist/
 *.db
 .DS_Store
 .venv/
+logs/
