@@ -204,7 +204,9 @@ async def _try_stamina_potion(game: GameClient, state: FarmerState, wave: int = 
 
     any_used = False
 
-    # First pass: use partial potions (sorted small→large), skip full-refill
+    # First pass: use partial potions (sorted small→large), skip full-refill.
+    # Partials are used even if they'd overfill — Full Stamina Potion is only
+    # a last resort when no partial potions remain.
     full_potion: StaminaPotion | None = None
     for potion in potions:
         if potion.quantity <= 0 or stamina_needed <= 0:
@@ -215,12 +217,13 @@ async def _try_stamina_potion(game: GameClient, state: FarmerState, wave: int = 
             full_potion = potion
             continue
         else:
-            # Partial potion — use as many as fit without overfilling
-            if stamina_needed < potion.stamina_value:
-                state.log(f"  Skipping {potion.name} — would overfill ({stamina_needed} gap < {potion.stamina_value})")
+            # Use as many as fit; allow one extra to cover the remainder (overfill OK)
+            exact = stamina_needed // potion.stamina_value
+            if stamina_needed % potion.stamina_value > 0:
+                exact += 1
+            use_count = min(exact, potion.quantity)
+            if use_count <= 0:
                 continue
-
-            use_count = min(stamina_needed // potion.stamina_value, potion.quantity)
             state.log(f"  Using {use_count}x {potion.name} (+{use_count * potion.stamina_value} stamina)...")
 
             for i in range(use_count):
@@ -234,12 +237,16 @@ async def _try_stamina_potion(game: GameClient, state: FarmerState, wave: int = 
                     break
                 any_used = True
                 stamina_needed -= potion.stamina_value
+                potion.quantity -= 1
                 await asyncio.sleep(0.3)
 
             state.log(f"  Stamina gap remaining: ~{stamina_needed}")
 
-    # Last resort: use full-refill potion only if partial potions weren't enough
-    if stamina_needed > 0 and full_potion and full_potion.quantity > 0 and not any_used:
+    # Last resort: Full Stamina Potion only when all partial potions are exhausted
+    partials_remaining = any(
+        (not p.is_full) and p.quantity > 0 for p in potions
+    )
+    if stamina_needed > 0 and full_potion and full_potion.quantity > 0 and not partials_remaining:
         state.log(f"  No partial potions left — using {full_potion.name} as last resort...")
         try:
             ok = await game.use_stamina_potion(full_potion.inv_id)
