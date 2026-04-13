@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 from veyra.game.client import GameClient
 from veyra.game.endpoints import get_stamina_option, step_down_stamina
-from veyra.game.types import FarmStats, Monster, TargetConfig
+from veyra.game.types import FarmStats, Monster, StaminaPotion, TargetConfig
 from veyra.engine.rate_limiter import RateLimiter
 
 # Avoid circular import — imported at use time
@@ -204,21 +204,16 @@ async def _try_stamina_potion(game: GameClient, state: FarmerState, wave: int = 
 
     any_used = False
 
+    # First pass: use partial potions (sorted small→large), skip full-refill
+    full_potion: StaminaPotion | None = None
     for potion in potions:
         if potion.quantity <= 0 or stamina_needed <= 0:
             continue
 
         if potion.is_full:
-            # Full refill — use one, done
-            state.log(f"  Using {potion.name}...")
-            try:
-                ok = await game.use_stamina_potion(potion.inv_id)
-            except Exception as e:
-                state.log(f"  Error: {e}")
-                continue
-            if ok:
-                state.log(f"  {potion.name} used! Stamina fully restored")
-                return True
+            # Save full-refill as last resort
+            full_potion = potion
+            continue
         else:
             # Partial potion — use as many as fit without overfilling
             if stamina_needed < potion.stamina_value:
@@ -242,6 +237,18 @@ async def _try_stamina_potion(game: GameClient, state: FarmerState, wave: int = 
                 await asyncio.sleep(0.3)
 
             state.log(f"  Stamina gap remaining: ~{stamina_needed}")
+
+    # Last resort: use full-refill potion only if partial potions weren't enough
+    if stamina_needed > 0 and full_potion and full_potion.quantity > 0 and not any_used:
+        state.log(f"  No partial potions left — using {full_potion.name} as last resort...")
+        try:
+            ok = await game.use_stamina_potion(full_potion.inv_id)
+        except Exception as e:
+            state.log(f"  Error: {e}")
+        else:
+            if ok:
+                state.log(f"  {full_potion.name} used! Stamina fully restored")
+                return True
 
     if any_used:
         return True

@@ -494,8 +494,8 @@ def parse_stamina_potions(html: str) -> list[StaminaPotion]:
             stamina_value=stam_val,
         ))
 
-    # Small potions first, full potions last (conserve the more valuable ones)
-    potions.sort(key=lambda p: 1 if p.is_full else 0)
+    # Small potions first, large potions next, full-refill potions last
+    potions.sort(key=lambda p: (1, 0) if p.is_full else (0, p.stamina_value))
     return potions
 
 
