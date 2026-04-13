@@ -201,14 +201,27 @@ async def pvp_stop():
 @router.post("/stats/start")
 async def stats_start(request: Request):
     body = await request.json()
-    target = body.get("target", "").lower()
-    if target not in ("attack", "defense", "stamina"):
-        return {"ok": False, "error": "Invalid stat target"}
+
+    # New format: goals list + default_stat
+    raw_goals = body.get("goals", [])
+    default_stat = body.get("default_stat", "stamina").lower()
+    if default_stat not in ("attack", "defense", "stamina"):
+        return {"ok": False, "error": "Invalid default stat"}
+
+    from veyra.engine.stat_allocator import StatGoal
+    goals = []
+    for g in raw_goals:
+        stat = g.get("stat", "").lower()
+        target = int(g.get("target", 0))
+        if stat not in ("attack", "defense", "stamina") or target <= 0:
+            continue
+        goals.append(StatGoal(stat=stat, target=target))
+
     if manager.is_stat_running:
         return {"ok": False, "error": "Stat allocator already running"}
     if not manager.is_connected:
         return {"ok": False, "error": "Not connected"}
-    ok = await manager.start_stat_allocator(target)
+    ok = await manager.start_stat_allocator(goals, default_stat)
     return {"ok": ok}
 
 

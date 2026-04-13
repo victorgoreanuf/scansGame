@@ -90,24 +90,29 @@
         </div>
       </div>
 
-      <div class="panel" id="statSection">
+      <div class="panel panel-stat" id="statSection">
         <div class="panel-header">
           <span class="panel-title">
             Auto Stats
             <span class="pvp-badge off" id="statBadge">OFF</span>
           </span>
         </div>
-        <div class="panel-body">
-          <span class="stat-info" id="statDisplay"></span>
-          <div class="stat-controls">
-            <select id="statTarget" class="f-stat-target">
+        <div class="stat-current" id="statDisplay"></div>
+        <div class="stat-plan" id="statPlanUI">
+          <div class="stat-goals" id="statGoals"></div>
+          <button class="stat-add-btn" id="statAddGoalBtn" onclick="addStatGoal()">+ Add priority goal</button>
+          <div class="stat-default-row">
+            <span class="stat-default-label">Remaining points go to</span>
+            <select id="statDefaultStat" class="stat-select">
+              <option value="stamina" selected>Stamina</option>
               <option value="attack">Attack</option>
               <option value="defense">Defense</option>
-              <option value="stamina" selected>Stamina</option>
             </select>
-            <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start</button>
-            <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
           </div>
+        </div>
+        <div class="stat-actions">
+          <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start Allocating</button>
+          <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
         </div>
       </div>
 

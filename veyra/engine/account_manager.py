@@ -11,7 +11,7 @@ from veyra.game.types import MonsterGroup, TargetConfig
 from veyra.engine.rate_limiter import RateLimiter
 from veyra.engine.wave_farmer import FarmerState, worker
 from veyra.engine.pvp_fighter import PvPState, pvp_worker
-from veyra.engine.stat_allocator import StatAllocatorState, stat_allocator_worker
+from veyra.engine.stat_allocator import StatAllocatorState, StatGoal, stat_allocator_worker
 from veyra.engine.quest_runner import QuestState, quest_worker
 
 
@@ -284,18 +284,17 @@ class AccountManager:
             return False
         return self._worker.stat_state.running
 
-    async def start_stat_allocator(self, target_stat: str) -> bool:
-        """Start the stat allocator with a target stat (attack/defense/stamina)."""
+    async def start_stat_allocator(self, goals: list[StatGoal], default_stat: str = "stamina") -> bool:
+        """Start the stat allocator with priority goals and a default stat."""
         if not self._worker or not self._worker.connected:
             return False
         if self._worker.stat_task and not self._worker.stat_task.done():
             return False
-        if target_stat not in ("attack", "defense", "stamina"):
-            return False
 
         w = self._worker
         w.stat_state = StatAllocatorState()
-        w.stat_state.target_stat = target_stat
+        w.stat_state.goals = goals
+        w.stat_state.default_stat = default_stat
         w.stat_state.running = True
 
         w.stat_task = asyncio.create_task(stat_allocator_worker(w.game, w.stat_state))
@@ -314,15 +313,17 @@ class AccountManager:
 
     def get_stat_stats(self) -> dict:
         if not self._worker:
-            return {"target": "", "allocated": 0, "unspent": 0, "attack": 0, "defense": 0, "stamina": 0}
+            return {"goals": [], "default_stat": "", "allocated": 0, "unspent": 0, "attack": 0, "defense": 0, "stamina": 0, "active_goal_index": 0}
         s = self._worker.stat_state
         return {
-            "target": s.target_stat,
+            "goals": [{"stat": g.stat, "target": g.target} for g in s.goals],
+            "default_stat": s.default_stat,
             "allocated": s.total_allocated,
             "unspent": s.unspent,
             "attack": s.current_attack,
             "defense": s.current_defense,
             "stamina": s.current_stamina,
+            "active_goal_index": s.active_goal_index,
         }
 
     # ── Quest Runner ─────────────────────────────────────────────────────────

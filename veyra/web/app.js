@@ -394,19 +394,64 @@ function updatePvPStatus(pvpRunning, pvpStats) {
 
 // ── Stat Allocator ──────────────────────────────────────────────────────────
 
+function addStatGoal(stat, target) {
+  const container = $('statGoals');
+  const idx = container.children.length + 1;
+  const row = document.createElement('div');
+  row.className = 'stat-goal-row';
+  row.innerHTML = `
+    <span class="stat-goal-num">${idx}</span>
+    <select class="stat-select sg-stat">
+      <option value="attack"${stat==='attack'?' selected':''}>Attack</option>
+      <option value="defense"${stat==='defense'?' selected':''}>Defense</option>
+      <option value="stamina"${stat==='stamina'?' selected':''}>Stamina</option>
+    </select>
+    <input type="number" class="stat-goal-input sg-target" value="${target||''}" placeholder="Target" min="1">
+    <span class="stat-goal-progress"></span>
+    <button class="stat-goal-rm" onclick="this.closest('.stat-goal-row').remove();renumberGoals()">&times;</button>
+  `;
+  container.appendChild(row);
+}
+
+function renumberGoals() {
+  $('statGoals').querySelectorAll('.stat-goal-row').forEach((row, i) => {
+    row.querySelector('.stat-goal-num').textContent = i + 1;
+  });
+}
+
+function getStatGoals() {
+  const goals = [];
+  $('statGoals').querySelectorAll('.stat-goal-row').forEach(row => {
+    const stat = row.querySelector('.sg-stat').value;
+    const target = parseInt(row.querySelector('.sg-target').value);
+    if (stat && target > 0) goals.push({stat, target});
+  });
+  return goals;
+}
+
+function setStatUIDisabled(disabled) {
+  $('statGoals').querySelectorAll('select, input, .stat-goal-rm').forEach(el => el.disabled = disabled);
+  $('statAddGoalBtn').disabled = disabled;
+  $('statDefaultStat').disabled = disabled;
+}
+
 async function startStats() {
-  const target = $('statTarget').value;
+  const goals = getStatGoals();
+  const default_stat = $('statDefaultStat').value;
   $('statStartBtn').disabled = true;
   startSSE();
   try {
-    const res = await fetch('/api/stats/start', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target})});
+    const res = await fetch('/api/stats/start', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({goals, default_stat})
+    });
     const data = await res.json();
     if (data.ok) {
       $('statStartBtn').style.display = 'none';
       $('statStopBtn').style.display = '';
-      $('statBadge').textContent = target.toUpperCase();
+      $('statBadge').textContent = 'RUNNING';
       $('statBadge').className = 'pvp-badge on';
-      $('statTarget').disabled = true;
+      setStatUIDisabled(true);
     } else {
       toast(data.error || 'Failed to start stat allocator', 'error');
       $('statStartBtn').disabled = false;
@@ -424,27 +469,60 @@ async function stopStats() {
   $('statStopBtn').style.display = 'none';
   $('statBadge').textContent = 'OFF';
   $('statBadge').className = 'pvp-badge off';
-  $('statTarget').disabled = false;
+  setStatUIDisabled(false);
 }
 
 function updateStatStatus(statRunning, statStats) {
   if (statRunning) {
     $('statStartBtn').style.display = 'none';
     $('statStopBtn').style.display = '';
-    $('statBadge').textContent = (statStats && statStats.target ? statStats.target.toUpperCase() : 'ON');
+    $('statBadge').textContent = 'RUNNING';
     $('statBadge').className = 'pvp-badge on';
-    $('statTarget').disabled = true;
-    if (statStats && statStats.target) $('statTarget').value = statStats.target;
+    setStatUIDisabled(true);
+
+    // Restore goals in UI if empty (session restore)
+    if (statStats && statStats.goals && statStats.goals.length > 0 && $('statGoals').children.length === 0) {
+      statStats.goals.forEach(g => addStatGoal(g.stat, g.target));
+      setStatUIDisabled(true);
+    }
+    if (statStats && statStats.default_stat) {
+      $('statDefaultStat').value = statStats.default_stat;
+    }
+
+    // Update goal row states
+    if (statStats) {
+      $('statGoals').querySelectorAll('.stat-goal-row').forEach((row, i) => {
+        const goal = statStats.goals && statStats.goals[i];
+        if (!goal) return;
+        const current = statStats[goal.stat] || 0;
+        const done = current >= goal.target;
+        row.classList.toggle('active', !done && i === statStats.active_goal_index);
+        row.classList.toggle('done', done);
+        const progress = row.querySelector('.stat-goal-progress');
+        progress.textContent = current + ' / ' + goal.target;
+      });
+    }
   } else {
     $('statStartBtn').style.display = '';
     $('statStartBtn').disabled = false;
     $('statStopBtn').style.display = 'none';
     $('statBadge').textContent = 'OFF';
     $('statBadge').className = 'pvp-badge off';
-    $('statTarget').disabled = false;
+    setStatUIDisabled(false);
+    $('statGoals').querySelectorAll('.stat-goal-row').forEach(row => {
+      row.classList.remove('active', 'done');
+      row.querySelector('.stat-goal-progress').textContent = '';
+    });
   }
   if (statStats && (statStats.attack > 0 || statStats.defense > 0 || statStats.stamina > 0)) {
-    $('statDisplay').textContent = 'ATK:' + statStats.attack + ' DEF:' + statStats.defense + ' STA:' + statStats.stamina + ' | Unspent:' + statStats.unspent + (statStats.allocated > 0 ? ' | Allocated:' + statStats.allocated : '');
+    const parts = [
+      'ATK ' + statStats.attack,
+      'DEF ' + statStats.defense,
+      'STA ' + statStats.stamina,
+      'Unspent ' + statStats.unspent,
+    ];
+    if (statStats.allocated > 0) parts.push('+' + statStats.allocated + ' allocated');
+    $('statDisplay').textContent = parts.join('  \u00b7  ');
   }
 }
 
