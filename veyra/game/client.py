@@ -14,6 +14,7 @@ from veyra.game.endpoints import (
     BASE_URL,
     BATTLE_URL,
     CHAPTER_URL,
+    COLLECTIONS_URL,
     DAMAGE_URL,
     GUILD_ACCEPT_URL,
     GUILD_FINISH_URL,
@@ -43,6 +44,7 @@ from veyra.game.parser import (
     parse_chapter_list,
     parse_character_stats,
     parse_class_skills,
+    parse_collection_progress,
     parse_damage_response,
     parse_dead_monsters,
     parse_exp_per_dmg,
@@ -508,6 +510,11 @@ class GameClient:
         )
         data = resp.json()
         return parse_damage_response(data, None)
+
+    async def fetch_collection_progress(self, collection_id: int) -> dict | None:
+        """Get the live progress of a collection (current `have` vs `need` per item)."""
+        html = await self.fetch_page(COLLECTIONS_URL)
+        return parse_collection_progress(html, collection_id)
 
     async def fetch_monster_loot(self, monster_id: str) -> tuple[str, list[LootItem]]:
         """Fetch the battle page for a monster and parse its possible loot.

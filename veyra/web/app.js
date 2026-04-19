@@ -1,6 +1,22 @@
 const $ = id => document.getElementById(id);
 let waveData = {};
+let currentWave = null;
 let sse = null;
+
+const WAVE_DEFAULT_GOALS = { 1: 0, 2: 3000000, 3: 5000000, 4: 10000000 };
+
+// Per-monster goal overrides: MONSTER_DEFAULT_GOALS[waveNum][name] wins over
+// WAVE_DEFAULT_GOALS[waveNum]. Use whole numbers (e.g. 3_500_000 for 3.5m).
+const MONSTER_DEFAULT_GOALS = {
+  2: {
+    'Lizardman Shadowclaw': 3500000,
+  },
+};
+
+function monsterDefaultGoal(waveNum, name, fallback) {
+  const wave = MONSTER_DEFAULT_GOALS[waveNum];
+  return (wave && wave[name] != null) ? wave[name] : fallback;
+}
 
 // ── Toast Notifications ─────────────────────────────────────────────────────
 
@@ -44,7 +60,13 @@ function parseGoal(str) {
 
 function fmtGoal(n) {
   if (n <= 0) return '0';
-  if (n >= 1e6 && n % 1e6 === 0) return (n/1e6)+'m';
+  if (n >= 1e6) {
+    const m = n / 1e6;
+    // Render up to one decimal: 3.5m, 10m, 2.7m
+    if (Math.abs(m * 10 - Math.round(m * 10)) < 0.001) {
+      return (Math.round(m * 10) / 10) + 'm';
+    }
+  }
   if (n >= 1e3 && n % 1e3 === 0) return (n/1e3)+'k';
   return n.toLocaleString();
 }
@@ -53,6 +75,15 @@ function toggleSettings(){} // backward compat
 
 function toggleWave(gridId, on) {
   $(gridId).querySelectorAll('.mc').forEach(card => {
+    card.querySelector('.switch input').checked = on;
+    card.classList.toggle('off', !on);
+  });
+}
+
+function toggleCurrentWave(on) {
+  const grid = document.querySelector('.monster-grid[data-wave="' + currentWave + '"]');
+  if (!grid) return;
+  grid.querySelectorAll('.mc').forEach(card => {
     card.querySelector('.switch input').checked = on;
     card.classList.toggle('off', !on);
   });
@@ -90,8 +121,7 @@ function showApp(data) {
   if (data.waves) {
     waveData = {};
     for (const [k,v] of Object.entries(data.waves)) waveData[k] = v;
-    renderWave('1', waveData['1']||[], 'w1grid', 'w1badge', 'w1empty', 0);
-    renderWave('2', waveData['2']||[], 'w2grid', 'w2badge', 'w2empty', 3000000);
+    renderAllWaves();
   }
 
   $('dot').classList.add('on');
@@ -158,8 +188,7 @@ async function refreshWaves() {
     if (data.ok) {
       waveData = {};
       for (const [k,v] of Object.entries(data.waves)) waveData[k] = v;
-      renderWave('1', waveData['1']||[], 'w1grid', 'w1badge', 'w1empty', 0);
-      renderWave('2', waveData['2']||[], 'w2grid', 'w2badge', 'w2empty', 3000000);
+      renderAllWaves();
       toast('Waves refreshed', 'success');
     } else if (data.error === 'Not authenticated') {
       showLogin();
@@ -170,24 +199,26 @@ async function refreshWaves() {
   btn.disabled = false; btn.classList.remove('loading');
 }
 
-function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
-  const grid = $(gridId);
-  const empty = $(emptyId);
-  if (empty) empty.remove();
-  grid.querySelectorAll('.mc').forEach(el => el.remove());
+function renderWaveGrid(grid, waveNum, groups, defaultGoal) {
+  grid.innerHTML = '';
 
-  const total = groups.reduce((s,g) => s+g.count, 0);
-  $(badgeId).textContent = groups.length+' types \u00b7 '+total+' alive';
+  if (!groups.length) {
+    grid.innerHTML = `<div class="empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>No monsters in this wave</div></div>`;
+    return;
+  }
 
   const presets = defaultGoal === 0
     ? [{l:'1x Hit',v:'0'},{l:'70K',v:'70000'},{l:'500K',v:'500000'},{l:'1M',v:'1000000'},{l:'3M',v:'3000000'}]
     : [{l:'1x Hit',v:'0'},{l:'70K',v:'70000'},{l:'500K',v:'500000'},{l:'1M',v:'1000000'},{l:'3M',v:'3000000'},{l:'5M',v:'5000000'},{l:'10M',v:'10000000'}];
 
-  const defStr = fmtGoal(defaultGoal);
+  const waveNumInt = parseInt(waveNum);
 
   groups.forEach((g, idx) => {
+    const monsterGoal = monsterDefaultGoal(waveNumInt, g.name, defaultGoal);
+    const defStr = fmtGoal(monsterGoal);
+
     const card = document.createElement('div');
-    card.className = 'mc';
+    card.className = 'mc off';
     card.dataset.name = g.name;
     card.dataset.wave = waveNum;
     card.dataset.ids = JSON.stringify(g.ids);
@@ -196,7 +227,7 @@ function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
 
     const hasImg = g.image && g.image.length > 5;
     const chipHtml = presets.map(p =>
-      `<button type="button" class="chip${p.v===String(defaultGoal)?' on':''}" onclick="setGoal(this,'${p.v}')">${p.l}</button>`
+      `<button type="button" class="chip${p.v===String(monsterGoal)?' on':''}" onclick="setGoal(this,'${p.v}')">${p.l}</button>`
     ).join('');
 
     card.innerHTML = `
@@ -210,7 +241,7 @@ function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
           <div class="mc-meta">${g.new_count||0} new${g.joined_count ? ' \u00b7 <span class="jn">'+g.joined_count+' joined</span>' : ''} &middot; HP: <span class="hp">${fmt(g.max_hp)}</span>${g.total_your_dmg ? ' &middot; DMG: <span class="yd">'+fmt(g.total_your_dmg)+'</span>' : ''}</div>
         </div>
         <label class="switch">
-          <input type="checkbox" checked onchange="this.closest('.mc').classList.toggle('off',!this.checked)">
+          <input type="checkbox" onchange="this.closest('.mc').classList.toggle('off',!this.checked)">
           <span class="track"></span>
         </label>
       </div>
@@ -241,6 +272,66 @@ function renderWave(waveNum, groups, gridId, badgeId, emptyId, defaultGoal) {
       </div>`;
     grid.appendChild(card);
   });
+}
+
+function renderAllWaves() {
+  const pills = $('wavePills');
+  const container = $('wavesContainer');
+  const empty = $('wavesEmpty');
+  if (empty) empty.remove();
+
+  pills.innerHTML = '';
+  container.querySelectorAll('.monster-grid').forEach(el => el.remove());
+
+  const waveKeys = Object.keys(waveData).sort((a, b) => parseInt(a) - parseInt(b));
+  if (!waveKeys.length) {
+    container.innerHTML = `<div class="empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>`;
+    return;
+  }
+
+  if (!currentWave || !waveData[currentWave]) currentWave = parseInt(waveKeys[0]);
+
+  waveKeys.forEach(wk => {
+    const wn = parseInt(wk);
+    const groups = waveData[wk] || [];
+    const total = groups.reduce((s, g) => s + g.count, 0);
+
+    const pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = 'wave-pill' + (wn === currentWave ? ' active' : '');
+    pill.dataset.wave = wn;
+    pill.onclick = () => selectWave(wn);
+    pill.innerHTML = `Wave ${wn} <span class="wave-pill-count">${total}</span>`;
+    pills.appendChild(pill);
+
+    const grid = document.createElement('div');
+    grid.className = 'monster-grid';
+    grid.dataset.wave = wn;
+    if (wn !== currentWave) grid.hidden = true;
+    container.appendChild(grid);
+    renderWaveGrid(grid, String(wn), groups, WAVE_DEFAULT_GOALS[wn] || 0);
+  });
+
+  updateWaveCountRow();
+}
+
+function selectWave(wn) {
+  currentWave = wn;
+  document.querySelectorAll('.wave-pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.dataset.wave) === wn);
+  });
+  document.querySelectorAll('.monster-grid[data-wave]').forEach(g => {
+    g.hidden = parseInt(g.dataset.wave) !== wn;
+  });
+  updateWaveCountRow();
+}
+
+function updateWaveCountRow() {
+  const row = $('waveCountRow');
+  if (!row) return;
+  const groups = waveData[currentWave] || [];
+  const total = groups.reduce((s, g) => s + g.count, 0);
+  row.textContent = groups.length + ' types \u00b7 ' + total + ' alive';
 }
 
 // ── Start / Stop ────────────────────────────────────────────────────────────
@@ -704,11 +795,356 @@ async function deleteProfile() {
   }
 }
 
+// ── Tabs ────────────────────────────────────────────────────────────────────
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  document.querySelectorAll('.tab-page').forEach(p => {
+    p.hidden = p.id !== 'tab-' + name;
+  });
+  // Close any open event detail when switching away from Events tab
+  if (name !== 'events') closeEvent();
+  // Action bar is farming-specific
+  $('actionBar').hidden = name !== 'farming';
+  // Auto-scroll the log to bottom when entering the Logs tab
+  if (name === 'logs') {
+    const box = $('logBox');
+    if (box) box.scrollTop = box.scrollHeight;
+  }
+}
+
+// ── Events ──────────────────────────────────────────────────────────────────
+//
+// Add a new event by pushing an entry to EVENTS. Keep past events in the
+// list with status='ended' so the UI (and shared helpers) stay available
+// when the event returns.
+//
+// Shape:
+//   {
+//     id:       unique string id (used in URLs / detail container)
+//     title:    main card label
+//     subtitle: short status line shown under the title
+//     image:    optional URL or data-URI for the card art (falls back to gradient)
+//     badge:    'LIVE' | 'ENDED' | custom label  (color derived from status)
+//     status:   'live' | 'ended'  (ended events render greyed + non-clickable)
+//     render:   (containerEl) => void — builds the detail view when opened
+//   }
+
+const EVENTS = [
+  {
+    id: 'emberfall-vaelith',
+    title: 'Emberfall: Vaelith',
+    subtitle: 'Live event',
+    image: '/static/events/emberfall-vaelith.png',
+    badge: 'LIVE',
+    status: 'live',
+    render(container) { renderEmberfallDetail(container); },
+  },
+];
+
+// ── Collection Farmer (Emberfall event detail) ──────────────────────────────
+
+let collectionPlans = null;          // cached /api/collections/plan result
+let collectionPollTimer = null;      // setTimeout handle
+let collectionPollCadence = 0;       // current cadence in ms (0 = none)
+let lastCollectionStatus = null;
+const COLL_POLL_ACTIVE_MS = 2000;
+const COLL_POLL_IDLE_MS = 30000;
+
+async function renderEmberfallDetail(container) {
+  container.innerHTML = `
+    <div class="event-detail-header emberfall-header">
+      <h2>Emberfall: Vaelith</h2>
+      <p>Auto-farm the bulk ingredients for the event collections.
+      Boss drops (Star-Split Glass Heart, Living Black Index, Emberwing Plume,
+      Lucid Memory Shard, Hollow Star Core Dust) stay up to you.</p>
+    </div>
+    <div class="coll-grid" id="collGrid">
+      <div class="empty" style="padding:40px 16px;grid-column:1/-1">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <div>Loading plan…</div>
+      </div>
+    </div>`;
+
+  try {
+    if (!collectionPlans) {
+      const res = await fetch('/api/collections/plan');
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Failed to load plan');
+      collectionPlans = data.collections;
+    }
+    renderCollectionCards();
+    await refreshCollectionStatus();
+    startCollectionPolling();
+  } catch (e) {
+    $('collGrid').innerHTML = `<div class="empty" style="padding:40px 16px;grid-column:1/-1">
+      <div>Failed to load collections: ${e.message}</div></div>`;
+  }
+}
+
+function renderCollectionCards() {
+  const grid = $('collGrid');
+  if (!grid || !collectionPlans) return;
+  grid.innerHTML = '';
+  for (const plan of collectionPlans) {
+    const card = document.createElement('div');
+    card.className = 'coll-card';
+    card.dataset.collId = plan.id;
+    card.innerHTML = `
+      <div class="coll-header">
+        <div class="coll-title">${plan.name}</div>
+        <div class="coll-reward">Reward · ${plan.reward}</div>
+      </div>
+      <div class="coll-items"></div>
+      <div class="coll-footer">
+        <div class="coll-stats" data-role="stats">—</div>
+        <div class="coll-controls">
+          <select class="coll-stamina">
+            <option value="10 Stamina" selected>10 Stam</option>
+            <option value="50 Stamina">50 Stam</option>
+            <option value="100 Stamina">100 Stam</option>
+            <option value="200 Stamina">200 Stam</option>
+          </select>
+          <button class="btn btn-sm btn-accent coll-start">Start</button>
+          <button class="btn btn-sm btn-red coll-stop" hidden>Stop</button>
+        </div>
+      </div>`;
+
+    const itemsEl = card.querySelector('.coll-items');
+    for (const item of plan.items) {
+      const row = document.createElement('div');
+      row.className = 'coll-item';
+      row.dataset.itemName = item.name;
+      row.innerHTML = `
+        <div class="coll-item-name" title="Source: ${item.source_monster || '—'}">${item.name}</div>
+        <div class="coll-item-right">
+          <div class="coll-item-count"><span data-role="have">0</span> / <span data-role="need">${fmtGoal(item.need)}</span></div>
+          <div class="coll-item-bar"><div class="coll-item-fill" style="width:0%"></div></div>
+        </div>`;
+      itemsEl.appendChild(row);
+    }
+
+    card.querySelector('.coll-start').onclick = () => startCollection(plan.id, card);
+    card.querySelector('.coll-stop').onclick = () => stopCollection();
+    grid.appendChild(card);
+  }
+}
+
+function applyCollectionStatus(st) {
+  lastCollectionStatus = st;
+  if (!collectionPlans) return;
+
+  const running = !!st.running;
+  const activeId = running ? st.collection_id : 0;
+  const progress = st.progress || {};
+
+  for (const plan of collectionPlans) {
+    const card = document.querySelector(`.coll-card[data-coll-id="${plan.id}"]`);
+    if (!card) continue;
+
+    const isActive = activeId === plan.id;
+    card.classList.toggle('active', isActive);
+
+    for (const item of plan.items) {
+      const row = card.querySelector(`.coll-item[data-item-name="${CSS.escape(item.name)}"]`);
+      if (!row) continue;
+      const p = progress[item.name];
+      const have = p ? p.have : 0;
+      const need = item.need;  // always use the plan target, not game.need
+      const pct = need > 0 ? Math.min(100, Math.round(have / need * 100)) : 0;
+      row.querySelector('[data-role="have"]').textContent = fmtGoal(have);
+      row.querySelector('[data-role="need"]').textContent = fmtGoal(need);
+      row.querySelector('.coll-item-fill').style.width = pct + '%';
+      row.classList.toggle('done', have >= need);
+      row.classList.toggle('current', isActive && st.current_item === item.name);
+    }
+
+    const statsEl = card.querySelector('[data-role="stats"]');
+    const startBtn = card.querySelector('.coll-start');
+    const stopBtn = card.querySelector('.coll-stop');
+    const staminaSel = card.querySelector('.coll-stamina');
+
+    // Totals across plan items
+    let haveTot = 0, needTot = 0;
+    for (const item of plan.items) {
+      const p = progress[item.name];
+      haveTot += p ? Math.min(p.have, item.need) : 0;
+      needTot += item.need;
+    }
+    const overallPct = needTot > 0 ? Math.round(haveTot / needTot * 100) : 0;
+
+    let statsText = `${fmtGoal(haveTot)} / ${fmtGoal(needTot)} total · ${overallPct}%`;
+    if (isActive) {
+      const s = st.stats || {};
+      if (s.killed) statsText += ` · ${s.killed} kills this session`;
+      if (st.current_item) statsText += ` · on ${st.current_item}`;
+    }
+    statsEl.textContent = statsText;
+
+    if (running && !isActive) {
+      // Another collection is running — disable start
+      startBtn.disabled = true;
+      startBtn.hidden = false;
+      stopBtn.hidden = true;
+      staminaSel.disabled = true;
+    } else if (isActive) {
+      startBtn.hidden = true;
+      stopBtn.hidden = false;
+      staminaSel.disabled = true;
+    } else {
+      startBtn.disabled = false;
+      startBtn.hidden = false;
+      stopBtn.hidden = true;
+      staminaSel.disabled = false;
+    }
+  }
+}
+
+async function refreshCollectionStatus() {
+  try {
+    const res = await fetch('/api/collections/status');
+    const data = await res.json();
+    if (data.ok) applyCollectionStatus(data);
+  } catch (e) {
+    console.error('collection status', e);
+  }
+  // Re-schedule at the cadence matching current state (adaptive poll).
+  const wantCadence = (lastCollectionStatus && lastCollectionStatus.running)
+    ? COLL_POLL_ACTIVE_MS : COLL_POLL_IDLE_MS;
+  if (collectionPollCadence > 0) {
+    schedulePoll(wantCadence);
+  }
+}
+
+function schedulePoll(ms) {
+  if (collectionPollTimer) clearTimeout(collectionPollTimer);
+  collectionPollCadence = ms;
+  collectionPollTimer = setTimeout(refreshCollectionStatus, ms);
+}
+
+function startCollectionPolling() {
+  // Kick off the adaptive loop. refreshCollectionStatus itself re-schedules.
+  schedulePoll(COLL_POLL_IDLE_MS);
+}
+
+function stopCollectionPolling() {
+  if (collectionPollTimer) clearTimeout(collectionPollTimer);
+  collectionPollTimer = null;
+  collectionPollCadence = 0;
+}
+
+async function startCollection(id, card) {
+  const stamina = card.querySelector('.coll-stamina').value || '200 Stamina';
+  const startBtn = card.querySelector('.coll-start');
+  startBtn.disabled = true;
+  try {
+    const res = await fetch('/api/collections/start', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({collection_id: id, stamina}),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      toast(data.error || 'Failed to start', 'warning');
+      startBtn.disabled = false;
+      return;
+    }
+    toast('Farming started', 'success');
+    schedulePoll(COLL_POLL_ACTIVE_MS);
+    await refreshCollectionStatus();
+  } catch (e) {
+    toast('Network error: ' + e.message, 'warning');
+    startBtn.disabled = false;
+  }
+}
+
+async function stopCollection() {
+  try {
+    await fetch('/api/collections/stop', {method: 'POST'});
+    toast('Stopping…', 'info');
+    schedulePoll(COLL_POLL_ACTIVE_MS);  // stay fast a few cycles to watch shutdown
+    await refreshCollectionStatus();
+  } catch (e) {
+    toast('Network error: ' + e.message, 'warning');
+  }
+}
+
+function eventBadgeClass(ev) {
+  return ev.status === 'live' ? 'event-badge live' : 'event-badge ended';
+}
+
+function renderEvents() {
+  const grid = $('eventsGrid');
+  grid.innerHTML = '';
+
+  if (!EVENTS.length) {
+    grid.innerHTML = `
+      <div class="events-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div>No active events right now</div>
+        <div class="events-empty-hint">New events appear here when they go live.</div>
+      </div>`;
+    return;
+  }
+
+  EVENTS.forEach((ev, idx) => {
+    const card = document.createElement('div');
+    card.className = 'event-card' + (ev.status === 'ended' ? ' ended' : '');
+    card.style.animationDelay = (idx * 60) + 'ms';
+    if (ev.status === 'live') {
+      card.onclick = () => openEvent(ev.id);
+    }
+    const badgeLabel = ev.badge || (ev.status === 'live' ? 'LIVE' : 'ENDED');
+    card.innerHTML = `
+      <div class="event-card-art">
+        <span class="${eventBadgeClass(ev)}">${badgeLabel}</span>
+        <div class="event-card-art-fallback" style="background:${grad(ev.title)}">${ini(ev.title)}</div>
+        ${ev.image ? `<img src="${ev.image}" alt="${ev.title}" onerror="this.remove()">` : ''}
+      </div>
+      <div class="event-card-body">
+        <div class="event-card-title">${ev.title}</div>
+        <div class="event-card-subtitle">${ev.subtitle || ''}</div>
+        <button class="btn btn-sm ${ev.status === 'live' ? 'btn-accent' : 'btn-ghost'} event-card-btn"
+                ${ev.status === 'ended' ? 'disabled' : ''}>
+          ${ev.status === 'live' ? 'Enter ' + ev.title : 'Event Ended'}
+        </button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function openEvent(id) {
+  const ev = EVENTS.find(e => e.id === id);
+  if (!ev || ev.status !== 'live') return;
+  const detail = $('eventDetailContent');
+  detail.innerHTML = '';
+  try {
+    ev.render(detail);
+  } catch (e) {
+    detail.innerHTML = '<div class="empty">Failed to load event.</div>';
+    console.error(e);
+  }
+  $('eventsGridView').hidden = true;
+  $('eventsDetailView').hidden = false;
+}
+
+function closeEvent() {
+  const gridView = $('eventsGridView');
+  const detailView = $('eventsDetailView');
+  if (gridView && detailView) {
+    gridView.hidden = false;
+    detailView.hidden = true;
+  }
+  stopCollectionPolling();
+}
+
 // ── Init ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   $('pvpBadge').className = 'pvp-badge off';
   $('statBadge').className = 'pvp-badge off';
   $('questBadge').className = 'pvp-badge off';
+  renderEvents();
   checkSession();
 });

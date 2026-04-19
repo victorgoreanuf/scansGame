@@ -1,0 +1,3121 @@
+{
+  "generated_at": "2026-04-19T08:20:41.963008+00:00",
+  "event_id": 8,
+  "collections": [
+    {
+      "id": 18,
+      "name": "Vaelith's Final Testament",
+      "reward": "+100 attack",
+      "requires": [
+        {
+          "name": "Vaelith's Last Testament",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Last_Testament.webp"
+        },
+        {
+          "name": "Vaelith's Witness Crown",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Witness_Crown.webp"
+        },
+        {
+          "name": "Vaelith's Testament Robe",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Testament_Robe.webp"
+        },
+        {
+          "name": "Vaelith's Scriptbound Gloves",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Scriptbound_Gloves.webp"
+        },
+        {
+          "name": "Vaelith's Starwake Boots",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Starwake_Boots.webp"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Ashscript Regalia",
+      "reward": "+50 attack",
+      "requires": [
+        {
+          "name": "Ashscript Staff",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp"
+        },
+        {
+          "name": "Ashscript Hood",
+          "need": 1000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp"
+        },
+        {
+          "name": "Ashscript Robe",
+          "need": 1000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp"
+        },
+        {
+          "name": "Ashscript Gloves",
+          "need": 1000,
+          "have": 5,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp"
+        },
+        {
+          "name": "Ashscript Boots",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Heart of the Bastion Ultimate",
+      "reward": "+200 defense",
+      "requires": [
+        {
+          "name": "Molten Bastion Helmet",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868497_Molten_Bastion.webp"
+        },
+        {
+          "name": "Molten Bastion armor",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868520_Molten_Bastion_armor.webp"
+        },
+        {
+          "name": "Molten Bastion boots",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868546_Molten_Bastion_boots.webp"
+        },
+        {
+          "name": "Molten Bastion gloves",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868576_Molten_Bastion_gloves.webp"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Heart of the Bastion",
+      "reward": "+100 defense",
+      "requires": [
+        {
+          "name": "Molten Bastion Helmet",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868497_Molten_Bastion.webp"
+        },
+        {
+          "name": "Molten Bastion armor",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868520_Molten_Bastion_armor.webp"
+        },
+        {
+          "name": "Molten Bastion boots",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868546_Molten_Bastion_boots.webp"
+        },
+        {
+          "name": "Molten Bastion gloves",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868576_Molten_Bastion_gloves.webp"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Ashen Wall Arsenal",
+      "reward": "+50 defense",
+      "requires": [
+        {
+          "name": "Ashguard helmet",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868357_Ashguard_helmet.webp"
+        },
+        {
+          "name": "Ashguard gloves",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868391_Ashguard_gloves.webp"
+        },
+        {
+          "name": "Ashguard boots",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868420_Ashguard_boots.webp"
+        },
+        {
+          "name": "Ashguard armor",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868455_Ashguard_armor.webp"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Venomrat Relics",
+      "reward": "+50 stamina",
+      "requires": [
+        {
+          "name": "Viridian Vermin Visor",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875686_Viridian Vermin Visor.webp"
+        },
+        {
+          "name": "Viridian Vermin Carapace",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875739_Viridian Vermin Carapace.webp"
+        },
+        {
+          "name": "Viridian Vermin Treads",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875779_Viridian Vermin Treads.webp"
+        },
+        {
+          "name": "Viridian Vermin Grips",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875815_Viridian Vermin Grips.webp"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Merry Winter",
+      "reward": "+20 defense",
+      "requires": [
+        {
+          "name": "Crown of Yuletide Joy",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567327_santa hat.webp"
+        },
+        {
+          "name": "Santa's Hearthcoat",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567386_santa armor.webp"
+        },
+        {
+          "name": "Frostwoven Deliverer's Mitts",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567435_santa gloves.webp"
+        },
+        {
+          "name": "North Star Trekker Boots",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567470_santa's boots.webp"
+        },
+        {
+          "name": "Bell of Eternal Cheer",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567550_santa's bell.webp"
+        },
+        {
+          "name": "Emberheart Holiday Band",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567600_santa's ring 1.webp"
+        },
+        {
+          "name": "Wishkeeper's Loop",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765567656_santa's ring 2.webp"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Lizardy Winter",
+      "reward": "+100 stamina",
+      "requires": [
+        {
+          "name": "Frostbound Gloves",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765564832_Frostbound Gloves.webp"
+        },
+        {
+          "name": "Snowtread Boots",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566268_Snowtread Boots.webp"
+        },
+        {
+          "name": "Winter Iron Hoodhelm",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566340_Winter Iron Hoodhelm.webp"
+        },
+        {
+          "name": "Winter Iron Jerkin",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566377_Winter Iron Jerkin.webp"
+        },
+        {
+          "name": "Frozen Loop Band",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566431_Frozen Loop Band.webp"
+        },
+        {
+          "name": "Snowmark Ring",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566453_Snowmark Ring.webp"
+        },
+        {
+          "name": "Scout's Winter Pendant",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765566499_Scout Winter Pendant.webp"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "The Crownpiercer Set",
+      "reward": "+100 stamina",
+      "requires": [
+        {
+          "name": "Crownpiercer Heartpierce",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764721343_6830f15795d3.webp"
+        },
+        {
+          "name": "Crownpiercer Warband",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764721187_0909b672e419.webp"
+        },
+        {
+          "name": "Crownpiercer Signet",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764721066_637d50ed2444_1.webp"
+        },
+        {
+          "name": "Crownpiercer the Violet Stride",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1759462741_Crownpiercer_the_Violet_Stride.webp"
+        },
+        {
+          "name": "Crownpiercer the Violet Grasp",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1759461374_Crownpiercer_the_Violet_Grasp.webp"
+        },
+        {
+          "name": "Crownpiercer, the Violet Plate",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757966606_Crownpiercer_the_Violet_Plate.webp"
+        },
+        {
+          "name": "Crownpiercer, the Violet Visor",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757945060_Crownpiercer_the_Violet_Visor.webp"
+        },
+        {
+          "name": "Crownpiercer, the Violet Sovereign",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757937996_orc_king_spear.webp"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Heirlooms of the Eternal Flame",
+      "reward": "+70 defense",
+      "requires": [
+        {
+          "name": "Ember Forged Scale Armor",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801246_armor.webp"
+        },
+        {
+          "name": "Ember Forged Scale Helm",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801293_helmet.webp"
+        },
+        {
+          "name": "Ember Forged Scale Gauntlets",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801364_gloves.webp"
+        },
+        {
+          "name": "Ember Forged Scale Greaves",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801437_boots.webp"
+        },
+        {
+          "name": "Ember Forged Scale Ring",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801557_ring.webp"
+        },
+        {
+          "name": "Ember Forged Scale Amulet",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762801640_amulet.webp"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Relics of the Scorched Legion",
+      "reward": "+70 Attack",
+      "requires": [
+        {
+          "name": "Scorched Scale Armor",
+          "need": 1000,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1762799931_chestplate.webp"
+        },
+        {
+          "name": "Scorched Scale Helm",
+          "need": 1000,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1762799964_helmet.webp"
+        },
+        {
+          "name": "Scorched Scale Gloves",
+          "need": 1000,
+          "have": 6,
+          "image": "https://demonicscans.org/images/items/1762800010_gloves.webp"
+        },
+        {
+          "name": "Scorched Scale Boots",
+          "need": 1000,
+          "have": 6,
+          "image": "https://demonicscans.org/images/items/1762800100_boots.webp"
+        },
+        {
+          "name": "Ember Stained Band",
+          "need": 1000,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1762800195_ring.webp"
+        },
+        {
+          "name": "Smoldering Lizard Talisman",
+          "need": 1000,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1762800328_amulet.webp"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "The Cursed Artifacts",
+      "reward": "+60 Defense",
+      "requires": [
+        {
+          "name": "Cursed Hauberk",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761385608_Halloween_Hauberk.webp"
+        },
+        {
+          "name": "Cursed Grasp",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761386043_Halloween_Grasp.webp"
+        },
+        {
+          "name": "Cursed Treads",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761386129_Halloween_Treads.webp"
+        },
+        {
+          "name": "Cursed Helm",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761386536_Halloween_Helmet.webp"
+        },
+        {
+          "name": "The Harvestreaper",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761386577_The Harvestreaper.webp"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Harvest Scavenger’s",
+      "reward": "+60 stamina",
+      "requires": [
+        {
+          "name": "Harvest Scavenger's Sickle",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761381476_Harvest Scavenger's Sickle.webp"
+        },
+        {
+          "name": "Harvest Scavenger's Hood",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761382080_Harvest Scavenger's helmet.webp"
+        },
+        {
+          "name": "Harvest Scavenger's Boots",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761382184_Harvest Scavenger's boots.webp"
+        },
+        {
+          "name": "Harvest Scavenger's Gloves",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761382288_Harvest Scavenger's gloves.webp"
+        },
+        {
+          "name": "Harvest Scavenger's Armor",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761382342_Harvest Scavenger's Armor.webp"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Goblin's archive",
+      "reward": "+60 defense",
+      "requires": [
+        {
+          "name": "Rusty Shortsword",
+          "need": 1000,
+          "have": 1527,
+          "image": "https://demonicscans.org/images/items/1755223589_rusty_shortsword.webp"
+        },
+        {
+          "name": "Torn Leather Armor",
+          "need": 1000,
+          "have": 1043,
+          "image": "https://demonicscans.org/images/items/1755224068_Torn Leather Armor.webp"
+        },
+        {
+          "name": "Worn Leather Boots",
+          "need": 1000,
+          "have": 1593,
+          "image": "https://demonicscans.org/images/items/1755224174_Worn Leather Boots.webp"
+        },
+        {
+          "name": "Worn Leather Gloves",
+          "need": 1000,
+          "have": 1020,
+          "image": "https://demonicscans.org/images/items/1755224230_Worn Leather Gloves.webp"
+        },
+        {
+          "name": "Goblin Ear",
+          "need": 500,
+          "have": 1248,
+          "image": "https://demonicscans.org/images/items/1755224533_Goblin ears.webp"
+        },
+        {
+          "name": "Chipped Goblin Ring",
+          "need": 1000,
+          "have": 1148,
+          "image": "https://demonicscans.org/images/items/1755225870_ddd.webp"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "The Fall Of The Orc King",
+      "reward": "+60 attack",
+      "requires": [
+        {
+          "name": "Pale Tyrant Cuirass",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757575902_compressed_orc_king_armor_right.webp"
+        },
+        {
+          "name": "Pale Tyrant Greaves",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576214_compressed_orc_king_boots.webp"
+        },
+        {
+          "name": "Pale Tyrant Grips",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576300_compressed_orc_king_gloves.webp"
+        },
+        {
+          "name": "Pale Tyrant Visor",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576369_compressed_orc_king_ice_helmet.webp"
+        },
+        {
+          "name": "Pale Tyrant Gorget",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576599_compressed_orc_king_necklace.webp"
+        },
+        {
+          "name": "Pale Tyrant Ring",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576766_compressed_orc_king_ring.webp"
+        },
+        {
+          "name": "Tusklord Icebite Ring",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757576822_compressed_orc_king_ring_right.webp"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Orc's archive",
+      "reward": "+50 stamina",
+      "requires": [
+        {
+          "name": "Orc's Cleaver",
+          "need": 1000,
+          "have": 55,
+          "image": "https://demonicscans.org/images/items/1757560670_compressed_orc_cleaver.webp"
+        },
+        {
+          "name": "Orc's gloves",
+          "need": 1000,
+          "have": 55,
+          "image": "https://demonicscans.org/images/items/1757560743_compressed_orc_gloves.webp"
+        },
+        {
+          "name": "Orc's dual-axe",
+          "need": 1000,
+          "have": 47,
+          "image": "https://demonicscans.org/images/items/1757560864_compressed_orc_dual_axe.webp"
+        },
+        {
+          "name": "orc's mace",
+          "need": 1000,
+          "have": 50,
+          "image": "https://demonicscans.org/images/items/1757560939_compressed_mace.webp"
+        },
+        {
+          "name": "Orc's Bow",
+          "need": 1000,
+          "have": 56,
+          "image": "https://demonicscans.org/images/items/1757561009_compressed_orc_bow.webp"
+        },
+        {
+          "name": "Orc's glasses",
+          "need": 1000,
+          "have": 47,
+          "image": "https://demonicscans.org/images/items/1757561050_compressed_orc_glasses.webp"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "The Fall Of The Goblin King",
+      "reward": "+60 attack",
+      "requires": [
+        {
+          "name": "Goblin King's Cleaver",
+          "need": 3,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756617430_compressed_Goblin_King_Cleaver.webp"
+        },
+        {
+          "name": "Helm of the Goblin Warlord",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1756617538_compressed_Helm_of_the_Goblin_king.webp"
+        },
+        {
+          "name": "Goblin Titan's Plate",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1756617677_compressed_Goblin_Titan_Plate.webp"
+        },
+        {
+          "name": "Stompers of the Giant Goblin",
+          "need": 3,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756617769_compressed_Stompers_of the_Giant_Goblin.webp"
+        },
+        {
+          "name": "Amulet of the Goblin King's Soul",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1756617832_compressed_Amulet_of_the_Goblin_King_Soul.webp"
+        },
+        {
+          "name": "Ring of Corrupted Greed",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1756617893_summoning_Ring_of_Corrupted_Greed.webp"
+        },
+        {
+          "name": "Feral Goblin Claws",
+          "need": 3,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756754175_compressed_Feral_Goblin_Claws.webp"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "The Emerald Hunt",
+      "reward": "+50 attack",
+      "requires": [
+        {
+          "name": "Emerald Essence Spear",
+          "need": 3,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755291177_aaaa.webp"
+        },
+        {
+          "name": "Emerald Warhelm",
+          "need": 3,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755293370_eeee.webp"
+        },
+        {
+          "name": "Emerald Legionplate",
+          "need": 3,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755293719_eeeeeaea.webp"
+        },
+        {
+          "name": "Emerald Fistguards",
+          "need": 3,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755294264_kkkkkkkkk.webp"
+        },
+        {
+          "name": "Emerald Warboots",
+          "need": 3,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755294582_0_2.webp"
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "recipe_id": 72,
+      "output_name": "Pendant of the Final Ward",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Pendant_of_the_Final_Ward.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "An impossible pendant wrought from the full Ashscript inheritance and every surviving boss-signature of the event. Each Mana Shield pulse answers with healing.",
+      "power": "PvP only. Whenever you gain or refresh Mana Shield, heal by 1% of your max health.",
+      "ingredients": [
+        {
+          "name": "Ashscript Staff",
+          "need": 2000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp"
+        },
+        {
+          "name": "Ashscript Hood",
+          "need": 2000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp"
+        },
+        {
+          "name": "Ashscript Robe",
+          "need": 2000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp"
+        },
+        {
+          "name": "Ashscript Gloves",
+          "need": 2000,
+          "have": 5,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp"
+        },
+        {
+          "name": "Ashscript Boots",
+          "need": 2000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp"
+        },
+        {
+          "name": "Vaelith Sigil Fragment",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Sigil_Fragment.webp"
+        },
+        {
+          "name": "Hollow Star Core Dust",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Hollow_Star_Core_Dust.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 71,
+      "output_name": "Vaelith's Starwake Boots",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Starwake_Boots.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Boots stepped through broken constellations and back. Their defense rises with the seal, and their wearer strikes harder behind a living Mana Shield.",
+      "power": "Increase Defense stat by 3%. PvP only. While you have an active Mana Shield, increase Attack stat by 5%.",
+      "ingredients": [
+        {
+          "name": "Ashscript Boots",
+          "need": 2000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp"
+        },
+        {
+          "name": "Star-Split Glass Heart",
+          "need": 1,
+          "have": 1,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Star_Split_Glass_Heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 70,
+      "output_name": "Vaelith's Scriptbound Gloves",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Scriptbound_Gloves.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Legendary gloves bound in archive script and furnace-thread, made to keep a mage steady while Mana Shield turns strain into force.",
+      "power": "Increase Defense stat by 3%. PvP only. While you have an active Mana Shield, increase Attack stat by 5%.",
+      "ingredients": [
+        {
+          "name": "Ashscript Gloves",
+          "need": 2000,
+          "have": 5,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp"
+        },
+        {
+          "name": "Star-Split Glass Heart",
+          "need": 1,
+          "have": 1,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Star_Split_Glass_Heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 69,
+      "output_name": "Vaelith's Testament Robe",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Testament_Robe.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "A ceremonial robe reworked into battle vestments, lined with surviving testimony and the last geometry of the seals.",
+      "power": "Increase Defense stat by 3%. PvP only. While you have an active Mana Shield, increase Attack stat by 5%.",
+      "ingredients": [
+        {
+          "name": "Ashscript Robe",
+          "need": 2000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp"
+        },
+        {
+          "name": "Living Black Index",
+          "need": 1,
+          "have": 1,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Living_Black_Index.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 68,
+      "output_name": "Vaelith's Witness Crown",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Witness_Crown.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "A crown-hood formed from preserved ward-script and memory lacquer. It hardens the wearer and rewards those who refuse to let their Mana Shield break.",
+      "power": "Increase Defense stat by 3%. PvP only. While you have an active Mana Shield, increase Attack stat by 5%.",
+      "ingredients": [
+        {
+          "name": "Ashscript Hood",
+          "need": 2000,
+          "have": 10,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp"
+        },
+        {
+          "name": "Emberwing Plume",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Emberwing_Plume.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 67,
+      "output_name": "Vaelith's Last Testament",
+      "output_image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Last_Testament.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "Vaeliths final staff. Its core remembers the shape of containment magic, and every restored Mana Shield answers with violence.",
+      "power": "Increase Attack stat by 10%. PvP only. Whenever you gain or refresh Mana Shield, deal slash damage to a random living enemy.",
+      "ingredients": [
+        {
+          "name": "Ashscript Staff",
+          "need": 2000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp"
+        },
+        {
+          "name": "Lucid Memory Shard",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/events/Emberfall/items/Lucid_Memory_Shard.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 66,
+      "output_name": "Molten Bastion Helmet",
+      "output_image": "https://demonicscans.org/images/items/1771868497_Molten_Bastion.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "A fortress-like basalt helm etched with ancient runes and glowing molten veins. It radiates the presence of an unbreakable guardian.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Ashguard helmet",
+          "need": 100,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868357_Ashguard_helmet.webp"
+        },
+        {
+          "name": "Void Drake Scale",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947339_void_drake_scale.webp"
+        },
+        {
+          "name": "Embercore Drake Scale",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947321_fire_drake_scale.webp"
+        },
+        {
+          "name": "Tideglass Drake Scale",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947259_water_drake_scale.webp"
+        },
+        {
+          "name": "Ember Blood",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771832953_Ember Blood.webp"
+        },
+        {
+          "name": "Emberwhisker Thread",
+          "need": 40,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771852144_Emberwhisker Thread.webp"
+        },
+        {
+          "name": "Lynx Pelt",
+          "need": 30,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771852014_Lynx Pelt.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 65,
+      "output_name": "Molten Bastion gloves",
+      "output_image": "https://demonicscans.org/images/items/1771868576_Molten_Bastion_gloves.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Massive rune-etched gauntlets of basalt and ember-forged metal. Their weight and strength are made for crushing impact and steadfast defense.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Ashguard gloves",
+          "need": 100,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868391_Ashguard_gloves.webp"
+        },
+        {
+          "name": "Stormcharged Drake Scale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947303_thunder_drake_scale.webp"
+        },
+        {
+          "name": "Dawnveil Drake Scale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947377_light_drake_scale.webp"
+        },
+        {
+          "name": "Cinder Tusk",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771833413_Cinder Tusk.webp"
+        },
+        {
+          "name": "Hyena Pelt",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771852362_Hyena Pelt.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 64,
+      "output_name": "Molten Bastion boots",
+      "output_image": "https://demonicscans.org/images/items/1771868546_Molten_Bastion_boots.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Towering war boots reinforced with layered greaves and molten seams. Each step carries the weight and certainty of a siege engine.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Ashguard boots",
+          "need": 100,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868420_Ashguard_boots.webp"
+        },
+        {
+          "name": "Void Drake Scale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947339_void_drake_scale.webp"
+        },
+        {
+          "name": "Embercore Drake Scale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947321_fire_drake_scale.webp"
+        },
+        {
+          "name": "Ashfang Pelt",
+          "need": 40,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771832892_Ashfang_Pelt.webp"
+        },
+        {
+          "name": "Ashfeng Wolf Fang",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771832920_Wolf Fang.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 63,
+      "output_name": "Molten Bastion armor",
+      "output_image": "https://demonicscans.org/images/items/1771868520_Molten_Bastion_armor.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "A colossal basalt-steel cuirass infused with molten channels and defensive runes. Forged to turn its wearer into a living wall.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Ashguard armor",
+          "need": 100,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771868455_Ashguard_armor.webp"
+        },
+        {
+          "name": "Verdant Heartscale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947190_nature_drake_scale.webp"
+        },
+        {
+          "name": "Tideglass Drake Scale",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771947259_water_drake_scale.webp"
+        },
+        {
+          "name": "Ashback Fur",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771851358_Ashback Fur.webp"
+        },
+        {
+          "name": "Heatproof Hide Patch",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1771851411_Heatproof Hide Patch.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 62,
+      "output_name": "Viridictum",
+      "output_image": "https://demonicscans.org/images/items/1768878615_Viridictum.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "Viridictum is not forged, it is condensed judgment.\r\nBorn from living Venom, this dagger carries poison that decides, not merely wounds. Every cut implants a living verdict inside the target, a toxin that adapts, hunts, and escalates until the victim either falls... or is deemed unworthy to continue existing.",
+      "power": "Increases the chance to infect enemies with poison on hit by 20%.if the player is a hunter , increase poison damage by 20%.",
+      "ingredients": [
+        {
+          "name": "Heart of the Cosmic Plague",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1770022485_cosmic venom heart.webp"
+        },
+        {
+          "name": "Cosmic Venom Metal",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1770022379_cosmic venom metal.webp"
+        },
+        {
+          "name": "Poison Essence Nectar",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878163_poison_essence_nectar.webp"
+        },
+        {
+          "name": "Venom Essence",
+          "need": 1000,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878326_Venom_Essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 61,
+      "output_name": "Viridian Ratfang Carapace",
+      "output_image": "https://demonicscans.org/images/items/1768876413_Viridian_Ratfang_Carapace.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "Armor engraved with poison channels that pulse with viridian energy.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Viridian Vermin Carapace",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875739_Viridian Vermin Carapace.webp"
+        },
+        {
+          "name": "Venom Essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878326_Venom_Essence.webp"
+        },
+        {
+          "name": "Rotting Bone",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878225_Rotting_rat_bone.webp"
+        },
+        {
+          "name": "Rotting Rat Carcass",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768877797_Rotting_rat_carcass.webp"
+        },
+        {
+          "name": "Toxic Mice",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878284_toxic_mouse.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 60,
+      "output_name": "Viridian Ratfang Treads",
+      "output_image": "https://demonicscans.org/images/items/1768877718_Viridian_Ratfang_Treads.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Boots that corrode the ground and leave poisonous footprints.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Viridian Vermin Treads",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875779_Viridian Vermin Treads.webp"
+        },
+        {
+          "name": "Venom Essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878326_Venom_Essence.webp"
+        },
+        {
+          "name": "Rotting Bone",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878225_Rotting_rat_bone.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 59,
+      "output_name": "Viridian Ratfang Claws",
+      "output_image": "https://demonicscans.org/images/items/1768877677_Viridian_Ratfang_Claws.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Gauntlets that inject venom directly into enemies on contact.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Viridian Vermin Grips",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875815_Viridian Vermin Grips.webp"
+        },
+        {
+          "name": "Venom Essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878326_Venom_Essence.webp"
+        },
+        {
+          "name": "Toxic Mice",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878284_toxic_mouse.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 58,
+      "output_name": "Viridian Ratfang Helm",
+      "output_image": "https://demonicscans.org/images/items/1768876312_Viridian_Ratfang_Helm.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "A helmet worn by toxic rat knights, constantly leaking lunar poison vapor.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Viridian Vermin Visor",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768875686_Viridian Vermin Visor.webp"
+        },
+        {
+          "name": "Venom Essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768878326_Venom_Essence.webp"
+        },
+        {
+          "name": "Rotting Rat Carcass",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768877797_Rotting_rat_carcass.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 57,
+      "output_name": "Thalassarion,Treads of the Abyssal King",
+      "output_image": "https://demonicscans.org/images/items/1768093772_Treads_of_the Abyssal_King.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Greaves forged from Divine Water Iron and blessed by Poseidon himself.\r\nEach step anchors the wearer with the weight of the ocean floor, unmoved by waves, storms, or divine pressure.",
+      "power": "Increase its stats by 150% of your water elemental rate.",
+      "ingredients": [
+        {
+          "name": "Titanflow Boots",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092945_Titanflow_boots.webp"
+        },
+        {
+          "name": "Divine Water Blueprint",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094418_divine_water_blueprint.webp"
+        },
+        {
+          "name": "Divine Water Iron",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094475_divine_water_metal.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 56,
+      "output_name": "Thalassarion,Helm of the sea king",
+      "output_image": "https://demonicscans.org/images/items/1768094106_Helm_of_the_Sea.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "A helm infused with Poseidon's will, radiating unquestionable dominance.\r\nThose who face its bearer feel the same dread as sailors standing before a rising horizon.",
+      "power": "Increase its stats by 150% of your water elemental rate.",
+      "ingredients": [
+        {
+          "name": "Titanflow Helm",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768093015_Titanflow_helmet.webp"
+        },
+        {
+          "name": "Divine Water Blueprint",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094418_divine_water_blueprint.webp"
+        },
+        {
+          "name": "Divine Water Iron",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094475_divine_water_metal.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 55,
+      "output_name": "Thalassarion,Grasp of the Tide Sovereign",
+      "output_image": "https://demonicscans.org/images/items/1768093867_Grasp_of_the_Tide_Sovereign.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Gauntlets bearing Poseidon's authority over all waters.\r\nThe sea answers the wielder’s hands, bending tides and crushing resistance with effortless control.",
+      "power": "Increase its stats by 150% of your water elemental rate.",
+      "ingredients": [
+        {
+          "name": "Titanflow Gloves",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092911_Titanflow_gloves.webp"
+        },
+        {
+          "name": "Divine Water Blueprint",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094418_divine_water_blueprint.webp"
+        },
+        {
+          "name": "Divine Water Iron",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094475_divine_water_metal.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 54,
+      "output_name": "Thalassarion,Cuirass of the Endless Deep",
+      "output_image": "https://demonicscans.org/images/items/1768093963_Cuirass_of_the Endless_Deep.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "A divine cuirass layered with Sovereign Scales and flowing tidal runes.\r\nThe armor does not block force, it redirects it, turning divine pressure into controlled flow.",
+      "power": "Increase its stats by 150% of your water elemental rate.",
+      "ingredients": [
+        {
+          "name": "Titanflow Armor",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092972_Titanflow_armor.webp"
+        },
+        {
+          "name": "Divine Water Blueprint",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094418_divine_water_blueprint.webp"
+        },
+        {
+          "name": "Divine Water Iron",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094475_divine_water_metal.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 53,
+      "output_name": "Thalassarion",
+      "output_image": "https://demonicscans.org/images/items/1768093567_Thalassarion.png",
+      "attack": 100,
+      "defense": 0,
+      "description": "Forged from Divine Water Iron and sanctioned by Poseidon's Edict,\r\nThalassarion is not merely a weapon , it is a decree given form.\r\n\r\nIts strikes carry the authority of the ocean itself, overwhelming defenses and asserting dominion where resistance once stood.",
+      "power": "Increase its stats by 300% of your water elemental rate.",
+      "ingredients": [
+        {
+          "name": "Titanflow Trident",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768093159_Titanflow_trident.webp"
+        },
+        {
+          "name": "Divine Water Blueprint",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094418_divine_water_blueprint.webp"
+        },
+        {
+          "name": "Divine Water Iron",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094475_divine_water_metal.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 20,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 52,
+      "output_name": "Titanflow Trident",
+      "output_image": "https://demonicscans.org/images/items/1768093159_Titanflow_trident.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "A reforged Tidebound trident strengthened with Titan-forged metal and primordial tidal essence.\r\nThe weapon retains its original fluid balance, but its core now carries the crushing weight of abyssal depths.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Tidebound Trident",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092764_Tidebound_trident.webp"
+        },
+        {
+          "name": "Pearl of the Tidemind",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768135204_Pearl_of_the_Tidemind.webp"
+        },
+        {
+          "name": "Abyss Touched Hide",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768135435_Abyss_Touched_Hide.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        },
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 3,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 51,
+      "output_name": "Titanflow Boots",
+      "output_image": "https://demonicscans.org/images/items/1768092945_Titanflow_boots.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Tidebound Boots",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092552_Tidebound_Boots.webp"
+        },
+        {
+          "name": "Scylla Rending Fang",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133650_Scylla_Rending_Fang.webp"
+        },
+        {
+          "name": "Siren Recorder",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133684_Siren_recorder.webp"
+        },
+        {
+          "name": "Tide Hardened Battle Kelp",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133735_Tide_Hardened_Battle_Kelp.webp"
+        },
+        {
+          "name": "Veil of Flowing Grace",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133779_Veil_of_Flowing_Grace.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        },
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 50,
+      "output_name": "Titanflow Armor",
+      "output_image": "https://demonicscans.org/images/items/1768092972_Titanflow_armor.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "The original Tidebound chestplate, reforged with Titan materials. Its flexible plates have been thickened and bound with glowing Titan veins.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Tidebound Armor",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092650_Tidebound_Armor.webp"
+        },
+        {
+          "name": "Abyss Touched Hide",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768135435_Abyss_Touched_Hide.webp"
+        },
+        {
+          "name": "Abyssal Vortex Core",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133555_Abyssal_Vortex_Core.webp"
+        },
+        {
+          "name": "Colossal Kraken tentacle",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133584_Colossal_Kraken_tentacle.webp"
+        },
+        {
+          "name": "Royal Carapace Plate",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133621_Royal_Carapace_Plate.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        },
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 49,
+      "output_name": "Titanflow Gloves",
+      "output_image": "https://demonicscans.org/images/items/1768092911_Titanflow_gloves.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "The Tidebound Helm reforged using Titan scale. The original wave engraved plates remain, now reinforced with deep sea metal and glowing Titan runes.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Tidebound Gloves",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092517_Tidebound_Gloves.webp"
+        },
+        {
+          "name": "Siren Recorder",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133684_Siren_recorder.webp"
+        },
+        {
+          "name": "Tide Hardened Battle Kelp",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133735_Tide_Hardened_Battle_Kelp.webp"
+        },
+        {
+          "name": "Veil of Flowing Grace",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133779_Veil_of_Flowing_Grace.webp"
+        },
+        {
+          "name": "Pearl of the Tidemind",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768135204_Pearl_of_the_Tidemind.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        },
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 48,
+      "output_name": "Titanflow Helm",
+      "output_image": "https://demonicscans.org/images/items/1768093015_Titanflow_helmet.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "The Tidebound Helm reforged using Titan scale. The original wave-engraved plates remain, now reinforced with deep-sea metal and glowing Titan runes.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Tidebound Helmet",
+          "need": 200,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768092450_Tidebound_Helmet.webp"
+        },
+        {
+          "name": "Abyssal Vortex Core",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133555_Abyssal_Vortex_Core.webp"
+        },
+        {
+          "name": "Colossal Kraken tentacle",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133584_Colossal_Kraken_tentacle.webp"
+        },
+        {
+          "name": "Royal Carapace Plate",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133621_Royal_Carapace_Plate.webp"
+        },
+        {
+          "name": "Scylla Rending Fang",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768133650_Scylla_Rending_Fang.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        },
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "small water essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768085915_watter_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 47,
+      "output_name": "Tidebreaker Relic",
+      "output_image": "https://demonicscans.org/images/items/1768092612_Tidebreaker_Relic.webp",
+      "attack": 0,
+      "defense": 0,
+      "description": "A Titan-forged relic that fractures divine shields. Without it, Poseidon cannot be harmed.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Primordial Tidal Essence",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094512_Primordial_Tidal_Essence.webp"
+        },
+        {
+          "name": "Water Titan Core",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094552_Water_titan_Core.webp"
+        },
+        {
+          "name": "Water Titan Fragment",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1768094590_Water_Titan_Fragment.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 46,
+      "output_name": "Forbidden Fruit",
+      "output_image": "https://demonicscans.org/images/items/1766354835_forbidden_fruit.webp",
+      "attack": 0,
+      "defense": 0,
+      "description": "A growth that should not exist.\r\nThis fruit forms only where arcane saturation collapses inward where magic has consumed itself and left behind something hungry.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Forbidden Crystal",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1766354964_forbidden_black_stone.webp"
+        },
+        {
+          "name": "Forbidden Manuscript",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1766354738_forbidden_manuscript.webp"
+        },
+        {
+          "name": "Draught of the Broken Limit",
+          "need": 1,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1766355048_Draught_of_the_Broken_Limit.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 45,
+      "output_name": "Frozen Shield",
+      "output_image": "https://demonicscans.org/images/items/1765769070_frozen_shield.webp",
+      "attack": 20,
+      "defense": 80,
+      "description": "A shield forged to withstand the end of ages.\r\nEach blow absorbed deepens the eternal cold within.\r\nThose who strike it lose the will to fight.",
+      "power": "Increase HP By 15%",
+      "ingredients": [
+        {
+          "name": "Frozen Behemoth Core",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765725844_clause_guardian_core.webp"
+        },
+        {
+          "name": "Sap of the Consumed Realms",
+          "need": 4,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765768980_Sap_of_the_Consumed_Realms.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 44,
+      "output_name": "Frozen Cleric Staff",
+      "output_image": "https://demonicscans.org/images/items/1765767386_frozen_cleric_staff.webp",
+      "attack": 80,
+      "defense": 0,
+      "description": "A divine artifact corrupted by demon winter.\r\nIt heals allies by stealing warmth from the world itself,\r\nand condemns enemies to holy frost annihilation.",
+      "power": "Increase Defense Stat By 15%",
+      "ingredients": [
+        {
+          "name": "Frozen Behemoth Core",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765725844_clause_guardian_core.webp"
+        },
+        {
+          "name": "Frozen Behemoth Winter Star",
+          "need": 4,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765767148_frozen_behemoth_star.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 43,
+      "output_name": "Frozen Behemoth Staff",
+      "output_image": "https://demonicscans.org/images/items/1765766302_frozen_staff.webp",
+      "attack": 80,
+      "defense": 0,
+      "description": "A staff once raised against the heavens themselves.\r\nIts spells do not freeze enemies,\r\nthey collapse reality into stillness.",
+      "power": "Increase Attack Stat By 10%",
+      "ingredients": [
+        {
+          "name": "Frozen Behemoth Core",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765725844_clause_guardian_core.webp"
+        },
+        {
+          "name": "Corpse Caravan Frozen Bones",
+          "need": 4,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765766222_dead_caravan_pile.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 42,
+      "output_name": "Frozen Behemoth Daggers",
+      "output_image": "https://demonicscans.org/images/items/1765726240_frozen_daggers.webp",
+      "attack": 80,
+      "defense": 0,
+      "description": "Forged from the Behemoth's Frozen Core and carved along the edge with a Behemoth Frozen Fang, this dagger carries the stillness of a creature that ruled winter itself.\r\nThe daggers exhales a pale frost with every movement, and its edge bites not with sharpness alone, but with the authority of absolute cold.",
+      "power": "Increase Crit Rate by 5% and Crit damage by 10%.",
+      "ingredients": [
+        {
+          "name": "Frozen Behemoth Core",
+          "need": 6,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765725844_clause_guardian_core.webp"
+        },
+        {
+          "name": "Frozen Behemoth Fang",
+          "need": 4,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1765725908_Behemoth_fang.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 41,
+      "output_name": "Crownpiercer Heartpierce",
+      "output_image": "https://demonicscans.org/images/items/1764721343_6830f15795d3.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "An amulet shaped from a splinter of a ruined throne, empowering its bearer to pierce through both flesh and royal enchantments.",
+      "power": "Increase Critical Rate By 5%",
+      "ingredients": [
+        {
+          "name": "Shattered Royal Amulet",
+          "need": 4,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711900_0_0 (1).webp"
+        },
+        {
+          "name": "Royal Gravebone Fragment",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723409_1f6d7afa38b_0.webp"
+        },
+        {
+          "name": "Chimera Core Shard",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723315_982165a79287_1.webp"
+        },
+        {
+          "name": "Abomination Core",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722610_cafa9cf69cfe_0.webp"
+        },
+        {
+          "name": "Rage Spirit Essence",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722953_de94ec195_1.webp"
+        },
+        {
+          "name": "Chaos Crystal",
+          "need": 100,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711557_aeab-bb4c377278a7.webp"
+        },
+        {
+          "name": "Original Mixed Blood",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723468_2d37bf908f18_1.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 40,
+      "output_name": "Crownpiercer Warband",
+      "output_image": "https://demonicscans.org/images/items/1764721187_0909b672e419.webp",
+      "attack": 50,
+      "defense": 50,
+      "description": "A battle-forged ring worn by those who challenge sovereign power on the battlefield itself.",
+      "power": "Increase Critical Rate By 2.5%",
+      "ingredients": [
+        {
+          "name": "Shattered Dead Prince Ring",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711838_ring2.webp"
+        },
+        {
+          "name": "Original Mixed Blood",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723468_2d37bf908f18_1.webp"
+        },
+        {
+          "name": "Royal Gravebone Fragment",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723409_1f6d7afa38b_0.webp"
+        },
+        {
+          "name": "Chimera Core Shard",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723315_982165a79287_1.webp"
+        },
+        {
+          "name": "Abomination Core",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722610_cafa9cf69cfe_0.webp"
+        },
+        {
+          "name": "Rage Spirit Essence",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722953_de94ec195_1.webp"
+        },
+        {
+          "name": "Chaos Crystal",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711557_aeab-bb4c377278a7.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 39,
+      "output_name": "Crownpiercer Signet",
+      "output_image": "https://demonicscans.org/images/items/1764721066_637d50ed2444_1.webp",
+      "attack": 50,
+      "defense": 50,
+      "description": "A heavy signet forged to protect the royal lineage, engraved with a fractured crown crest.",
+      "power": "Increase Critical Rate By 2.5%",
+      "ingredients": [
+        {
+          "name": "Shattered Dead King Ring",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711732_3ed8213fdeb6.webp"
+        },
+        {
+          "name": "Original Mixed Blood",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723468_2d37bf908f18_1.webp"
+        },
+        {
+          "name": "Royal Gravebone Fragment",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723409_1f6d7afa38b_0.webp"
+        },
+        {
+          "name": "Abomination Core",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722610_cafa9cf69cfe_0.webp"
+        },
+        {
+          "name": "Chimera Core Shard",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764723315_982165a79287_1.webp"
+        },
+        {
+          "name": "Chaos Crystal",
+          "need": 50,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764711557_aeab-bb4c377278a7.webp"
+        },
+        {
+          "name": "Rage Spirit Essence",
+          "need": 5,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1764722953_de94ec195_1.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 38,
+      "output_name": "Ember Forged Scale Greaves",
+      "output_image": "https://demonicscans.org/images/items/1762801437_boots.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Boots forged from tempered obsidian, their soles never cool, each step leaves faint scorch marks.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Scorched Scale Boots",
+          "need": 100,
+          "have": 6,
+          "image": "https://demonicscans.org/images/items/1762800100_boots.webp"
+        },
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        },
+        {
+          "name": "Lizard King Sigil",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762811272_lizard_king_sigil.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 37,
+      "output_name": "Ember Forged Scale Ring",
+      "output_image": "https://demonicscans.org/images/items/1762801557_ring.webp",
+      "attack": 50,
+      "defense": 50,
+      "description": "Tempered in dragonfire and cooled in the blood of a fallen guardian, this ring hums faintly with the rhythm of living flame. The scales along its edge shift color as heat passes through them.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Ember Stained Band",
+          "need": 100,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1762800195_ring.webp"
+        },
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        },
+        {
+          "name": "Crimson Reliquary",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762810810_Crimson Reliquary.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 36,
+      "output_name": "Ember Forged Scale Gauntlets",
+      "output_image": "https://demonicscans.org/images/items/1762801364_gloves.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Gauntlets etched with runes of flame, each punch leaves a trace of smoldering light.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Scorched Scale Gloves",
+          "need": 100,
+          "have": 6,
+          "image": "https://demonicscans.org/images/items/1762800010_gloves.webp"
+        },
+        {
+          "name": "Shadefang Catalyst",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762810458_Shadefang Catalyst.webp"
+        },
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 35,
+      "output_name": "Ember Forged Scale Amulet",
+      "output_image": "https://demonicscans.org/images/items/1762801640_amulet.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "Fashioned from the heart scale of a lizardman high priest, this amulet channels both protection and fury. When its core glows, the air around it ripples like molten glass.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Smoldering Lizard Talisman",
+          "need": 100,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1762800328_amulet.webp"
+        },
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        },
+        {
+          "name": "Dracite Pressure Plate",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762806045_Dracite Pressure Plate.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 34,
+      "output_name": "Ember Forged Scale Helm",
+      "output_image": "https://demonicscans.org/images/items/1762801293_helmet.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "Crowned with a ridge of cooled magma, this helm radiates a quiet heat that steadies its wearer's resolve.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        },
+        {
+          "name": "Runic Ember Focus",
+          "need": 10,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1762795976_Runic Ember Focus.webp"
+        },
+        {
+          "name": "Scorched Scale Helm",
+          "need": 100,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1762799964_helmet.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 33,
+      "output_name": "Ember Forged Scale Armor",
+      "output_image": "https://demonicscans.org/images/items/1762801246_armor.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "A chestplate of layered obsidian and gold, its molten veins glow faintly when struck.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Scorched Scale Armor",
+          "need": 100,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1762799931_chestplate.webp"
+        },
+        {
+          "name": "Small fire essence",
+          "need": 10,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1762791416_Small_fire_essence.webp"
+        },
+        {
+          "name": "Vanguard Heartforge Core",
+          "need": 10,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1762791528_Heartforge Core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 32,
+      "output_name": "Ring of the Eternal Harvest",
+      "output_image": "https://demonicscans.org/images/items/1761387350_Ring of the Eternal Harvest.webp",
+      "attack": 50,
+      "defense": 50,
+      "description": "Forged in blood, bone, and pumpkin flame, the Ring of the Eternal Harvest binds the wearer to All Hallow's magic. Its glow never fades, feeding on the souls of the fallen.",
+      "power": "PVE only. Heals You by 5% Of The Damage Received And Increase Your Armor Penetration by 5% .",
+      "ingredients": [
+        {
+          "name": "The Butcher Hook",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761387047_The Butcher Hook.webp"
+        },
+        {
+          "name": "Vampiric Blood Core",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761387096_Vampiric Blood Core.webp"
+        },
+        {
+          "name": "Witch King's Hex Rune",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761387186_Witch King's Hex Rune.webp"
+        },
+        {
+          "name": "Goblord's Head",
+          "need": 1,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1761387251_compressed_goblin_halloween_event.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 31,
+      "output_name": "Aegis Ram-Gauntlets",
+      "output_image": "https://demonicscans.org/images/items/1760928886_Aegis_Ram_Gauntlets.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Fist-guards inlaid with runic crystal veins. Each strike builds kinetic charge, amplifying the next blow. Ram-head sigils on the wrists flare amber when the charge peaks, momentarily overwhelming lesser shields.",
+      "power": "PvP only. If you are the Attacker: Increase your ATK Stats by 5%.\nIf you are the Defender: Convert the equipment's ATK stat to DEF And Increase your DEF Stats by 5%.",
+      "ingredients": [
+        {
+          "name": "Player Soul Orb",
+          "need": 2500,
+          "have": 1920,
+          "image": "https://demonicscans.org/images/items/1760906085_compressed_play_soul_orb.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 30,
+      "output_name": "Aegis Ram-Greaves",
+      "output_image": "https://demonicscans.org/images/items/1760928962_Aegis_Ram_Greaves.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Bronze greaves etched with spiral horns along the shins. Every step channels stored kinetic force into the ground, leaving faint teal sparks in the dust. Grants increased momentum and reduced knockback during charges.",
+      "power": "PvP only. If you are the Attacker: Increase your ATK Stats by 5%.\nIf you are the Defender: Convert the equipment's ATK stat to DEF And Increase your DEF Stats by 5%.",
+      "ingredients": [
+        {
+          "name": "Player Soul Orb",
+          "need": 2500,
+          "have": 1920,
+          "image": "https://demonicscans.org/images/items/1760906085_compressed_play_soul_orb.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 29,
+      "output_name": "Aegis Ram-Helm",
+      "output_image": "https://demonicscans.org/images/items/1760928569_Aegis_Ram_Helm.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "A bronze war-helm crowned with curved ram horns that channel teal lightning. Its visor glows with an inner crystal eye that heightens battle focus, granting brief clarity at the onset of each duel. Whispered legend says the horns resonate with every clash of steel.",
+      "power": "PvP only. If you are the Attacker: Increase your ATK Stats by 5%.\nIf you are the Defender: Convert the equipment's ATK stat to DEF And Increase your DEF Stats by 5%.",
+      "ingredients": [
+        {
+          "name": "Player Soul Orb",
+          "need": 2500,
+          "have": 1920,
+          "image": "https://demonicscans.org/images/items/1760906085_compressed_play_soul_orb.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 28,
+      "output_name": "Aegis Ram-Lance",
+      "output_image": "https://demonicscans.org/images/items/1760564308_compressed_aegis_lance.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "A bronze ram-headed guard that blooms into a crescent shield around a needle-keen lance. Forged to hold the line and break it in the same breath, its runes pulse from warm amber to teal as it turns defense into momentum.",
+      "power": "PvP only. If you are the Attacker: Increase your ATK Stats by 10%.\nIf you are the Defender: Convert the equipment's ATK stat to DEF And Increase your DEF Stats by 10%.",
+      "ingredients": [
+        {
+          "name": "Player Soul Orb",
+          "need": 2500,
+          "have": 1920,
+          "image": "https://demonicscans.org/images/items/1760906085_compressed_play_soul_orb.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 27,
+      "output_name": "Aegis Ram-Plate Armor",
+      "output_image": "https://demonicscans.org/images/items/1760928355_compressed_Aegis_Ram_Plate Armor.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "Heavy segmented armor engraved with the sigil of the Ram saint. Bronze plates hide a lattice of kinetic crystals that hum with stored impact energy. When struck, the armor releases a resonant pulse that lessens incoming damage and briefly strengthens the wearer's stance.",
+      "power": "PvP only. If you are the Attacker: Increase your ATK Stats by 5%.\nIf you are the Defender: Convert the equipment's ATK stat to DEF And Increase your DEF Stats by 5%.",
+      "ingredients": [
+        {
+          "name": "Player Soul Orb",
+          "need": 2500,
+          "have": 1920,
+          "image": "https://demonicscans.org/images/items/1760906085_compressed_play_soul_orb.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 26,
+      "output_name": "Scalescourge Emberstride Greaves",
+      "output_image": "https://demonicscans.org/images/items/1759692004_Scalescourge_Emberstride_Boots.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "Formed from fire-blackened dragonhide and molten-hardened steel.\r\nEach plate is etched with smoldering runes, and when the wearer moves, faint embers flicker at their steps. These greaves embody both strength and mobility, designed for dragon-slaying battlefields.",
+      "power": "2.5% Extra Damage To Monsters,+ Another 2.5% Against Dragons",
+      "ingredients": [
+        {
+          "name": "Troll Blood Essence",
+          "need": 20,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp"
+        },
+        {
+          "name": "Lizzardmen blood",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp"
+        },
+        {
+          "name": "Lizardman Scales",
+          "need": 100,
+          "have": 264,
+          "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp"
+        },
+        {
+          "name": "Trollish Iron",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp"
+        },
+        {
+          "name": "Lizardman Heart",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 25,
+      "output_name": "Scalescourge Clawshatter Grips",
+      "output_image": "https://demonicscans.org/images/items/1759691715_Scalescourge_Clawshatter_Grips.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "Gauntlets lined with dragonhide leather, tipped with obsidian claws.\r\nInfused with the essence of shattered dragon talons, they grant crushing grip strength and the power to tear through even enchanted steel.",
+      "power": "2.5% Extra Damage To Monsters,+ Another 2.5% Against Dragons",
+      "ingredients": [
+        {
+          "name": "Troll Blood Essence",
+          "need": 20,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp"
+        },
+        {
+          "name": "Lizzardmen blood",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp"
+        },
+        {
+          "name": "Lizardman Scales",
+          "need": 100,
+          "have": 264,
+          "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp"
+        },
+        {
+          "name": "Trollish Iron",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp"
+        },
+        {
+          "name": "Lizardman Heart",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 24,
+      "output_name": "Scalescourge Fangwarden Plate",
+      "output_image": "https://demonicscans.org/images/items/1759557337_Scalescourge_fangchest.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "Overlapping crimson and emerald scales form this unbreakable chestplate.\r\nTempered in dragonfire and etched with glowing runes, the armor channels draconic fury while protecting its bearer from even the fiercest flames.",
+      "power": "2.5% Extra Damage To Monsters,+ Another 2.5% Against Dragons",
+      "ingredients": [
+        {
+          "name": "Troll Blood Essence",
+          "need": 20,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp"
+        },
+        {
+          "name": "Lizzardmen blood",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp"
+        },
+        {
+          "name": "Lizardman Scales",
+          "need": 100,
+          "have": 264,
+          "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp"
+        },
+        {
+          "name": "Trollish Iron",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp"
+        },
+        {
+          "name": "Lizardman Heart",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 23,
+      "output_name": "Scalescourge fangbreaker",
+      "output_image": "https://demonicscans.org/images/items/1759533791_Scalescourge_fangbreaker.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "Legendary helm forged from the skull of a slain wyrm.\r\nIts jagged horns and obsidian edges radiate raw intimidation. The visor is reinforced with dragon bone, said to sharpen the wearer's senses and shield their mind against terror.\r\nEffect: Greatly increases resistance to fear, intimidation, and fire.",
+      "power": "2.5% Extra Damage To Monsters,+ Another 2.5% Against Dragons",
+      "ingredients": [
+        {
+          "name": "Troll Blood Essence",
+          "need": 20,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp"
+        },
+        {
+          "name": "Lizzardmen blood",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp"
+        },
+        {
+          "name": "Lizardman Scales",
+          "need": 100,
+          "have": 264,
+          "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp"
+        },
+        {
+          "name": "Trollish Iron",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp"
+        },
+        {
+          "name": "Lizardman Heart",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 22,
+      "output_name": "Crownpiercer the Violet Stride",
+      "output_image": "https://demonicscans.org/images/items/1759462741_Crownpiercer_the_Violet_Stride.webp",
+      "attack": 60,
+      "defense": 40,
+      "description": "When the Bloodforged Emerald Boots drank the Orc King's Essence, their verdant filigree blackened and veined crimson. A cool purple mist curls off each step like trailing banners, and the ground itself seems to yield before your march.",
+      "power": "Increase Critical Damage By 5%",
+      "ingredients": [
+        {
+          "name": "Bloodforged Emerald Boots",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1759462658_concentrated_orc_boots.webp"
+        },
+        {
+          "name": "Orc King's Essence",
+          "need": 2,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1757935568_orc_king_core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 21,
+      "output_name": "Bloodforged Emerald Boots",
+      "output_image": "https://demonicscans.org/images/items/1759462658_concentrated_orc_boots.webp",
+      "attack": 40,
+      "defense": 40,
+      "description": "Once verdant and calm, the inlays have scorched into crimson veins that pulse with a marching beat. With every step, black-green motes spill from the seams like cinders, gripping the ground and driving you forward. Don them, and your stride hardens under fire and your focus narrows against Orc-kind—as if a fallen warlord’s relentless march now echoes beneath your heels.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Emerald Warboots",
+          "need": 2,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755294582_0_2.webp"
+        },
+        {
+          "name": "Concentrated Orc Essence",
+          "need": 2,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1757933290_conventrated_orc_energy.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 20,
+      "output_name": "Crownpiercer the Violet Grasp",
+      "output_image": "https://demonicscans.org/images/items/1759461374_Crownpiercer_the_Violet_Grasp.webp",
+      "attack": 80,
+      "defense": 30,
+      "description": "When the Bloodforged Emerald Gloves drank the Orc King’s Essence, their emerald inlays blackened and veined crimson. Violet mist coils around the fingers; every strike lands like a war-drum beat, and lesser warlords flinch at its touch.",
+      "power": "Increase Critical Damage By 5%",
+      "ingredients": [
+        {
+          "name": "Bloodforged Emerald Gloves",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1759461256_concentrated_orc_gloves.webp"
+        },
+        {
+          "name": "Orc King's Essence",
+          "need": 2,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1757935568_orc_king_core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 19,
+      "output_name": "Bloodforged Emerald Gloves",
+      "output_image": "https://demonicscans.org/images/items/1759461256_concentrated_orc_gloves.webp",
+      "attack": 50,
+      "defense": 30,
+      "description": "Once cool and verdant, the inlays have scorched into crimson veins that throb under the plating. Black-green motes seep from the seams like breath on cold iron, and a low war-drum seems to beat in your knuckles. Wearing them hardens your grip and fans a focused wrath toward Orc-kind—as if a fallen warlord's ferocity now lives in your hands.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Emerald Fistguards",
+          "need": 2,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755294264_kkkkkkkkk.webp"
+        },
+        {
+          "name": "Concentrated Orc Essence",
+          "need": 2,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1757933290_conventrated_orc_energy.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 18,
+      "output_name": "Crownpiercer, the Violet Plate",
+      "output_image": "https://demonicscans.org/images/items/1757966606_Crownpiercer_the_Violet_Plate.webp",
+      "attack": 60,
+      "defense": 60,
+      "description": "When the Bloodforged Emerald Armor drank the Orc King's Essence, its plates ossified into an obsidian lattice veined in crimson. A cool purple mist leaks from the seams, and a distant war drum steadies the bearer's stance. Under its gaze, lesser warlords waver.",
+      "power": "Increase Critical Damage By 5%",
+      "ingredients": [
+        {
+          "name": "Bloodforged Emerald Armor",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757965723_concentrated_orc_armor.webp"
+        },
+        {
+          "name": "Orc King's Essence",
+          "need": 2,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1757935568_orc_king_core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 17,
+      "output_name": "Bloodforged Emerald Armor",
+      "output_image": "https://demonicscans.org/images/items/1757965723_concentrated_orc_armor.webp",
+      "attack": 50,
+      "defense": 50,
+      "description": "Once a calm, glinting relic, the armor now runs with crimson veins where orcish war essence seared through its plates. A low drumbeat thrums in the metal, and black-green motes leak from the seams like breath in cold air. Wearing it steels your stance under siege and sharpens your wrath against Orc kind as if a fallen warlord’s grit has settled over your heart.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Emerald Legionplate",
+          "need": 2,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755293719_eeeeeaea.webp"
+        },
+        {
+          "name": "Concentrated Orc Essence",
+          "need": 2,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1757933290_conventrated_orc_energy.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 16,
+      "output_name": "Crownpiercer, the Violet Visor",
+      "output_image": "https://demonicscans.org/images/items/1757945060_Crownpiercer_the_Violet_Visor.webp",
+      "attack": 70,
+      "defense": 30,
+      "description": "When the Bloodforged Emerald Helm drank the Orc King’s Essence, its emerald filigree turned to an obsidian lattice veined in crimson. A cool violet mist seeps from the visor’s slits, and the echo of a war-drum steadies the bearer’s heart. Lesser warlords feel their resolve thin beneath its gaze.",
+      "power": "Increase Critical Damage By 5%",
+      "ingredients": [
+        {
+          "name": "Bloodforged Emerald Helm",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757944789_concentrated_orc_helmet.webp"
+        },
+        {
+          "name": "Orc King's Essence",
+          "need": 2,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1757935568_orc_king_core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 15,
+      "output_name": "Bloodforged Emerald Helm",
+      "output_image": "https://demonicscans.org/images/items/1757944789_concentrated_orc_helmet.webp",
+      "attack": 50,
+      "defense": 30,
+      "description": "Once a tranquil emerald artifact, the helm now runs with crimson veins where the Orc war-essence burned through its inlays. A low drumbeat seems to thrum inside the metal, and black-green motes leak from the vents like breath on a cold night. Those who wear it feel steadier under siege and fiercer as if a fallen warlord’s resolve has taken roost behind their eyes.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Emerald Warhelm",
+          "need": 2,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755293370_eeee.webp"
+        },
+        {
+          "name": "Concentrated Orc Essence",
+          "need": 2,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1757933290_conventrated_orc_energy.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 14,
+      "output_name": "Crownpiercer, the Violet Sovereign",
+      "output_image": "https://demonicscans.org/images/items/1757937996_orc_king_spear.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "When the Bloodforged Emerald Spear drank the Orc King's Essence, its emerald core blackened and bloomed a violet crown. The weapon now rules the battlefield with cold authority, a dark mist coils from its blade, and lesser warlords bow or break before it.",
+      "power": "Increase Critical Damage By 20%",
+      "ingredients": [
+        {
+          "name": "Bloodforged Emerald Spear",
+          "need": 2,
+          "have": 0,
+          "image": "https://demonicscans.org/images/items/1757934345_conventrated_orc_spear.webp"
+        },
+        {
+          "name": "Orc King's Essence",
+          "need": 2,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1757935568_orc_king_core.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 13,
+      "output_name": "Bloodforged Emerald Spear",
+      "output_image": "https://demonicscans.org/images/items/1757934345_conventrated_orc_spear.webp",
+      "attack": 70,
+      "defense": 0,
+      "description": "The Emerald Spear, once radiant with tranquil power, has been bathed in the fury of fallen Orc Chiefs. The weapon’s shaft now glows a deep crimson under its emerald sheen, and faint whispers of war-cries echo when it strikes. This spear thirsts for battle, feeding on the rage that forged it.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Emerald Essence Spear",
+          "need": 2,
+          "have": 4,
+          "image": "https://demonicscans.org/images/items/1755291177_aaaa.webp"
+        },
+        {
+          "name": "Concentrated Orc Essence",
+          "need": 2,
+          "have": 2,
+          "image": "https://demonicscans.org/images/items/1757933290_conventrated_orc_energy.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 12,
+      "output_name": "Scalescourge",
+      "output_image": "https://demonicscans.org/images/items/1756355094_compressed_Scalescourge.webp",
+      "attack": 100,
+      "defense": 0,
+      "description": "Scalescourge is no mere sword, it is a curse made steel. Forged from trollish black iron and quenched in rivers of reptilian blood, its jagged edge is carved with runes that blaze in crimson fire. With every Lizardman slain, the blade hums with hunger, its aura flaring like burning blood under the moonlight. To the scaled, its name is whispered only as doom.",
+      "power": "10% Extra Damage To Monsters,+ Another 10% Against Dragons",
+      "ingredients": [
+        {
+          "name": "Troll Blood Essence",
+          "need": 20,
+          "have": 1,
+          "image": "https://demonicscans.org/images/items/1756326642_compressed_troll_blood.webp"
+        },
+        {
+          "name": "Lizzardmen blood",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756334788_compressed_lizzard_blood.webp"
+        },
+        {
+          "name": "Lizardman Scales",
+          "need": 100,
+          "have": 264,
+          "image": "https://demonicscans.org/images/items/1756334689_compressed_lizzardmen_scales.webp"
+        },
+        {
+          "name": "Trollish Iron",
+          "need": 20,
+          "have": 5,
+          "image": "https://demonicscans.org/images/items/1756340648_compressed_troll_iron.webp"
+        },
+        {
+          "name": "Lizardman Heart",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1756346474_compressed_lizzard_heart.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 11,
+      "output_name": "Fangbinder Amulet",
+      "output_image": "https://demonicscans.org/images/items/1756015402_fang_necklace.webp",
+      "attack": 25,
+      "defense": 0,
+      "description": "A necklace strung with sharpened orc fangs.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Orc Fang",
+          "need": 100,
+          "have": 791,
+          "image": "https://demonicscans.org/images/items/1755228671_0_2.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 2,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 10,
+      "output_name": "Emerald Warboots",
+      "output_image": "https://demonicscans.org/images/items/1755294582_0_2.webp",
+      "attack": 35,
+      "defense": 0,
+      "description": "Heavy copper-plated boots transformed into a gleaming emerald green through the infusion of goblin agility and orcish strength. Each step resonates with primal power, granting the wearer unmatched stability and driving force in battle. The ground seems to quake beneath their march, a warning to all who stand in their path.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Hobgoblin Copper boots",
+          "need": 5,
+          "have": 407,
+          "image": "https://demonicscans.org/images/items/1755235360_ddd.webp"
+        },
+        {
+          "name": "Goblin Essence",
+          "need": 5,
+          "have": 105,
+          "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 9,
+      "output_name": "Emerald Fistguards",
+      "output_image": "https://demonicscans.org/images/items/1755294264_kkkkkkkkk.webp",
+      "attack": 35,
+      "defense": 0,
+      "description": "Forged in the fires of hobgoblin discipline and infused with the chaotic vigor of goblins and the raw might of orcs, these gloves radiate a deep emerald glow. Copper plates turned verdant green reinforce the knuckles and forearms, channeling primal energy into every blow. Strikes land heavier, faster, and with a predatory precision that leaves enemies reeling.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Hobgoblin Copper Gloves",
+          "need": 5,
+          "have": 391,
+          "image": "https://demonicscans.org/images/items/1755235407_adada.webp"
+        },
+        {
+          "name": "Goblin Essence",
+          "need": 5,
+          "have": 105,
+          "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 8,
+      "output_name": "Emerald Legionplate",
+      "output_image": "https://demonicscans.org/images/items/1755293719_eeeeeaea.webp",
+      "attack": 35,
+      "defense": 0,
+      "description": "This imposing armor is the pinnacle of hobgoblin metallurgy, transformed by the infusion of goblin essence and orc essence into a deep, gleaming green. The plates hum faintly with primal energy, granting the wearer the cunning of goblins and the brute strength of orcs. Each strike it endures seems to feed its power, making its bearer an unyielding force on the battlefield.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Hobgoblin Copper Armor",
+          "need": 5,
+          "have": 404,
+          "image": "https://demonicscans.org/images/items/1755235164_dadad.webp"
+        },
+        {
+          "name": "Goblin Essence",
+          "need": 5,
+          "have": 105,
+          "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 7,
+      "output_name": "Emerald Warhelm",
+      "output_image": "https://demonicscans.org/images/items/1755293370_eeee.webp",
+      "attack": 35,
+      "defense": 0,
+      "description": "A rare helm born from the union of hobgoblin craftsmanship, goblin cunning, and orcish ferocity. Its once-bronze copper plating now gleams with a deep emerald hue, faintly pulsing with the mixed essences within. The wearer feels a surge of primal instinct and unwavering resolve, striking fear into foes with a single glance through its narrow, battle-hardened visor.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Hobgoblin Copper helmet",
+          "need": 5,
+          "have": 411,
+          "image": "https://demonicscans.org/images/items/1755235216_zzz.webp"
+        },
+        {
+          "name": "Goblin Essence",
+          "need": 5,
+          "have": 105,
+          "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    },
+    {
+      "recipe_id": 6,
+      "output_name": "Emerald Essence Spear",
+      "output_image": "https://demonicscans.org/images/items/1755291177_aaaa.webp",
+      "attack": 40,
+      "defense": 0,
+      "description": "A masterwork spear forged from the disciplined craftsmanship of the hobgoblin legions and infused with the wild energies of goblins and the raw fury of orcs. Its polished copper has turned a deep emerald green, glowing faintly with swirling primal essence. Light in the hand yet devastating in combat, each thrust delivers a surge of feral power capable of piercing the toughest armor.",
+      "power": "",
+      "ingredients": [
+        {
+          "name": "Hobgoblin Copper Spear",
+          "need": 5,
+          "have": 407,
+          "image": "https://demonicscans.org/images/items/1755235456_eee.webp"
+        },
+        {
+          "name": "Goblin Essence",
+          "need": 5,
+          "have": 105,
+          "image": "https://demonicscans.org/images/items/1755224465_Goblin Essence.webp"
+        },
+        {
+          "name": "Orc Essence",
+          "need": 5,
+          "have": 7,
+          "image": "https://demonicscans.org/images/items/1755228798_da.webp"
+        }
+      ]
+    }
+  ],
+  "best_sources": {
+    "Ashscript Boots": [
+      {
+        "monster": "Arcanecrest Hyena",
+        "monster_id": "106297541",
+        "drop_rate": "100%",
+        "dmg_required": 2500000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Runestag",
+        "monster_id": "106268821",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Sigilscale Viper",
+        "monster_id": "106288119",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      }
+    ],
+    "Ashscript Gloves": [
+      {
+        "monster": "Arcanefang Wolf",
+        "monster_id": "106248989",
+        "drop_rate": "100%",
+        "dmg_required": 2500000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Spellfurnace Lynx",
+        "monster_id": "106307916",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Hexpyre Crow",
+        "monster_id": "106288512",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      }
+    ],
+    "Ashscript Hood": [
+      {
+        "monster": "Arcaneback Bear",
+        "monster_id": "106262041",
+        "drop_rate": "100%",
+        "dmg_required": 2400000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Arcanehide Boar",
+        "monster_id": "106276625",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Arcanecrest Hyena",
+        "monster_id": "106297541",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      }
+    ],
+    "Ashscript Robe": [
+      {
+        "monster": "Hexpyre Crow",
+        "monster_id": "106288512",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Arcaneback Bear",
+        "monster_id": "106262041",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Arcanehide Boar",
+        "monster_id": "106276625",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      }
+    ],
+    "Ashscript Staff": [
+      {
+        "monster": "Runestag",
+        "monster_id": "106268821",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Spellfurnace Lynx",
+        "monster_id": "106307916",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "monster": "Sigilscale Viper",
+        "monster_id": "106288119",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      }
+    ],
+    "Draught of the Broken Limit": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 1000000000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Forbidden Crystal": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 2000000000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Forbidden Manuscript": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 3000000000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Hollow Star Core Dust": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 25000000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Lucid Memory Shard": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 10000000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Star-Split Glass Heart": [
+      {
+        "monster": "The Hollow Star Avatar",
+        "monster_id": "101536712",
+        "drop_rate": "100%",
+        "dmg_required": 7500000,
+        "rarity": "LEGENDARY"
+      }
+    ],
+    "Vaelith Sigil Fragment": [
+      {
+        "monster": "Hexpyre Crow",
+        "monster_id": "106288512",
+        "drop_rate": "45%",
+        "dmg_required": 2200000,
+        "rarity": "EPIC"
+      }
+    ]
+  }
+}

@@ -444,17 +444,80 @@ def parse_manga_links(html: str) -> list[str]:
     return links
 
 
+def _parse_stamina_value(desc: str, name: str) -> int:
+    """Return stamina restored per use, or 0 for full-refill potions.
+
+    "Refills 20 Stamina" → 20, "Refills 5000 Stamina(Or 50% max stamina)" → 5000,
+    "Fully Refills Your Stamina" → 0.
+    """
+    sv = re.search(r"Refills?\s+(\d+)\s*Stamina", desc, re.IGNORECASE)
+    if sv:
+        return int(sv.group(1))
+    if re.search(r"full(?:y)?\s+refills?", desc, re.IGNORECASE):
+        return 0
+    # Name-based fallback — Full Stamina Potion is a full refill
+    if re.search(r"\bfull\b", name, re.IGNORECASE):
+        return 0
+    return 0
+
+
 def parse_stamina_potions(html: str) -> list[StaminaPotion]:
-    """Parse stamina potions from the inventory page.
+    """Parse stamina potions from the inventory / battle drawer page.
 
-    Each slot has an info button with data-name/data-desc and a Use button with:
-        useItem(inv_id, item_type_id, 'Name', quantity)
+    Supports the current `.potion-card` layout (data-inv-id, data-item-id,
+    .potion-name, .potion-desc, .potion-qty-left) and falls back to the
+    legacy `.slot-box` + `useItem(...)` onclick format.
 
-    Returns potions sorted: small potions first (to conserve full potions).
+    Returns potions sorted: small partial potions first, large partial next,
+    full-refill potions last.
     """
     soup = BeautifulSoup(html, "html.parser")
     potions: list[StaminaPotion] = []
+    seen_inv_ids: set[str] = set()
 
+    # Current layout: .potion-card with data attributes
+    for card in soup.select(".potion-card"):
+        inv_id = card.get("data-inv-id", "")
+        item_id = card.get("data-item-id", "")
+        if not inv_id or not item_id:
+            continue
+
+        name_el = card.select_one(".potion-name span")
+        img = card.select_one("img")
+        name = (name_el.get_text(strip=True) if name_el else "") or (img.get("alt", "") if img else "")
+        if "stamina" not in name.lower():
+            continue
+
+        qty_el = card.select_one(".potion-qty-left")
+        try:
+            qty = int(qty_el.get_text(strip=True)) if qty_el else 0
+        except ValueError:
+            qty = 0
+        if qty <= 0:
+            # Fall back to the Use button's data-max attribute
+            btn = card.select_one(".potion-use-btn, button[data-max]")
+            if btn:
+                try:
+                    qty = int(btn.get("data-max", "0"))
+                except ValueError:
+                    qty = 0
+        if qty <= 0:
+            continue
+
+        desc_el = card.select_one(".potion-desc")
+        desc = desc_el.get_text(strip=True) if desc_el else ""
+
+        potions.append(StaminaPotion(
+            inv_id=inv_id,
+            item_type=item_id,
+            name=name,
+            quantity=qty,
+            desc=desc,
+            stamina_value=_parse_stamina_value(desc, name),
+        ))
+        seen_inv_ids.add(inv_id)
+
+    # Legacy layout: .slot-box with useItem(...) onclick
     for box in soup.select(".slot-box"):
         info_btn = box.select_one(".info-btn")
         if not info_btn:
@@ -462,7 +525,6 @@ def parse_stamina_potions(html: str) -> list[StaminaPotion]:
 
         name = info_btn.get("data-name", "")
         desc = info_btn.get("data-desc", "")
-
         if "stamina" not in name.lower():
             continue
 
@@ -475,26 +537,24 @@ def parse_stamina_potions(html: str) -> list[StaminaPotion]:
         if not m:
             continue
 
+        inv_id = m.group(1)
+        if inv_id in seen_inv_ids:
+            continue
         qty = int(m.group(4))
         if qty <= 0:
             continue
 
-        # Parse stamina restored: "Refills 20 Stamina" → 20, "Fully Refills" → 0
-        stam_val = 0
-        sv = re.search(r"Refills?\s+(\d+)\s+Stamina", desc, re.IGNORECASE)
-        if sv:
-            stam_val = int(sv.group(1))
-
         potions.append(StaminaPotion(
-            inv_id=m.group(1),
+            inv_id=inv_id,
             item_type=m.group(2),
             name=name,
             quantity=qty,
             desc=desc,
-            stamina_value=stam_val,
+            stamina_value=_parse_stamina_value(desc, name),
         ))
+        seen_inv_ids.add(inv_id)
 
-    # Small potions first, large potions next, full-refill potions last
+    # Small partial → large partial → full-refill last
     potions.sort(key=lambda p: (1, 0) if p.is_full else (0, p.stamina_value))
     return potions
 
@@ -673,6 +733,56 @@ def parse_monster_loot(html: str) -> tuple[str, list[LootItem]]:
         ))
 
     return monster_name, items
+
+
+def parse_collection_progress(html: str, collection_id: int) -> dict | None:
+    """Parse a single collection card from /collections.php.
+
+    Returns:
+      {
+        "id": int, "name": str, "reward": str,
+        "items": [{"name": str, "need": int, "have": int, "image": str}, ...]
+      }
+    or None if the card isn't found.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    card = soup.select_one(f'.card[data-col-id="{collection_id}"]')
+    if not card:
+        return None
+
+    title_el = card.select_one(".title")
+    name = title_el.get_text(strip=True) if title_el else ""
+    reward = ""
+    reward_el = card.select_one(".reward")
+    if reward_el:
+        reward = reward_el.get_text(" ", strip=True).replace("Reward:", "").strip()
+
+    items: list[dict] = []
+    for req in card.select(".req-item"):
+        nm_el = req.select_one("div[style*='font-weight:600']") or req.select_one("div > div")
+        if not nm_el:
+            continue
+        item_name = nm_el.get_text(strip=True)
+        muted = req.select_one(".muted")
+        need = have = 0
+        if muted:
+            text = muted.get_text(" ", strip=True)
+            nm = re.search(r"Need:\s*([\d,]+)", text)
+            if nm:
+                need = int(nm.group(1).replace(",", ""))
+            have_el = muted.select_one("span")
+            if have_el:
+                try:
+                    have = int(have_el.get_text(strip=True).replace(",", ""))
+                except ValueError:
+                    have = 0
+        img = req.select_one("img.req-img")
+        src = img.get("src", "") if img else ""
+        if src and not src.startswith("http"):
+            src = f"{BASE_URL}/{src.lstrip('/')}"
+        items.append({"name": item_name, "need": need, "have": have, "image": src})
+
+    return {"id": collection_id, "name": name, "reward": reward, "items": items}
 
 
 def parse_chapter_id(html: str) -> str | None:

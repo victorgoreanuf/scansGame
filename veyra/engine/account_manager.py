@@ -13,6 +13,11 @@ from veyra.engine.wave_farmer import FarmerState, worker
 from veyra.engine.pvp_fighter import PvPState, pvp_worker
 from veyra.engine.stat_allocator import StatAllocatorState, StatGoal, stat_allocator_worker
 from veyra.engine.quest_runner import QuestState, quest_worker
+from veyra.engine.collection_farmer import (
+    COLLECTION_PLANS,
+    CollectionState,
+    collection_worker,
+)
 
 
 logger = logging.getLogger("veyra.manager")
@@ -41,6 +46,9 @@ class AccountWorker:
     # Quest runner
     quest_state: QuestState = field(default_factory=QuestState)
     quest_task: asyncio.Task | None = None
+    # Collection farmer
+    collection_state: CollectionState = field(default_factory=CollectionState)
+    collection_task: asyncio.Task | None = None
 
 
 class AccountManager:
@@ -95,7 +103,7 @@ class AccountManager:
             return {}
         w = self._worker
         waves: dict[int, list[MonsterGroup]] = {}
-        for wn in [1, 2]:
+        for wn in [1, 2, 3]:
             w.state.log(f"Refreshing Wave {wn}...")
             try:
                 grouped = await w.game.fetch_wave_grouped(wn)
@@ -124,6 +132,7 @@ class AccountManager:
             self._worker.pvp_state.stop()
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
+            self._worker.collection_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
             if self._worker.pvp_task:
@@ -134,6 +143,8 @@ class AccountManager:
                 self._worker.stat_task.cancel()
             if self._worker.quest_task:
                 self._worker.quest_task.cancel()
+            if self._worker.collection_task:
+                self._worker.collection_task.cancel()
             await self._worker.game.close()
 
         game = GameClient()
@@ -149,7 +160,7 @@ class AccountManager:
             return False, {}
 
         waves: dict[int, list[MonsterGroup]] = {}
-        for wn in [1, 2]:
+        for wn in [1, 2, 3]:
             w.state.log(f"Fetching Wave {wn}...")
             try:
                 grouped = await game.fetch_wave_grouped(wn)
@@ -174,6 +185,8 @@ class AccountManager:
         if not self._worker or not self._worker.connected:
             return False
         if self._worker.task and not self._worker.task.done():
+            return False
+        if self.is_collection_running:
             return False
 
         w = self._worker
@@ -341,8 +354,8 @@ class AccountManager:
         """Start the quest runner. Mutually exclusive with wave farmer."""
         if not self._worker or not self._worker.connected:
             return False
-        # Block if wave farmer is running
-        if self.is_running:
+        # Block if wave farmer or collection farmer is running
+        if self.is_running or self.is_collection_running:
             return False
         if self._worker.quest_task and not self._worker.quest_task.done():
             return False
@@ -380,6 +393,76 @@ class AccountManager:
             "fallback": s.farming_fallback,
         }
 
+    # ── Collection Farmer ─────────────────────────────────────────────────────
+
+    @property
+    def is_collection_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.collection_task and self._worker.collection_task.done():
+            self._worker.collection_state.running = False
+            return False
+        return self._worker.collection_state.running
+
+    async def start_collection(self, collection_id: int, stamina_label: str = "10 Stamina") -> tuple[bool, str]:
+        """Start farming ingredients for a collection. Mutually exclusive with wave farmer + quests."""
+        if not self._worker or not self._worker.connected:
+            return False, "Not connected"
+        if collection_id not in COLLECTION_PLANS:
+            return False, f"Unknown collection id {collection_id}"
+        if self.is_running:
+            return False, "Wave farmer is running — stop it first"
+        if self.is_quest_running:
+            return False, "Quest runner is running — stop it first"
+        if self._worker.collection_task and not self._worker.collection_task.done():
+            return False, "Collection farmer is already running"
+
+        w = self._worker
+        w.collection_state = CollectionState()
+        w.collection_state.collection_id = collection_id
+        w.collection_state.collection_name = COLLECTION_PLANS[collection_id]["name"]
+        w.collection_state.stamina_label = stamina_label
+        w.collection_state.running = True
+        w.collection_state.stats.started_at = time.time()
+        w.limiter.reset()
+
+        w.collection_task = asyncio.create_task(
+            collection_worker(w.game, w.collection_state, w.limiter)
+        )
+        return True, ""
+
+    def stop_collection(self) -> None:
+        if self._worker and self._worker.collection_state.running:
+            self._worker.collection_state.stop()
+            self._worker.collection_state.log("Stopping...")
+
+    def get_collection_state(self) -> CollectionState | None:
+        if self._worker:
+            return self._worker.collection_state
+        return None
+
+    def get_collection_status(self) -> dict:
+        if not self._worker:
+            return {"running": False, "collection_id": 0, "collection_name": "",
+                    "current_item": "", "progress": {}, "stats": {}}
+        s = self._worker.collection_state
+        stats = s.stats
+        return {
+            "running": self.is_collection_running,
+            "collection_id": s.collection_id,
+            "collection_name": s.collection_name,
+            "current_item": s.current_item,
+            "progress": s.progress,
+            "stats": {
+                "killed": stats.killed,
+                "damage": stats.damage,
+                "stamina_spent": stats.stamina_spent,
+                "looted": stats.looted,
+                "monsters_attacked": stats.monsters_attacked,
+                "started_at": stats.started_at,
+            },
+        }
+
     def get_state(self) -> FarmerState | None:
         if self._worker:
             return self._worker.state
@@ -404,6 +487,7 @@ class AccountManager:
             self._worker.pvp_state.stop()
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
+            self._worker.collection_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
                 try:
@@ -432,6 +516,12 @@ class AccountManager:
                 self._worker.quest_task.cancel()
                 try:
                     await self._worker.quest_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.collection_task:
+                self._worker.collection_task.cancel()
+                try:
+                    await self._worker.collection_task
                 except (asyncio.CancelledError, Exception):
                     pass
             await self._worker.game.close()

@@ -176,6 +176,8 @@ async def status():
         "stat_stats": manager.get_stat_stats(),
         "quest_running": manager.is_quest_running,
         "quest_stats": manager.get_quest_stats(),
+        "collection_running": manager.is_collection_running,
+        "collection_status": manager.get_collection_status(),
     }
 
 
@@ -240,6 +242,7 @@ async def logs():
         pvp_last_id = 0
         stat_last_id = 0
         quest_last_id = 0
+        col_last_id = 0
         while True:
             state = manager.get_state()
             if state:
@@ -270,6 +273,14 @@ async def logs():
                     quest_last_id = new[-1]["id"]
                 for entry in new:
                     tagged = {"id": entry["id"], "msg": f"[Quest] {entry['msg']}"}
+                    yield f"data: {json.dumps(tagged)}\n\n"
+            col_state = manager.get_collection_state()
+            if col_state:
+                new = [l for l in col_state.logs if l["id"] > col_last_id]
+                if new:
+                    col_last_id = new[-1]["id"]
+                for entry in new:
+                    tagged = {"id": entry["id"], "msg": f"[Collection] {entry['msg']}"}
                     yield f"data: {json.dumps(tagged)}\n\n"
             await asyncio.sleep(1)
 
@@ -449,6 +460,62 @@ async def quest_status():
         "running": manager.is_quest_running,
         "stats": manager.get_quest_stats(),
     }
+
+
+# ── Collection Farmer ────────────────────────────────────────────────────────
+
+
+@router.get("/collections/plan")
+async def collections_plan():
+    """Return the plannable collections (name, reward, items, best monster)."""
+    from veyra.engine.collection_farmer import plannable_collections
+    return {"ok": True, "collections": plannable_collections()}
+
+
+@router.post("/collections/start")
+async def collections_start(request: Request):
+    """Start farming a collection. Body: {"collection_id": 17, "stamina": "200 Stamina"}"""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    col_id = int(body.get("collection_id", 0))
+    stamina = body.get("stamina", "10 Stamina")
+    ok, err = await manager.start_collection(col_id, stamina)
+    return {"ok": ok, "error": err} if not ok else {"ok": True}
+
+
+@router.post("/collections/stop")
+async def collections_stop():
+    manager.stop_collection()
+    return {"ok": True}
+
+
+@router.get("/collections/status")
+async def collections_status():
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    # Return the cached state always (ok even when not running — lets the UI
+    # render last-known progress after a stop).
+    return {"ok": True, **manager.get_collection_status()}
+
+
+@router.post("/collections/refresh")
+async def collections_refresh():
+    """Force an immediate poll of /collections.php for the active collection."""
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    w = manager.worker
+    if not w or not w.collection_state.collection_id:
+        return {"ok": False, "error": "No collection selected"}
+    try:
+        from veyra.engine.collection_farmer import _poll_progress
+        ok = await _poll_progress(w.game, w.collection_state)
+        if not ok:
+            return {"ok": False, "error": "Poll failed"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    return {"ok": True, **manager.get_collection_status()}
 
 
 @router.delete("/profiles")

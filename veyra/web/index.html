@@ -56,150 +56,163 @@
     </div>
   </header>
 
+  <nav class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="farming" onclick="switchTab('farming')">Farming</button>
+      <button class="tab-btn" data-tab="guild" onclick="switchTab('guild')">Adventure Guild</button>
+      <button class="tab-btn" data-tab="events" onclick="switchTab('events')">Events</button>
+      <button class="tab-btn" data-tab="logs" onclick="switchTab('logs')">Logs</button>
+    </div>
+  </nav>
+
   <main class="content">
-    <div class="panel-section">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Profiles</span>
-        </div>
-        <div class="panel-body">
-          <select id="profileSelect" class="f-profile">
-            <option value="">Select profile...</option>
-          </select>
-          <div class="panel-btns">
-            <button class="btn btn-xs btn-ghost" onclick="loadProfile()">Load</button>
-            <button class="btn btn-xs btn-accent" onclick="saveProfile()">Save</button>
-            <button class="btn btn-xs btn-ghost btn-danger" onclick="deleteProfile()">Del</button>
+    <div class="tab-page" id="tab-farming">
+      <div class="panel-section">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Profiles</span>
           </div>
-        </div>
-      </div>
-
-      <div class="panel" id="pvpSection">
-        <div class="panel-header">
-          <span class="panel-title">
-            Solo PvP
-            <span class="pvp-badge off" id="pvpBadge">OFF</span>
-          </span>
-        </div>
-        <div class="panel-body">
-          <span class="pvp-stat" id="pvpStat"></span>
-          <div class="pvp-btns">
-            <button class="btn btn-sm btn-pvp" id="pvpStartBtn" onclick="startPvP()">Start PvP</button>
-            <button class="btn btn-sm btn-red" id="pvpStopBtn" onclick="stopPvP()" style="display:none">Stop PvP</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel panel-stat" id="statSection">
-        <div class="panel-header">
-          <span class="panel-title">
-            Auto Stats
-            <span class="pvp-badge off" id="statBadge">OFF</span>
-          </span>
-        </div>
-        <div class="stat-current" id="statDisplay"></div>
-        <div class="stat-plan" id="statPlanUI">
-          <div class="stat-goals" id="statGoals"></div>
-          <button class="stat-add-btn" id="statAddGoalBtn" onclick="addStatGoal()">+ Add priority goal</button>
-          <div class="stat-default-row">
-            <span class="stat-default-label">Remaining points go to</span>
-            <select id="statDefaultStat" class="stat-select">
-              <option value="stamina" selected>Stamina</option>
-              <option value="attack">Attack</option>
-              <option value="defense">Defense</option>
+          <div class="panel-body">
+            <select id="profileSelect" class="f-profile">
+              <option value="">Select profile...</option>
             </select>
+            <div class="panel-btns">
+              <button class="btn btn-xs btn-ghost" onclick="loadProfile()">Load</button>
+              <button class="btn btn-xs btn-accent" onclick="saveProfile()">Save</button>
+              <button class="btn btn-xs btn-ghost btn-danger" onclick="deleteProfile()">Del</button>
+            </div>
           </div>
         </div>
-        <div class="stat-actions">
-          <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start Allocating</button>
-          <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
+
+        <div class="panel" id="pvpSection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Solo PvP
+              <span class="pvp-badge off" id="pvpBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body">
+            <span class="pvp-stat" id="pvpStat"></span>
+            <div class="pvp-btns">
+              <button class="btn btn-sm btn-pvp" id="pvpStartBtn" onclick="startPvP()">Start PvP</button>
+              <button class="btn btn-sm btn-red" id="pvpStopBtn" onclick="stopPvP()" style="display:none">Stop PvP</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-stat" id="statSection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Auto Stats
+              <span class="pvp-badge off" id="statBadge">OFF</span>
+            </span>
+          </div>
+          <div class="stat-current" id="statDisplay"></div>
+          <div class="stat-plan" id="statPlanUI">
+            <div class="stat-goals" id="statGoals"></div>
+            <button class="stat-add-btn" id="statAddGoalBtn" onclick="addStatGoal()">+ Add priority goal</button>
+            <div class="stat-default-row">
+              <span class="stat-default-label">Remaining points go to</span>
+              <select id="statDefaultStat" class="stat-select">
+                <option value="stamina" selected>Stamina</option>
+                <option value="attack">Attack</option>
+                <option value="defense">Defense</option>
+              </select>
+            </div>
+          </div>
+          <div class="stat-actions">
+            <button class="btn btn-sm btn-pvp" id="statStartBtn" onclick="startStats()">Start Allocating</button>
+            <button class="btn btn-sm btn-red" id="statStopBtn" onclick="stopStats()" style="display:none">Stop</button>
+          </div>
         </div>
       </div>
 
-      <div class="panel panel-quest" id="questSection">
-        <div class="panel-header">
-          <span class="panel-title">
-            Quests
-            <span class="pvp-badge off" id="questBadge">OFF</span>
-          </span>
+      <div class="dashboard" id="dashboard">
+        <div class="stat-card" data-accent="red">
+          <div class="stat-val" id="stKilled">0</div>
+          <div class="stat-lbl">Killed</div>
         </div>
-        <div class="panel-body quest-panel-body">
-          <span class="quest-info" id="questDisplay"></span>
-          <div class="quest-controls">
-            <button class="btn btn-sm btn-quest" id="questStartBtn" onclick="startQuest()">Start Quests</button>
-            <button class="btn btn-sm btn-red" id="questStopBtn" onclick="stopQuest()" style="display:none">Stop</button>
+        <div class="stat-card" data-accent="purple">
+          <div class="stat-val" id="stDmg">0</div>
+          <div class="stat-lbl">Damage</div>
+        </div>
+        <div class="stat-card" data-accent="green">
+          <div class="stat-val" id="stStam">0</div>
+          <div class="stat-lbl">Stamina</div>
+        </div>
+        <div class="stat-card" data-accent="amber">
+          <div class="stat-val" id="stLooted">0</div>
+          <div class="stat-lbl">Looted</div>
+        </div>
+        <div class="stat-card" data-accent="blue">
+          <div class="stat-val" id="stTime">00:00</div>
+          <div class="stat-lbl">Uptime</div>
+        </div>
+      </div>
+
+      <section class="wave-section">
+        <div class="section-header">
+          <div class="wave-pills" id="wavePills"></div>
+          <div class="section-actions">
+            <button class="btn btn-xs btn-ghost" onclick="toggleCurrentWave(true)">All On</button>
+            <button class="btn btn-xs btn-ghost" onclick="toggleCurrentWave(false)">All Off</button>
+          </div>
+        </div>
+        <div class="wave-count-row" id="waveCountRow"></div>
+        <div class="waves-container" id="wavesContainer">
+          <div class="empty" id="wavesEmpty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-page" id="tab-guild" hidden>
+      <div class="panel-section">
+        <div class="panel panel-quest" id="questSection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Quests
+              <span class="pvp-badge off" id="questBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body quest-panel-body">
+            <span class="quest-info" id="questDisplay"></span>
+            <div class="quest-controls">
+              <button class="btn btn-sm btn-quest" id="questStartBtn" onclick="startQuest()">Start Quests</button>
+              <button class="btn btn-sm btn-red" id="questStopBtn" onclick="stopQuest()" style="display:none">Stop</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="dashboard" id="dashboard">
-      <div class="stat-card" data-accent="red">
-        <div class="stat-val" id="stKilled">0</div>
-        <div class="stat-lbl">Killed</div>
+    <div class="tab-page" id="tab-events" hidden>
+      <div id="eventsGridView">
+        <div class="section-header">
+          <div class="section-title"><span>Core Activities</span></div>
+        </div>
+        <div class="events-grid" id="eventsGrid"></div>
       </div>
-      <div class="stat-card" data-accent="purple">
-        <div class="stat-val" id="stDmg">0</div>
-        <div class="stat-lbl">Damage</div>
-      </div>
-      <div class="stat-card" data-accent="green">
-        <div class="stat-val" id="stStam">0</div>
-        <div class="stat-lbl">Stamina</div>
-      </div>
-      <div class="stat-card" data-accent="amber">
-        <div class="stat-val" id="stLooted">0</div>
-        <div class="stat-lbl">Looted</div>
-      </div>
-      <div class="stat-card" data-accent="blue">
-        <div class="stat-val" id="stTime">00:00</div>
-        <div class="stat-lbl">Uptime</div>
+      <div id="eventsDetailView" hidden>
+        <button class="btn btn-ghost btn-sm event-back-btn" onclick="closeEvent()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back to Events
+        </button>
+        <div id="eventDetailContent"></div>
       </div>
     </div>
 
-    <section class="wave-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="wave-num w1">W1</span>
-          <span>Wave 1</span>
-          <span class="wave-count" id="w1badge"></span>
+    <div class="tab-page" id="tab-logs" hidden>
+      <section class="log-section" id="logSection">
+        <div class="log-header">
+          <span class="log-title">Activity Log</span>
+          <button class="btn btn-xs btn-ghost" onclick="clearLog()">Clear</button>
         </div>
-        <div class="section-actions">
-          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w1grid',true)">All On</button>
-          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w1grid',false)">All Off</button>
-        </div>
-      </div>
-      <div class="monster-grid" id="w1grid">
-        <div class="empty" id="w1empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
-      </div>
-    </section>
-
-    <section class="wave-section">
-      <div class="section-header">
-        <div class="section-title">
-          <span class="wave-num w2">W2</span>
-          <span>Wave 2</span>
-          <span class="wave-count" id="w2badge"></span>
-        </div>
-        <div class="section-actions">
-          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w2grid',true)">All On</button>
-          <button class="btn btn-xs btn-ghost" onclick="toggleWave('w2grid',false)">All Off</button>
-        </div>
-      </div>
-      <div class="monster-grid" id="w2grid">
-        <div class="empty" id="w2empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div>Connect to load monsters</div></div>
-      </div>
-    </section>
-
-    <section class="log-section">
-      <div class="log-header">
-        <span class="log-title">Activity Log</span>
-        <button class="btn btn-xs btn-ghost" onclick="clearLog()">Clear</button>
-      </div>
-      <div class="log-box" id="logBox"></div>
-    </section>
+        <div class="log-box" id="logBox"></div>
+      </section>
+    </div>
   </main>
 
-  <div class="action-bar">
+  <div class="action-bar" id="actionBar">
     <button class="btn btn-start" id="startBtn" onclick="start()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
       Start Farming

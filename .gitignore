@@ -8,3 +8,4 @@ dist/
 .venv/
 logs/
 debug_*.txt
+debug_*.html

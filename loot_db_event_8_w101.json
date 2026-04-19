@@ -1,0 +1,720 @@
+{
+  "the hollow star avatar": {
+    "monster_name": "The Hollow Star Avatar",
+    "scraped_from_id": "101536712",
+    "items": [
+      {
+        "name": "Arcane Treat XL",
+        "description": "An extremely rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 100000 points.",
+        "image": "https://demonicscans.org/images/items/1756618311_compressed_XL_fruit.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Draught of the Broken Limit",
+        "description": "A viscous concoction distilled from saturation remains and doctrinal reagents.\r\nIt does not empower the body,it destroys the mechanism that decides when growth must stop.",
+        "image": "https://demonicscans.org/images/items/1766355048_Draught_of_the_Broken_Limit.webp",
+        "drop_rate": "100%",
+        "dmg_required": 1000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Epic Draconic Soul Crystal",
+        "description": "A jagged, pulsating crystal harvested from the heart-stone of a fallen drake. It hums with a low, rhythmic heat that makes weapon steel glow a faint cherry-red. While it grants immense power, used to increase the stats of equipements.",
+        "image": "https://demonicscans.org/images/items/1772127221_dad.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Epic Draconic Soul Crystal",
+        "description": "A jagged, pulsating crystal harvested from the heart-stone of a fallen drake. It hums with a low, rhythmic heat that makes weapon steel glow a faint cherry-red. While it grants immense power, used to increase the stats of equipements.",
+        "image": "https://demonicscans.org/images/items/1772127221_dad.webp",
+        "drop_rate": "100%",
+        "dmg_required": 15000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Forbidden Crystal",
+        "description": "Preserved Forbidden arcane remains embedded in black crystal",
+        "image": "https://demonicscans.org/images/items/1766354964_forbidden_black_stone.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Forbidden Manuscript",
+        "description": "A proscribed text defining how arcane intake may continue after lawful limits collapse.",
+        "image": "https://demonicscans.org/images/items/1766354738_forbidden_manuscript.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Hollow Star Core Dust",
+        "description": "A residue of impossible weight taken from the outer shell of the Hollow Star Avatar.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Hollow_Star_Core_Dust.webp",
+        "drop_rate": "100%",
+        "dmg_required": 25000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Lucid Memory Shard",
+        "description": "A bright shard of memory left untouched by distortion, grief, or false testimony.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Lucid_Memory_Shard.webp",
+        "drop_rate": "100%",
+        "dmg_required": 10000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Lucid Memory Shard",
+        "description": "A bright shard of memory left untouched by distortion, grief, or false testimony.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Lucid_Memory_Shard.webp",
+        "drop_rate": "100%",
+        "dmg_required": 55000000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Star-Split Glass Heart",
+        "description": "The refracted heart-crystal of Astramaw, humming with broken observatory constellations.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Star_Split_Glass_Heart.webp",
+        "drop_rate": "100%",
+        "dmg_required": 7500000,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "name": "Large Stamina Potion",
+        "description": "A magic Potion that Refills 5000 Stamina(Or 50% max stamina).",
+        "image": "https://demonicscans.org/images/items/1768627855_stamina_xl.webp",
+        "drop_rate": "100%",
+        "dmg_required": 300000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Large Stamina Potion",
+        "description": "A magic Potion that Refills 5000 Stamina(Or 50% max stamina).",
+        "image": "https://demonicscans.org/images/items/1768627855_stamina_xl.webp",
+        "drop_rate": "100%",
+        "dmg_required": 1000000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Large Stamina Potion",
+        "description": "A magic Potion that Refills 5000 Stamina(Or 50% max stamina).",
+        "image": "https://demonicscans.org/images/items/1768627855_stamina_xl.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000000,
+        "rarity": "EPIC"
+      }
+    ]
+  },
+  "arcaneback bear": {
+    "monster_name": "Arcaneback Bear",
+    "scraped_from_id": "106262041",
+    "items": [
+      {
+        "name": "Broken Oath Rune",
+        "description": "A snapped ward-rune taken from old covenant circles that failed under Hollow Star pressure.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Broken_Oath_Rune.webp",
+        "drop_rate": "65%",
+        "dmg_required": 1200000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Hood",
+        "description": "A soot-lined hood woven for Emberfall apprentices assigned to unstable ritual sites. The rune-stitching still glows when magic pressure rises.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2400000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Robe",
+        "description": "A layered mage robe reinforced with sigil-cloth and fire-dulled thread. It was made to survive long nights in the observatory ruins.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "arcanefang wolf": {
+    "monster_name": "Arcanefang Wolf",
+    "scraped_from_id": "106248989",
+    "items": [
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Gloves",
+        "description": "Arcane handling gloves worn by Emberfall staff who worked with hot lenses, volatile runes, and ritual glass.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Burnt Spellpage",
+        "description": "A half-charred academy page covered in incomplete glyphs and ash-stained equations.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Burnt_Spellpage.webp",
+        "drop_rate": "80%",
+        "dmg_required": 1000000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "arcanecrest hyena": {
+    "monster_name": "Arcanecrest Hyena",
+    "scraped_from_id": "106297541",
+    "items": [
+      {
+        "name": "Memory Ash",
+        "description": "Fine silver-gray ash left behind by memory echoes, familiar traces, and grief-burned magic.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Memory_Ash.webp",
+        "drop_rate": "65%",
+        "dmg_required": 1500000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Boots",
+        "description": "Wardline boots balanced for movement across ash, broken stone, and half-finished ritual circles.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Hood",
+        "description": "A soot-lined hood woven for Emberfall apprentices assigned to unstable ritual sites. The rune-stitching still glows when magic pressure rises.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "arcanehide boar": {
+    "monster_name": "Arcanehide Boar",
+    "scraped_from_id": "106276625",
+    "items": [
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Hood",
+        "description": "A soot-lined hood woven for Emberfall apprentices assigned to unstable ritual sites. The rune-stitching still glows when magic pressure rises.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Hood.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Robe",
+        "description": "A layered mage robe reinforced with sigil-cloth and fire-dulled thread. It was made to survive long nights in the observatory ruins.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Cracked Mana Lens",
+        "description": "A shattered lens once fitted into an Emberfall focus array. It still catches traces of spelllight.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Cracked_Mana_Lens.webp",
+        "drop_rate": "45%",
+        "dmg_required": 1800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Burnt Spellpage",
+        "description": "A half-charred academy page covered in incomplete glyphs and ash-stained equations.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Burnt_Spellpage.webp",
+        "drop_rate": "70%",
+        "dmg_required": 1200000,
+        "rarity": "COMMON"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "runestag": {
+    "monster_name": "Runestag",
+    "scraped_from_id": "106268821",
+    "items": [
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Boots",
+        "description": "Wardline boots balanced for movement across ash, broken stone, and half-finished ritual circles.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Staff",
+        "description": "A practical Emberfall casting staff etched with academy ash-script. It was built for repetition, discipline, and relentless spellwork on the wardline.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Cracked Mana Lens",
+        "description": "A shattered lens once fitted into an Emberfall focus array. It still catches traces of spelllight.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Cracked_Mana_Lens.webp",
+        "drop_rate": "40%",
+        "dmg_required": 1900000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Starglass Shard",
+        "description": "A razor-edged fragment of observatory glass touched by unstable celestial fire.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Starglass_Shard.webp",
+        "drop_rate": "75%",
+        "dmg_required": 1500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "spellfurnace lynx": {
+    "monster_name": "Spellfurnace Lynx",
+    "scraped_from_id": "106307916",
+    "items": [
+      {
+        "name": "Ward Thread",
+        "description": "A spool of luminous ward-thread used to anchor barrier circles and ritual arrays.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ward_Thread.webp",
+        "drop_rate": "60%",
+        "dmg_required": 2000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Gloves",
+        "description": "Arcane handling gloves worn by Emberfall staff who worked with hot lenses, volatile runes, and ritual glass.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Staff",
+        "description": "A practical Emberfall casting staff etched with academy ash-script. It was built for repetition, discipline, and relentless spellwork on the wardline.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Observatory Gear",
+        "description": "A brass and starglass mechanism taken from ruined Emberfall instruments.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Observatory_Gear.webp",
+        "drop_rate": "65%",
+        "dmg_required": 1800000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "hexpyre crow": {
+    "monster_name": "Hexpyre Crow",
+    "scraped_from_id": "106288512",
+    "items": [
+      {
+        "name": "Vaelith Sigil Fragment",
+        "description": "A broken sigil marked with Vaeliths personal ward signature.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Vaelith_Sigil_Fragment.webp",
+        "drop_rate": "45%",
+        "dmg_required": 2200000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Gloves",
+        "description": "Arcane handling gloves worn by Emberfall staff who worked with hot lenses, volatile runes, and ritual glass.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Gloves.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Robe",
+        "description": "A layered mage robe reinforced with sigil-cloth and fire-dulled thread. It was made to survive long nights in the observatory ruins.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Robe.webp",
+        "drop_rate": "100%",
+        "dmg_required": 2600000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Black Ink Vial",
+        "description": "A vial of archive ink so dense it seems to drink light.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Black_Ink_Vial.webp",
+        "drop_rate": "60%",
+        "dmg_required": 1700000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Sealed Page",
+        "description": "A document bound in warded ash-wax, pulled from the archive vault without fully breaking its seal.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Sealed_Page.webp",
+        "drop_rate": "80%",
+        "dmg_required": 1300000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  },
+  "sigilscale viper": {
+    "monster_name": "Sigilscale Viper",
+    "scraped_from_id": "106288119",
+    "items": [
+      {
+        "name": "Archive Ember Seal",
+        "description": "A fused seal of wax, ash, and observatory ember used to bind the highest order records.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Archive_Ember_Seal.webp",
+        "drop_rate": "60%",
+        "dmg_required": 2000000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Sister's Ribbon Thread",
+        "description": "A single preserved thread from Seris ribbon, carrying the warmth of a life remembered.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Sister_Ribbon_Thread.webp",
+        "drop_rate": "35%",
+        "dmg_required": 2200000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Ward Thread",
+        "description": "A spool of luminous ward-thread used to anchor barrier circles and ritual arrays.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ward_Thread.webp",
+        "drop_rate": "70%",
+        "dmg_required": 1800000,
+        "rarity": "EPIC"
+      },
+      {
+        "name": "Arcane Treat S",
+        "description": "A rare and glowing delicacy crafted from enchanted ingredients that increases your pet's exp by 300 points.",
+        "image": "https://demonicscans.org/images/items/1755468603_eeea.webp",
+        "drop_rate": "3%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Boots",
+        "description": "Wardline boots balanced for movement across ash, broken stone, and half-finished ritual circles.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/Ashscript_Boots.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Ashscript Staff",
+        "description": "A practical Emberfall casting staff etched with academy ash-script. It was built for repetition, discipline, and relentless spellwork on the wardline.",
+        "image": "https://demonicscans.org/images/events/Emberfall/items/ashscript_staff.webp",
+        "drop_rate": "100%",
+        "dmg_required": 3000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Full Hp Potion",
+        "description": "A magic Potion that Heals You To Full Hp.",
+        "image": "https://demonicscans.org/images/items/1760475550_hp_dungeon_portion.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Mana Potion S",
+        "description": "A magic Potion that Refills 20 Mana.",
+        "image": "https://demonicscans.org/images/items/1764082355_-a2e1-05414364e2f1_3.webp",
+        "drop_rate": "2%",
+        "dmg_required": 3500000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Small Stamina Potion",
+        "description": "A magic Potion that Refills 20 Stamina.",
+        "image": "https://demonicscans.org/images/items/1755316144_small_stamina_potion.webp",
+        "drop_rate": "5%",
+        "dmg_required": 5000000,
+        "rarity": "RARE"
+      },
+      {
+        "name": "Emberfall Token",
+        "description": "A Very rare token from Emberfall that can be used at the Ember Gacha Machine",
+        "image": "https://demonicscans.org/images/items/1771811848_8f20-189118b10725_2.webp",
+        "drop_rate": "60%",
+        "dmg_required": 3000000,
+        "rarity": "COMMON"
+      }
+    ]
+  }
+}

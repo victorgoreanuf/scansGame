@@ -36,7 +36,13 @@ WAVE_MAP: dict[int, str] = {
     2: f"{BASE_URL}/active_wave.php?gate=3&wave=5",
     3: f"{BASE_URL}/active_wave.php?gate=3&wave=8",
     4: f"{BASE_URL}/active_wave.php?gate=5&wave=9",
+    # Event waves — keyed by the in-game wave number (non-overlapping with gates)
+    101: f"{BASE_URL}/active_wave.php?event=8&wave=101",
 }
+
+# Collections / Blacksmith
+COLLECTIONS_URL = f"{BASE_URL}/collections.php"
+BLACKSMITH_URL = f"{BASE_URL}/blacksmith.php"
 
 STAMINA_OPTIONS = [
     {"label": "1 Stamina", "cost": 1, "skill_id": "0"},

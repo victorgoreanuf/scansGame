@@ -382,6 +382,15 @@ async def worker(
                 else:
                     skipped_hp = 0
 
+                # Skip mobs we've already damaged past the goal — nothing more
+                # to earn from them until they respawn.
+                skipped_done = 0
+                if t.damage_goal > 0:
+                    before_j = len(joined) + len(new_monsters)
+                    joined = [m for m in joined if m.your_dmg < t.damage_goal]
+                    new_monsters = [m for m in new_monsters if m.your_dmg < t.damage_goal]
+                    skipped_done = before_j - (len(joined) + len(new_monsters))
+
                 # Combine: joined first (continue fighting), then new
                 fresh = joined + sorted(new_monsters, key=lambda x: x.current_hp, reverse=True)
 
@@ -393,6 +402,8 @@ async def worker(
                 state.log(f"[{ti}/{len(targets)}] {t.name}  ({len(new_monsters)} new, {len(joined)} joined, {mode})")
                 if skipped_hp:
                     state.log(f"  Skipped {skipped_hp} (HP < {t.damage_goal:,})")
+                if skipped_done:
+                    state.log(f"  Skipped {skipped_done} (already ≥ {t.damage_goal:,} dmg dealt)")
 
                 for ii, inst in enumerate(fresh, 1):
                     if not state.running:
