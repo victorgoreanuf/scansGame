@@ -174,13 +174,24 @@ def _extract_hp(card: Tag) -> int:
 
 
 def _extract_your_damage(card: Tag) -> int:
+    # Primary: data-userdmg is rendered on every card (joined or not).
+    # #yourDamageValue and the "DMG" chip only exist for actively-joined cards,
+    # so on re-fetch after meeting the loot threshold they return 0 and the
+    # farmer mistakenly re-attacks.
+    raw = card.get("data-userdmg")
+    if raw:
+        try:
+            return int(str(raw).replace(",", ""))
+        except ValueError:
+            pass
     dmg_span = card.select_one("[id='yourDamageValue']")
     if dmg_span:
         nums = re.findall(r"[\d,]+", dmg_span.get_text())
         if nums:
             return int(nums[0].replace(",", ""))
     for chip in card.select(".chip"):
-        if "DMG" in chip.get_text().upper():
+        text_upper = chip.get_text().upper()
+        if "DMG" in text_upper or "YOU" in text_upper:
             nums = re.findall(r"[\d,]+", chip.get_text())
             if nums:
                 return int(nums[0].replace(",", ""))

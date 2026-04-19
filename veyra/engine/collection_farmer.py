@@ -148,20 +148,39 @@ async def _poll_progress(game: GameClient, state: CollectionState) -> bool:
     return True
 
 
-def _pick_next_item(state: CollectionState) -> str | None:
-    """Return the farmable item with the largest absolute deficit, or None."""
-    best_name = None
-    best_deficit = 0
-    for name, p in state.progress.items():
-        deficit = p["need"] - p["have"]
-        if deficit <= 0:
-            continue
-        if name not in BEST_SOURCES:
-            continue  # e.g. boss drop — user-farmed
-        if deficit > best_deficit:
-            best_deficit = deficit
-            best_name = name
-    return best_name
+def _farmable_items_sorted(state: CollectionState) -> list[str]:
+    """Return names of still-needed farmable items, ordered by have ascending
+    (rarest-in-inventory first)."""
+    items = [
+        (name, p["have"])
+        for name, p in state.progress.items()
+        if name in BEST_SOURCES and p["have"] < p["need"]
+    ]
+    items.sort(key=lambda x: x[1])
+    return [name for name, _ in items]
+
+
+def _build_targets(state: CollectionState) -> list[TargetConfig]:
+    """Build one TargetConfig per still-needed farmable item, priority-ordered
+    by lowest inventory count. The wave worker then iterates all targets per
+    round, skipping mobs already at their per-item threshold — so when one
+    item's mobs are exhausted we immediately move to the next instead of
+    sleeping out a respawn cycle."""
+    targets: list[TargetConfig] = []
+    for priority, name in enumerate(_farmable_items_sorted(state), 1):
+        src = BEST_SOURCES[name]
+        # Per-mob floor = max(item drop threshold, Emberfall Token threshold 3M).
+        dmg_threshold = max(src["dmg_required"], MIN_DAMAGE_PER_MOB)
+        targets.append(
+            TargetConfig(
+                name=src["monster"],
+                wave=src["wave"],
+                damage_goal=dmg_threshold,
+                stamina=state.stamina_label,
+                priority=priority,
+            )
+        )
+    return targets
 
 
 def _all_farmable_done(state: CollectionState) -> bool:
@@ -207,52 +226,35 @@ async def collection_worker(
                     state.log(f"  {marker} {n}: {p['have']:,} / {p['need']:,}")
                 break
 
-            item = _pick_next_item(state)
-            if item is None:
+            targets = _build_targets(state)
+            if not targets:
                 state.log("No farmable items left with deficit — stopping.")
                 break
 
-            src = BEST_SOURCES[item]
-            p = state.progress[item]
-            state.current_item = item
+            # Primary item for UI = lowest-have (targets are already sorted).
+            active_items = _farmable_items_sorted(state)
+            state.current_item = active_items[0]
+
             state.log("")
-            state.log(
-                f"→ Farming {item}: have {p['have']:,} / need {p['need']:,} "
-                f"via {src['monster']} (wave {src['wave']})"
-            )
+            state.log(f"→ Farming {len(active_items)} item(s), rarest first:")
+            for t, name in zip(targets, active_items):
+                p = state.progress[name]
+                state.log(
+                    f"  [{t.priority}] {name}: {p['have']:,}/{p['need']:,} "
+                    f"via {t.name} (≥{t.damage_goal:,} dmg)"
+                )
 
-            # Per-mob floor = max(Ashscript drop threshold, Emberfall Token
-            # threshold 3 M). Ensures every qualifying hit also rolls for the
-            # 60 %-drop event token. Event-mob HP is 500 M+, so the wave
-            # worker's HP-floor check won't filter anyone out.
-            dmg_threshold = max(src["dmg_required"], MIN_DAMAGE_PER_MOB)
-            target = TargetConfig(
-                name=src["monster"],
-                wave=src["wave"],
-                damage_goal=dmg_threshold,
-                stamina=state.stamina_label,
-                priority=1,
-            )
-            state.log(
-                f"  (target ≥ {dmg_threshold:,} dmg per mob to earn {item} drop)"
-            )
+            start_have = {n: state.progress[n]["have"] for n in active_items}
 
-            # wave_farmer.worker runs its own loop until state.running is False
-            # or stamina runs out. We want to stop it sooner — when the item
-            # progresses enough. The cleanest way: run it in a task, poll
-            # progress concurrently, and stop the nested state when the item
-            # hits its target (or another item becomes more urgent).
             nested_state = FarmerState()
             nested_state.running = True
             nested_state.stats.started_at = state.stats.started_at
-            # Fan out logs from nested worker into our own log stream
             original_log_id = nested_state._log_id
 
             farm_task = asyncio.create_task(
-                wave_worker(game, [target], nested_state, limiter)
+                wave_worker(game, targets, nested_state, limiter)
             )
             last_seen_nested_log_id = original_log_id
-            item_start_have = p["have"]
 
             try:
                 while not farm_task.done() and state.running:
@@ -262,32 +264,31 @@ async def collection_worker(
                             last_seen_nested_log_id = entry["id"]
                             state.log(entry["msg"])
 
-                    # Re-poll progress every POLL_EVERY_SECONDS
                     if time.time() - state.last_poll_ts >= POLL_EVERY_SECONDS:
                         if await _poll_progress(game, state):
-                            cur = state.progress[item]
-                            gained = cur["have"] - item_start_have
-                            state.log(
-                                f"  [poll] {item} {cur['have']:,}/{cur['need']:,} "
-                                f"(+{gained} this pass)"
-                            )
-                            if cur["have"] >= cur["need"]:
-                                state.log(f"  ✓ {item} target reached — switching")
+                            # Any active item complete? → rebuild target list.
+                            completed = [
+                                n for n in active_items
+                                if state.progress[n]["have"] >= state.progress[n]["need"]
+                            ]
+                            gained_any = False
+                            for n in active_items:
+                                gained = state.progress[n]["have"] - start_have[n]
+                                if gained > 0:
+                                    gained_any = True
+                                    state.log(
+                                        f"  [poll] {n} {state.progress[n]['have']:,}"
+                                        f"/{state.progress[n]['need']:,} (+{gained})"
+                                    )
+                            if not gained_any:
+                                state.log("  [poll] no inventory gains yet")
+                            if completed:
+                                state.log(
+                                    f"  ✓ complete: {', '.join(completed)} — "
+                                    f"rebuilding target list"
+                                )
                                 nested_state.stop()
                                 break
-                            # Swap to a more urgent item if one emerged
-                            next_item = _pick_next_item(state)
-                            if next_item and next_item != item:
-                                deficit_cur = cur["need"] - cur["have"]
-                                p_next = state.progress[next_item]
-                                deficit_next = p_next["need"] - p_next["have"]
-                                if deficit_next > deficit_cur * 2:
-                                    state.log(
-                                        f"  ↻ {next_item} is more urgent "
-                                        f"({deficit_next:,} vs {deficit_cur:,}) — switching"
-                                    )
-                                    nested_state.stop()
-                                    break
 
                     # Forward stats snapshots so the UI sees kill/dmg/stam updates
                     state.stats.killed = nested_state.stats.killed
@@ -319,14 +320,15 @@ async def collection_worker(
             # neither smart_loot nor potions could recover), we should stop too.
             if not state.running:
                 break
-            if not nested_state.running and not state.running:
-                break
             if not nested_state.running:
-                # Worker stopped on its own — check why. If stamina is gone
-                # and progress hasn't moved, bail.
-                prev_have = state.progress[item]["have"]
+                # Worker stopped on its own — check why. If no progress was
+                # made on any active item, stamina is the likely culprit.
+                prev_have = dict(start_have)
                 await _poll_progress(game, state)
-                if state.progress[item]["have"] <= prev_have:
+                progressed = any(
+                    state.progress[n]["have"] > prev_have[n] for n in active_items
+                )
+                if not progressed:
                     state.log("Farming run ended with no progress — stamina exhausted.")
                     break
 
