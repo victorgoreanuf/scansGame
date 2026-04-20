@@ -18,6 +18,10 @@ from veyra.engine.collection_farmer import (
     CollectionState,
     collection_worker,
 )
+from veyra.engine.achievement_farmer import (
+    AchievementState,
+    achievement_worker,
+)
 
 
 logger = logging.getLogger("veyra.manager")
@@ -49,6 +53,9 @@ class AccountWorker:
     # Collection farmer
     collection_state: CollectionState = field(default_factory=CollectionState)
     collection_task: asyncio.Task | None = None
+    # Achievement farmer
+    achievement_state: AchievementState = field(default_factory=AchievementState)
+    achievement_task: asyncio.Task | None = None
 
 
 class AccountManager:
@@ -133,6 +140,7 @@ class AccountManager:
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
+            self._worker.achievement_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
             if self._worker.pvp_task:
@@ -145,6 +153,8 @@ class AccountManager:
                 self._worker.quest_task.cancel()
             if self._worker.collection_task:
                 self._worker.collection_task.cancel()
+            if self._worker.achievement_task:
+                self._worker.achievement_task.cancel()
             await self._worker.game.close()
 
         game = GameClient()
@@ -187,6 +197,8 @@ class AccountManager:
         if self._worker.task and not self._worker.task.done():
             return False
         if self.is_collection_running:
+            return False
+        if self.is_achievement_running:
             return False
 
         w = self._worker
@@ -354,8 +366,8 @@ class AccountManager:
         """Start the quest runner. Mutually exclusive with wave farmer."""
         if not self._worker or not self._worker.connected:
             return False
-        # Block if wave farmer or collection farmer is running
-        if self.is_running or self.is_collection_running:
+        # Block if wave / collection / achievement farmer is running
+        if self.is_running or self.is_collection_running or self.is_achievement_running:
             return False
         if self._worker.quest_task and not self._worker.quest_task.done():
             return False
@@ -414,6 +426,8 @@ class AccountManager:
             return False, "Wave farmer is running — stop it first"
         if self.is_quest_running:
             return False, "Quest runner is running — stop it first"
+        if self.is_achievement_running:
+            return False, "Achievement farmer is running — stop it first"
         if self._worker.collection_task and not self._worker.collection_task.done():
             return False, "Collection farmer is already running"
 
@@ -463,6 +477,84 @@ class AccountManager:
             },
         }
 
+    # ── Achievement Farmer ────────────────────────────────────────────────────
+
+    @property
+    def is_achievement_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.achievement_task and self._worker.achievement_task.done():
+            self._worker.achievement_state.running = False
+            return False
+        return self._worker.achievement_state.running
+
+    async def start_achievements(
+        self,
+        wave: int = 101,
+        stamina_label: str = "10 Stamina",
+    ) -> tuple[bool, str]:
+        """Start the achievement farmer. Mutually exclusive with the other workers."""
+        if not self._worker or not self._worker.connected:
+            return False, "Not connected"
+        if self.is_running:
+            return False, "Wave farmer is running — stop it first"
+        if self.is_quest_running:
+            return False, "Quest runner is running — stop it first"
+        if self.is_collection_running:
+            return False, "Collection farmer is running — stop it first"
+        if self._worker.achievement_task and not self._worker.achievement_task.done():
+            return False, "Achievement farmer is already running"
+
+        w = self._worker
+        w.achievement_state = AchievementState()
+        w.achievement_state.wave = wave
+        w.achievement_state.stamina_label = stamina_label
+        w.achievement_state.running = True
+        w.achievement_state.stats.started_at = time.time()
+        w.limiter.reset()
+
+        w.achievement_task = asyncio.create_task(
+            achievement_worker(w.game, w.achievement_state, w.limiter)
+        )
+        return True, ""
+
+    def stop_achievements(self) -> None:
+        if self._worker and self._worker.achievement_state.running:
+            self._worker.achievement_state.stop()
+            self._worker.achievement_state.log("Stopping...")
+
+    def get_achievement_state(self) -> AchievementState | None:
+        if self._worker:
+            return self._worker.achievement_state
+        return None
+
+    def get_achievement_status(self) -> dict:
+        if not self._worker:
+            return {
+                "running": False, "wave": 0, "stamina_label": "",
+                "current_monster": "", "wave_monsters": [],
+                "achievements": [], "active": [], "stats": {},
+            }
+        s = self._worker.achievement_state
+        stats = s.stats
+        return {
+            "running": self.is_achievement_running,
+            "wave": s.wave,
+            "stamina_label": s.stamina_label,
+            "current_monster": s.current_monster,
+            "wave_monsters": s.wave_monsters,
+            "achievements": s.achievements,
+            "active": s.active,
+            "stats": {
+                "killed": stats.killed,
+                "damage": stats.damage,
+                "stamina_spent": stats.stamina_spent,
+                "looted": stats.looted,
+                "monsters_attacked": stats.monsters_attacked,
+                "started_at": stats.started_at,
+            },
+        }
+
     def get_state(self) -> FarmerState | None:
         if self._worker:
             return self._worker.state
@@ -488,6 +580,7 @@ class AccountManager:
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
+            self._worker.achievement_state.stop()
             if self._worker.task:
                 self._worker.task.cancel()
                 try:
@@ -522,6 +615,12 @@ class AccountManager:
                 self._worker.collection_task.cancel()
                 try:
                     await self._worker.collection_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.achievement_task:
+                self._worker.achievement_task.cancel()
+                try:
+                    await self._worker.achievement_task
                 except (asyncio.CancelledError, Exception):
                     pass
             await self._worker.game.close()

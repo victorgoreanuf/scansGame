@@ -861,12 +861,46 @@ async function renderEmberfallDetail(container) {
       Boss drops (Star-Split Glass Heart, Living Black Index, Emberwing Plume,
       Lucid Memory Shard, Hollow Star Core Dust) stay up to you.</p>
     </div>
+
+    <div class="section-header" style="margin-top:8px">
+      <div class="section-title"><span>Collection Farmer</span></div>
+    </div>
     <div class="coll-grid" id="collGrid">
       <div class="empty" style="padding:40px 16px;grid-column:1/-1">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
         <div>Loading plan…</div>
       </div>
-    </div>`;
+    </div>
+
+    <div class="section-header" style="margin-top:28px">
+      <div class="section-title"><span>Achievement Farmer</span></div>
+    </div>
+    <div class="ach-card" id="achCard">
+      <div class="ach-header">
+        <div class="ach-title-block">
+          <div class="ach-title">Event Mob Achievements</div>
+          <div class="ach-sub">Farms <em>Deal N damage to M Monster</em> achievements on event wave 101, in page order. Mobs not on the wave are skipped.</div>
+        </div>
+        <div class="coll-controls">
+          <select class="coll-stamina" id="achStamina">
+            <option value="10 Stamina" selected>10 Stam</option>
+            <option value="50 Stamina">50 Stam</option>
+            <option value="100 Stamina">100 Stam</option>
+            <option value="200 Stamina">200 Stam</option>
+          </select>
+          <button class="btn btn-sm btn-ghost" id="achRefreshBtn" onclick="refreshAchievementsPreview()">Scan</button>
+          <button class="btn btn-sm btn-accent" id="achStartBtn" onclick="startAchievements()">Run</button>
+          <button class="btn btn-sm btn-red" id="achStopBtn" hidden onclick="stopAchievements()">Stop</button>
+        </div>
+      </div>
+      <div class="ach-meta" id="achMeta">—</div>
+      <div class="ach-list" id="achList">
+        <div class="empty" style="padding:24px 16px">
+          <div>Click <b>Scan</b> to load achievements from the game.</div>
+        </div>
+      </div>
+    </div>
+    `;
 
   try {
     if (!collectionPlans) {
@@ -882,6 +916,10 @@ async function renderEmberfallDetail(container) {
     $('collGrid').innerHTML = `<div class="empty" style="padding:40px 16px;grid-column:1/-1">
       <div>Failed to load collections: ${e.message}</div></div>`;
   }
+
+  // Kick off achievement status polling in parallel (idempotent).
+  refreshAchievementStatus();
+  startAchievementPolling();
 }
 
 function renderCollectionCards() {
@@ -1070,6 +1108,166 @@ async function stopCollection() {
   }
 }
 
+// ── Achievement Farmer ─────────────────────────────────────────────────────
+
+const ACH_POLL_ACTIVE_MS = 2500;
+const ACH_POLL_IDLE_MS = 30000;
+let achPollTimer = null;
+let achPollCadence = 0;
+let lastAchStatus = null;
+
+function renderAchList(items, activeSet, currentMonster) {
+  const list = $('achList');
+  if (!list) return;
+  if (!items || items.length === 0) {
+    list.innerHTML = '<div class="empty" style="padding:24px 16px"><div>No matching achievements yet.</div></div>';
+    return;
+  }
+  const active = activeSet || new Set();
+  list.innerHTML = items.map(a => {
+    const farmable = active.has(a.title);
+    const done = a.kills_current >= a.kills_required;
+    const pct = a.percent ?? (a.kills_required ? Math.min(100, Math.round(a.kills_current / a.kills_required * 100)) : 0);
+    const state = done ? 'done' : (farmable ? (a.monster === currentMonster ? 'current' : 'farmable') : 'skipped');
+    const stateLabel = done ? 'DONE' : (farmable ? (a.monster === currentMonster ? 'NOW' : 'QUEUED') : 'SKIP');
+    return `
+      <div class="ach-row ${state}">
+        <div class="ach-row-main">
+          <div class="ach-row-title">${a.title || a.monster}</div>
+          <div class="ach-row-sub">${a.monster} · ${fmtGoal(a.damage_required)} dmg each · target ${fmtGoal(a.kills_required)}</div>
+        </div>
+        <div class="ach-row-meta">
+          <span class="ach-state-pill ${state}">${stateLabel}</span>
+          <div class="ach-row-count">${fmtGoal(a.kills_current)} / ${fmtGoal(a.kills_required)} <span class="ach-pct">${pct}%</span></div>
+          <div class="coll-item-bar"><div class="coll-item-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function applyAchStatus(st) {
+  lastAchStatus = st;
+  const running = !!st.running;
+  const startBtn = $('achStartBtn');
+  const stopBtn = $('achStopBtn');
+  const staminaSel = $('achStamina');
+  if (startBtn && stopBtn) {
+    startBtn.hidden = running;
+    stopBtn.hidden = !running;
+    startBtn.disabled = false;
+    if (staminaSel) staminaSel.disabled = running;
+  }
+
+  const meta = $('achMeta');
+  if (meta) {
+    const stats = st.stats || {};
+    const parts = [];
+    parts.push(running ? `Running — wave ${st.wave}` : (st.wave ? `Idle — last scan wave ${st.wave}` : 'Idle'));
+    if (st.wave_monsters && st.wave_monsters.length) {
+      parts.push(`Wave mobs: ${st.wave_monsters.join(', ')}`);
+    }
+    if (running && st.current_monster) parts.push(`Now: ${st.current_monster}`);
+    if (stats.killed) parts.push(`${stats.killed} kills this session`);
+    if (stats.damage) parts.push(`${fmtGoal(stats.damage)} dmg dealt`);
+    meta.textContent = parts.join(' · ');
+  }
+
+  const items = st.achievements || [];
+  const activeSet = new Set((st.active || []).map(a => a.title));
+  renderAchList(items, activeSet, st.current_monster || '');
+}
+
+async function refreshAchievementsPreview() {
+  const btn = $('achRefreshBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch('/api/achievements/preview?wave=101');
+    const data = await res.json();
+    if (!data.ok) {
+      toast(data.error || 'Scan failed', 'warning');
+      return;
+    }
+    // Merge preview into a status-shaped object so the same renderer works.
+    applyAchStatus({
+      running: (lastAchStatus && lastAchStatus.running) || false,
+      wave: data.wave,
+      wave_monsters: data.wave_monsters,
+      achievements: data.achievements,
+      active: data.active,
+      current_monster: (lastAchStatus && lastAchStatus.current_monster) || '',
+      stats: (lastAchStatus && lastAchStatus.stats) || {},
+    });
+    toast(`${data.active.length} farmable on wave ${data.wave}`, 'success');
+  } catch (e) {
+    toast('Network error: ' + e.message, 'warning');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function refreshAchievementStatus() {
+  try {
+    const res = await fetch('/api/achievements/status');
+    const data = await res.json();
+    if (data.ok) applyAchStatus(data);
+  } catch (e) {
+    console.error('achievement status', e);
+  }
+  const wantMs = (lastAchStatus && lastAchStatus.running) ? ACH_POLL_ACTIVE_MS : ACH_POLL_IDLE_MS;
+  if (achPollCadence > 0) scheduleAchPoll(wantMs);
+}
+
+function scheduleAchPoll(ms) {
+  if (achPollTimer) clearTimeout(achPollTimer);
+  achPollCadence = ms;
+  achPollTimer = setTimeout(refreshAchievementStatus, ms);
+}
+
+function startAchievementPolling() {
+  scheduleAchPoll(ACH_POLL_IDLE_MS);
+}
+
+function stopAchievementPolling() {
+  if (achPollTimer) clearTimeout(achPollTimer);
+  achPollTimer = null;
+  achPollCadence = 0;
+}
+
+async function startAchievements() {
+  const stamina = $('achStamina')?.value || '10 Stamina';
+  const btn = $('achStartBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch('/api/achievements/start', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({wave: 101, stamina}),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      toast(data.error || 'Failed to start', 'warning');
+      if (btn) btn.disabled = false;
+      return;
+    }
+    toast('Achievement farmer started', 'success');
+    scheduleAchPoll(ACH_POLL_ACTIVE_MS);
+    await refreshAchievementStatus();
+  } catch (e) {
+    toast('Network error: ' + e.message, 'warning');
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function stopAchievements() {
+  try {
+    await fetch('/api/achievements/stop', {method: 'POST'});
+    toast('Stopping…', 'info');
+    scheduleAchPoll(ACH_POLL_ACTIVE_MS);
+    await refreshAchievementStatus();
+  } catch (e) {
+    toast('Network error: ' + e.message, 'warning');
+  }
+}
+
 function eventBadgeClass(ev) {
   return ev.status === 'live' ? 'event-badge live' : 'event-badge ended';
 }
@@ -1137,6 +1335,7 @@ function closeEvent() {
     detailView.hidden = true;
   }
   stopCollectionPolling();
+  stopAchievementPolling();
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────

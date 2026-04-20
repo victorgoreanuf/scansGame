@@ -44,6 +44,9 @@ WAVE_MAP: dict[int, str] = {
 COLLECTIONS_URL = f"{BASE_URL}/collections.php"
 BLACKSMITH_URL = f"{BASE_URL}/blacksmith.php"
 
+# Achievements
+ACHIEVEMENTS_URL = f"{BASE_URL}/achievements.php"
+
 STAMINA_OPTIONS = [
     {"label": "1 Stamina", "cost": 1, "skill_id": "0"},
     {"label": "10 Stamina", "cost": 10, "skill_id": "-1"},

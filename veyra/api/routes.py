@@ -178,6 +178,8 @@ async def status():
         "quest_stats": manager.get_quest_stats(),
         "collection_running": manager.is_collection_running,
         "collection_status": manager.get_collection_status(),
+        "achievement_running": manager.is_achievement_running,
+        "achievement_status": manager.get_achievement_status(),
     }
 
 
@@ -243,6 +245,7 @@ async def logs():
         stat_last_id = 0
         quest_last_id = 0
         col_last_id = 0
+        ach_last_id = 0
         while True:
             state = manager.get_state()
             if state:
@@ -281,6 +284,14 @@ async def logs():
                     col_last_id = new[-1]["id"]
                 for entry in new:
                     tagged = {"id": entry["id"], "msg": f"[Collection] {entry['msg']}"}
+                    yield f"data: {json.dumps(tagged)}\n\n"
+            ach_state = manager.get_achievement_state()
+            if ach_state:
+                new = [l for l in ach_state.logs if l["id"] > ach_last_id]
+                if new:
+                    ach_last_id = new[-1]["id"]
+                for entry in new:
+                    tagged = {"id": entry["id"], "msg": f"[Achievements] {entry['msg']}"}
                     yield f"data: {json.dumps(tagged)}\n\n"
             await asyncio.sleep(1)
 
@@ -516,6 +527,94 @@ async def collections_refresh():
     except Exception as e:
         return {"ok": False, "error": str(e)}
     return {"ok": True, **manager.get_collection_status()}
+
+
+# ── Achievement Farmer ───────────────────────────────────────────────────────
+
+
+@router.get("/achievements/preview")
+async def achievements_preview(request: Request):
+    """Scrape /achievements.php + configured event wave and report what's farmable.
+
+    Query params: wave (default 101).
+    """
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    try:
+        wave = int(request.query_params.get("wave", 101))
+    except ValueError:
+        wave = 101
+    w = manager.worker
+    if not w:
+        return {"ok": False, "error": "No worker"}
+    try:
+        achievements = await w.game.fetch_achievements()
+        mobs = await w.game.fetch_wave(wave)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    wave_names = sorted({m.name for m in mobs})
+    wave_set = set(wave_names)
+    active = [
+        a for a in achievements
+        if a["monster"] in wave_set and a["kills_current"] < a["kills_required"]
+    ]
+    return {
+        "ok": True,
+        "wave": wave,
+        "wave_monsters": wave_names,
+        "achievements": achievements,
+        "active": active,
+    }
+
+
+@router.post("/achievements/start")
+async def achievements_start(request: Request):
+    """Start the achievement farmer. Body: {"wave": 101, "stamina": "10 Stamina"}."""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    try:
+        wave = int(body.get("wave", 101))
+    except (TypeError, ValueError):
+        wave = 101
+    stamina = body.get("stamina", "10 Stamina")
+    ok, err = await manager.start_achievements(wave, stamina)
+    return {"ok": ok, "error": err} if not ok else {"ok": True}
+
+
+@router.post("/achievements/stop")
+async def achievements_stop():
+    manager.stop_achievements()
+    return {"ok": True}
+
+
+@router.get("/achievements/status")
+async def achievements_status():
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    return {"ok": True, **manager.get_achievement_status()}
+
+
+@router.post("/achievements/refresh")
+async def achievements_refresh():
+    """Force an immediate poll."""
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    w = manager.worker
+    if not w:
+        return {"ok": False, "error": "No worker"}
+    s = w.achievement_state
+    if not s.wave:
+        s.wave = 101
+    try:
+        from veyra.engine.achievement_farmer import _poll_achievements
+        ok = await _poll_achievements(w.game, s)
+        if not ok:
+            return {"ok": False, "error": "Poll failed"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    return {"ok": True, **manager.get_achievement_status()}
 
 
 @router.delete("/profiles")

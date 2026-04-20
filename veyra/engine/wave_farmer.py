@@ -319,12 +319,19 @@ async def worker(
     targets: list[TargetConfig],
     state: FarmerState,
     limiter: RateLimiter,
+    recheck_priority: bool = False,
 ) -> None:
     """
     Main farming loop:
     1. Re-fetch each wave to get fresh HP / alive status
     2. Attack eligible monsters by priority
     3. Wait for respawns, repeat
+
+    When `recheck_priority` is True, after a target produces any attacks we
+    invalidate the wave cache and restart from priority 1 on the next target
+    pick. That way higher-priority mobs that respawned while we were busy on
+    a lower one get picked up mid-round instead of only after the respawn
+    sleep.
     """
     targets.sort(key=lambda t: t.priority)
     total_attacked = 0
@@ -340,6 +347,10 @@ async def worker(
             state.stats.rounds = rounds
             any_attacked = False
             wave_cache: dict[int, list[Monster]] = {}
+            # Tracks which targets have been visited this round — with
+            # recheck_priority, we revisit priority-1 only if it genuinely
+            # respawned (fresh list non-empty), otherwise advance linearly.
+            skipped_in_round: set[int] = set()
 
             # If site went down (detected during previous round), wait for recovery
             if game.is_site_down:
@@ -349,11 +360,19 @@ async def worker(
                 if not recovered:
                     break
 
-            for ti, t in enumerate(targets, 1):
+            ti_idx = 0
+            site_down_break = False
+            while ti_idx < len(targets):
                 if not state.running:
                     break
+                if ti_idx in skipped_in_round:
+                    ti_idx += 1
+                    continue
 
-                # Fetch fresh data (cached per round)
+                t = targets[ti_idx]
+                ti = ti_idx + 1  # 1-based for display
+
+                # Fetch wave (cached until we choose to invalidate)
                 if t.wave not in wave_cache:
                     try:
                         wave_cache[t.wave] = await game.fetch_wave(t.wave)
@@ -362,7 +381,8 @@ async def worker(
                         state.log(f"  Fetch wave {t.wave} failed: {e}")
                         game.record_net_failure()
                         if game.is_site_down:
-                            break  # exit targets loop → triggers site-down wait
+                            site_down_break = True
+                            break
                         wave_cache[t.wave] = []
 
                 fresh = [m for m in wave_cache[t.wave] if m.name == t.name]
@@ -395,6 +415,8 @@ async def worker(
                 fresh = joined + sorted(new_monsters, key=lambda x: x.current_hp, reverse=True)
 
                 if not fresh:
+                    skipped_in_round.add(ti_idx)
+                    ti_idx += 1
                     continue
 
                 mode = "hit once" if t.damage_goal <= 0 else f"{t.damage_goal:,} dmg"
@@ -405,6 +427,7 @@ async def worker(
                 if skipped_done:
                     state.log(f"  Skipped {skipped_done} (already ≥ {t.damage_goal:,} dmg dealt)")
 
+                attacked_this_target = False
                 for ii, inst in enumerate(fresh, 1):
                     if not state.running:
                         break
@@ -457,8 +480,25 @@ async def worker(
 
                     if r in ("done", "ok"):
                         any_attacked = True
+                        attacked_this_target = True
                         total_attacked += 1
                         state.stats.monsters_attacked = total_attacked
+
+                # After finishing this target's instances
+                if recheck_priority and attacked_this_target:
+                    # Re-scan from priority 1 with a fresh wave snapshot —
+                    # higher-priority mobs that respawned while we were busy
+                    # get picked up immediately.
+                    wave_cache.clear()
+                    skipped_in_round.clear()
+                    skipped_in_round.add(ti_idx)  # current target just drained
+                    ti_idx = 0
+                else:
+                    skipped_in_round.add(ti_idx)
+                    ti_idx += 1
+
+            if site_down_break:
+                pass  # falls through to outer site-down wait next iteration
 
             if not state.running:
                 break

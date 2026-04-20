@@ -70,14 +70,37 @@ COLLECTION_PLANS: dict[int, dict] = {
     },
 }
 
-# Cheapest-dmg monster on event wave 101 for each farmable ingredient.
-# (All are 100% drops; thresholds from loot_db_event_8_w101.json.)
-BEST_SOURCES: dict[str, dict] = {
-    "Ashscript Hood":   {"monster": "Arcaneback Bear",     "wave": EVENT_WAVE, "dmg_required": 2_400_000},
-    "Ashscript Gloves": {"monster": "Arcanefang Wolf",     "wave": EVENT_WAVE, "dmg_required": 2_500_000},
-    "Ashscript Boots":  {"monster": "Arcanecrest Hyena",   "wave": EVENT_WAVE, "dmg_required": 2_500_000},
-    "Ashscript Staff":  {"monster": "Runestag",            "wave": EVENT_WAVE, "dmg_required": 2_600_000},
-    "Ashscript Robe":   {"monster": "Hexpyre Crow",        "wave": EVENT_WAVE, "dmg_required": 2_600_000},
+# All monsters on event wave 101 that drop each farmable ingredient, sorted
+# by dmg_required ascending (cheapest first). Thresholds from
+# loot_db_event_8_w101.json; all are 100% drops. Listing every source lets the
+# farmer fall through to the next mob once one source is exhausted, instead of
+# sitting on respawn for a single monster.
+BEST_SOURCES: dict[str, list[dict]] = {
+    "Ashscript Hood": [
+        {"monster": "Arcaneback Bear",   "wave": EVENT_WAVE, "dmg_required": 2_400_000},
+        {"monster": "Arcanehide Boar",   "wave": EVENT_WAVE, "dmg_required": 2_600_000},
+        {"monster": "Arcanecrest Hyena", "wave": EVENT_WAVE, "dmg_required": 2_800_000},
+    ],
+    "Ashscript Gloves": [
+        {"monster": "Arcanefang Wolf",   "wave": EVENT_WAVE, "dmg_required": 2_500_000},
+        {"monster": "Spellfurnace Lynx", "wave": EVENT_WAVE, "dmg_required": 2_800_000},
+        {"monster": "Hexpyre Crow",      "wave": EVENT_WAVE, "dmg_required": 3_000_000},
+    ],
+    "Ashscript Boots": [
+        {"monster": "Arcanecrest Hyena", "wave": EVENT_WAVE, "dmg_required": 2_500_000},
+        {"monster": "Runestag",          "wave": EVENT_WAVE, "dmg_required": 2_800_000},
+        {"monster": "Sigilscale Viper",  "wave": EVENT_WAVE, "dmg_required": 3_000_000},
+    ],
+    "Ashscript Staff": [
+        {"monster": "Runestag",          "wave": EVENT_WAVE, "dmg_required": 2_600_000},
+        {"monster": "Spellfurnace Lynx", "wave": EVENT_WAVE, "dmg_required": 2_800_000},
+        {"monster": "Sigilscale Viper",  "wave": EVENT_WAVE, "dmg_required": 3_000_000},
+    ],
+    "Ashscript Robe": [
+        {"monster": "Hexpyre Crow",      "wave": EVENT_WAVE, "dmg_required": 2_600_000},
+        {"monster": "Arcaneback Bear",   "wave": EVENT_WAVE, "dmg_required": 2_800_000},
+        {"monster": "Arcanehide Boar",   "wave": EVENT_WAVE, "dmg_required": 3_000_000},
+    ],
 }
 
 
@@ -93,8 +116,9 @@ def plannable_collections() -> list[dict]:
                 {
                     "name": n,
                     "need": need,
-                    "source_monster": BEST_SOURCES.get(n, {}).get("monster", ""),
-                    "source_wave": BEST_SOURCES.get(n, {}).get("wave", 0),
+                    "source_monster": (BEST_SOURCES.get(n) or [{}])[0].get("monster", ""),
+                    "source_wave": (BEST_SOURCES.get(n) or [{}])[0].get("wave", 0),
+                    "source_monsters": [s["monster"] for s in BEST_SOURCES.get(n, [])],
                 }
                 for n, need in plan["items"].items()
             ],
@@ -161,25 +185,33 @@ def _farmable_items_sorted(state: CollectionState) -> list[str]:
 
 
 def _build_targets(state: CollectionState) -> list[TargetConfig]:
-    """Build one TargetConfig per still-needed farmable item, priority-ordered
-    by lowest inventory count. The wave worker then iterates all targets per
-    round, skipping mobs already at their per-item threshold — so when one
-    item's mobs are exhausted we immediately move to the next instead of
-    sleeping out a respawn cycle."""
+    """Build TargetConfigs for every still-needed farmable item × every source
+    monster that drops it. Priority is grouped so all sources for the rarest
+    item come first (cheapest-dmg source within each item first). The wave
+    worker iterates targets per round, skipping mobs already at their per-item
+    threshold — so when one source is exhausted we immediately fall through to
+    the next drop source instead of sleeping out a respawn cycle."""
     targets: list[TargetConfig] = []
-    for priority, name in enumerate(_farmable_items_sorted(state), 1):
-        src = BEST_SOURCES[name]
-        # Per-mob floor = max(item drop threshold, Emberfall Token threshold 3M).
-        dmg_threshold = max(src["dmg_required"], MIN_DAMAGE_PER_MOB)
-        targets.append(
-            TargetConfig(
-                name=src["monster"],
-                wave=src["wave"],
-                damage_goal=dmg_threshold,
-                stamina=state.stamina_label,
-                priority=priority,
+    priority = 0
+    seen: set[tuple[str, int]] = set()
+    for name in _farmable_items_sorted(state):
+        for src in BEST_SOURCES.get(name, []):
+            key = (src["monster"], src["wave"])
+            if key in seen:
+                continue
+            seen.add(key)
+            priority += 1
+            # Per-mob floor = max(item drop threshold, Emberfall Token threshold 3M).
+            dmg_threshold = max(src["dmg_required"], MIN_DAMAGE_PER_MOB)
+            targets.append(
+                TargetConfig(
+                    name=src["monster"],
+                    wave=src["wave"],
+                    damage_goal=dmg_threshold,
+                    stamina=state.stamina_label,
+                    priority=priority,
+                )
             )
-        )
     return targets
 
 
@@ -237,11 +269,11 @@ async def collection_worker(
 
             state.log("")
             state.log(f"→ Farming {len(active_items)} item(s), rarest first:")
-            for t, name in zip(targets, active_items):
+            for name in active_items:
                 p = state.progress[name]
+                sources = ", ".join(s["monster"] for s in BEST_SOURCES.get(name, []))
                 state.log(
-                    f"  [{t.priority}] {name}: {p['have']:,}/{p['need']:,} "
-                    f"via {t.name} (≥{t.damage_goal:,} dmg)"
+                    f"  {name}: {p['have']:,}/{p['need']:,} via {sources}"
                 )
 
             start_have = {n: state.progress[n]["have"] for n in active_items}

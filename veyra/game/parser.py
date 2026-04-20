@@ -796,6 +796,98 @@ def parse_collection_progress(html: str, collection_id: int) -> dict | None:
     return {"id": collection_id, "name": name, "reward": reward, "items": items}
 
 
+def _singularize_monster(plural: str) -> str:
+    """Best-effort English singular for the monster names used in achievements.
+
+    Covers the patterns that appear in the game:
+      Wolves → Wolf, Lynxes → Lynx, Hyenas → Hyena, Bears → Bear,
+      Boars → Boar, Crows → Crow, Vipers → Viper, Runestags → Runestag.
+    """
+    name = plural.strip()
+    if not name:
+        return name
+    low = name.lower()
+    if low.endswith("wolves"):
+        return name[:-6] + ("Wolf" if name[-6].isupper() else "wolf")
+    if low.endswith("ves"):
+        return name[:-3] + ("f" if name[-3].islower() else "F")
+    if low.endswith("xes") or low.endswith("ses") or low.endswith("zes"):
+        return name[:-2]
+    if low.endswith("ies") and len(name) > 3:
+        return name[:-3] + "y"
+    if low.endswith("s") and not low.endswith("ss"):
+        return name[:-1]
+    return name
+
+
+def parse_achievements(html: str) -> list[dict]:
+    """Parse damage-per-mob achievements from /achievements.php.
+
+    Matches the description pattern "Deal at least N damage to M <MonsterNames>."
+    and extracts the progress `X / M` from the same card.
+
+    Returns a list of dicts (page order preserved):
+      {title, monster, monster_plural, damage_required, kills_required,
+       kills_current, percent}
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    # Collapse the page to line-separated text — resilient to any card layout.
+    text = soup.get_text("\n", strip=True)
+    lines = [l.strip() for l in text.split("\n") if l.strip()]
+
+    desc_re = re.compile(
+        r"Deal at least\s+([\d,]+)\s+damage to\s+([\d,]+)\s+(.+?)\.?$",
+        re.IGNORECASE,
+    )
+    prog_re = re.compile(r"^([\d,]+)\s*/\s*([\d,]+)$")
+
+    achievements: list[dict] = []
+    for i, line in enumerate(lines):
+        m = desc_re.match(line)
+        if not m:
+            continue
+
+        damage_req = int(m.group(1).replace(",", ""))
+        kills_req = int(m.group(2).replace(",", ""))
+        monster_plural = m.group(3).strip().rstrip(".")
+
+        # Title: nearest preceding non-numeric, non-"rewards" line
+        title = ""
+        for j in range(i - 1, max(-1, i - 4), -1):
+            candidate = lines[j]
+            if (not prog_re.match(candidate)
+                    and not candidate.lower().startswith("rewards")
+                    and candidate.lower() != "claim"):
+                title = candidate
+                break
+
+        # Progress: first "X / kills_req" line within a small window after desc
+        current = 0
+        for j in range(i + 1, min(len(lines), i + 6)):
+            pm = prog_re.match(lines[j])
+            if pm:
+                c = int(pm.group(1).replace(",", ""))
+                n = int(pm.group(2).replace(",", ""))
+                if n == kills_req:
+                    current = c
+                    break
+
+        monster_singular = _singularize_monster(monster_plural)
+        percent = min(100, round(current * 100 / kills_req)) if kills_req else 0
+
+        achievements.append({
+            "title": title,
+            "monster": monster_singular,
+            "monster_plural": monster_plural,
+            "damage_required": damage_req,
+            "kills_required": kills_req,
+            "kills_current": current,
+            "percent": percent,
+        })
+
+    return achievements
+
+
 def parse_chapter_id(html: str) -> str | None:
     """Extract the internal chapterid from a chapter page.
 

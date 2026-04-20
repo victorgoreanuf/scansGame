@@ -10,6 +10,7 @@ logger = logging.getLogger("veyra.client")
 
 from veyra.game.auth import do_login
 from veyra.game.endpoints import (
+    ACHIEVEMENTS_URL,
     ALLOCATE_STAT_URL,
     BASE_URL,
     BATTLE_URL,
@@ -39,6 +40,7 @@ from veyra.game.endpoints import (
 from veyra.game.parser import (
     extract_user_id,
     group_monsters,
+    parse_achievements,
     parse_active_quest,
     parse_chapter_id,
     parse_chapter_list,
@@ -510,6 +512,11 @@ class GameClient:
         )
         data = resp.json()
         return parse_damage_response(data, None)
+
+    async def fetch_achievements(self) -> list[dict]:
+        """Get all damage-per-mob achievements (title, monster, progress)."""
+        html = await self.fetch_page(ACHIEVEMENTS_URL)
+        return parse_achievements(html)
 
     async def fetch_collection_progress(self, collection_id: int) -> dict | None:
         """Get the live progress of a collection (current `have` vs `need` per item)."""

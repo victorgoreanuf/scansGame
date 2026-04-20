@@ -348,6 +348,59 @@ input::placeholder { color: var(--text-muted); }
 
 .emberfall-header { max-width: 640px; }
 
+/* ─── Achievement farmer card ─── */
+.ach-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column;
+  gap: 14px; animation: fadeUp 0.35s var(--ease);
+}
+.ach-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+.ach-title-block { flex: 1 1 280px; min-width: 0; }
+.ach-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.ach-sub { color: var(--text-dim); font-size: 12px; margin-top: 3px; max-width: 620px; }
+.ach-meta {
+  font-size: 11px; color: var(--text-dim); font-family: var(--font-mono);
+  padding: 6px 10px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-xs);
+}
+.ach-list { display: flex; flex-direction: column; gap: 6px; }
+.ach-row {
+  display: grid; grid-template-columns: 1fr minmax(180px, 260px);
+  gap: 12px; align-items: center;
+  padding: 10px 12px; border-radius: var(--radius-xs);
+  background: var(--surface-2); border: 1px solid transparent;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+}
+.ach-row.current { border-color: rgba(34, 201, 151, 0.4); background: var(--green-soft); }
+.ach-row.done    { opacity: 0.55; }
+.ach-row.done .coll-item-fill { background: var(--green); }
+.ach-row.skipped { opacity: 0.45; }
+.ach-row-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.ach-row-sub {
+  font-size: 11px; color: var(--text-dim); margin-top: 2px;
+  font-family: var(--font-mono);
+}
+.ach-row-meta { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.ach-row-count {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim);
+}
+.ach-row-count .ach-pct { margin-left: 6px; color: var(--text); font-weight: 600; }
+.ach-row-meta .coll-item-bar { width: 100%; }
+
+.ach-state-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); color: var(--text-dim);
+}
+.ach-state-pill.current  { background: var(--green-soft); color: var(--green); }
+.ach-state-pill.farmable { background: var(--amber-soft); color: var(--amber); }
+.ach-state-pill.done     { background: var(--green-soft); color: var(--green); }
+.ach-state-pill.skipped  { background: rgba(255,255,255,0.04); color: var(--text-dim); }
+
 /* ─── Dashboard ─── */
 .dashboard {
   display: grid; grid-template-columns: repeat(5, 1fr);
