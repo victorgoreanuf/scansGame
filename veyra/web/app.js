@@ -522,9 +522,28 @@ async function stopTeamPvP() {
   refreshTeamPvPStatus();
 }
 
+// Cached party status \u2014 only updated by refreshTeamPvPStatus(). The 1s status
+// poll uses the worker's cached state which doesn't know in_party/is_leader
+// until the worker has run, so visibility is driven by this instead to avoid
+// the panel flickering on/off every second.
+let lastTeamPartyStatus = null;
+
 function updateTeamPvPStatus(running, stats) {
-  // Show the panel only if the user is in a party AND is the leader
-  const visible = !!(stats && stats.in_party && stats.is_leader);
+  stats = stats || {};
+  const party = lastTeamPartyStatus;
+  // Until we've fetched the real party status at least once, leave the panel
+  // in whatever state it was last in instead of forcing it hidden.
+  if (party === null) {
+    if (running) {
+      $('teamPvpSection').style.display = '';
+      $('teamPvpStartBtn').style.display = 'none';
+      $('teamPvpStopBtn').style.display = '';
+      $('teamPvpBadge').textContent = 'FIGHTING';
+      $('teamPvpBadge').className = 'pvp-badge on';
+    }
+    return;
+  }
+  const visible = !!(party.in_party && party.is_leader);
   $('teamPvpSection').style.display = visible ? '' : 'none';
   if (!visible) return;
 
@@ -540,9 +559,13 @@ function updateTeamPvPStatus(running, stats) {
     $('teamPvpBadge').textContent = 'OFF';
     $('teamPvpBadge').className = 'pvp-badge off';
   }
-  const tokenStr = stats.tokens_max
-    ? stats.tokens + '/' + stats.tokens_max + ' tokens'
-    : (stats.tokens > 0 ? stats.tokens + ' tokens' : '');
+  // Worker stats win when the worker is/was active; otherwise fall back to
+  // the live party tokens scraped from pvp.php.
+  const tokens = stats.tokens || party.tokens || 0;
+  const tokensMax = stats.tokens_max || party.tokens_max || 0;
+  const tokenStr = tokensMax
+    ? tokens + '/' + tokensMax + ' tokens'
+    : (tokens > 0 ? tokens + ' tokens' : '');
   if (stats.matches > 0) {
     $('teamPvpStat').textContent = stats.matches + ' played \u00b7 ' + stats.wins + 'W/' + stats.losses + 'L' + (tokenStr ? ' \u00b7 ' + tokenStr : '');
   } else {
@@ -554,15 +577,12 @@ async function refreshTeamPvPStatus() {
   try {
     const res = await fetch('/api/pvp/team/status');
     const data = await res.json();
-    if (!data.ok) return;
-    const merged = Object.assign({}, data.stats || {}, {
-      in_party: !!(data.party && data.party.in_party),
-      is_leader: !!(data.party && data.party.is_leader),
-      tokens: (data.party && typeof data.party.tokens === 'number') ? data.party.tokens : (data.stats && data.stats.tokens) || 0,
-      tokens_max: (data.party && typeof data.party.tokens_max === 'number') ? data.party.tokens_max : (data.stats && data.stats.tokens_max) || 0,
-      party_name: (data.party && data.party.party_name) || (data.stats && data.stats.party_name) || '',
-    });
-    updateTeamPvPStatus(!!data.running, merged);
+    if (!data.ok) {
+      lastTeamPartyStatus = {in_party: false, is_leader: false, tokens: 0, tokens_max: 0, party_name: ''};
+    } else {
+      lastTeamPartyStatus = data.party || {in_party: false, is_leader: false, tokens: 0, tokens_max: 0, party_name: ''};
+    }
+    updateTeamPvPStatus(!!(data && data.running), (data && data.stats) || {});
   } catch(e) {}
 }
 
