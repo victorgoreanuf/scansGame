@@ -55,6 +55,7 @@ from veyra.game.parser import (
     parse_monster_loot,
     parse_monsters,
     parse_player_stats,
+    parse_pvp_party_status,
     parse_pvp_solo_tokens,
     parse_quest_board,
     parse_stamina_potions,
@@ -371,6 +372,11 @@ class GameClient:
         html = await self.fetch_page(PVP_URL)
         return parse_pvp_solo_tokens(html)
 
+    async def fetch_pvp_party_status(self) -> dict:
+        """Fetch the party block from pvp.php (in_party, is_leader, tokens, tokens_max)."""
+        html = await self.fetch_page(PVP_URL)
+        return parse_pvp_party_status(html)
+
     async def pvp_find_match(self, ladder: str = "solo") -> dict:
         """Queue for a PvP match. Returns the server response JSON."""
         resp = await self._client.post(
@@ -394,6 +400,27 @@ class GameClient:
                 "since_log_id": str(since_log_id),
                 "action": "set_solo_control_mode",
                 "control_mode": "auto",
+            },
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": f"{PVP_BATTLE_URL}?match_id={match_id}"},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"error": resp.text[:300]}
+
+    async def pvp_set_party_auto(self, match_id: str, since_log_id: int = 0, enabled: bool = True) -> dict:
+        """Toggle auto-play for a party (team) PvP battle.
+
+        Form: action=set_party_auto_play&enabled=1
+        """
+        resp = await self._client.post(
+            PVP_BATTLE_ACTION_URL,
+            data={
+                "match_id": match_id,
+                "since_log_id": str(since_log_id),
+                "action": "set_party_auto_play",
+                "enabled": "1" if enabled else "0",
             },
             headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": f"{PVP_BATTLE_URL}?match_id={match_id}"},
             timeout=15,

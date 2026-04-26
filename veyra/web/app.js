@@ -138,6 +138,8 @@ function showApp(data) {
     $('stLooted').textContent = fmtGoal(data.stats.looted || 0);
   }
   updatePvPStatus(data.pvp_running, data.pvp_stats);
+  updateTeamPvPStatus(data.team_pvp_running, data.team_pvp_stats);
+  refreshTeamPvPStatus();
   updateStatStatus(data.stat_running, data.stat_stats);
   updateQuestStatus(data.quest_running, data.quest_stats);
 
@@ -425,11 +427,15 @@ function startPolling() {
         $('stopBtn').disabled = true;
       }
       updatePvPStatus(s.pvp_running, s.pvp_stats);
+      updateTeamPvPStatus(s.team_pvp_running, s.team_pvp_stats);
+      teamPvpTick = (teamPvpTick + 1) % 30;
+      if (teamPvpTick === 0) refreshTeamPvPStatus();
       updateStatStatus(s.stat_running, s.stat_stats);
       updateQuestStatus(s.quest_running, s.quest_stats);
     } catch(e){}
   }, 1000);
 }
+let teamPvpTick = 0;
 
 // ── PvP ─────────────────────────────────────────────────────────────────────
 
@@ -481,6 +487,83 @@ function updatePvPStatus(pvpRunning, pvpStats) {
   } else if (pvpStats && pvpStats.tokens > 0) {
     $('pvpStat').textContent = pvpStats.tokens + ' tokens';
   }
+}
+
+// \u2500\u2500 Team PvP \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+async function startTeamPvP() {
+  $('teamPvpStartBtn').disabled = true;
+  startSSE();
+  try {
+    const res = await fetch('/api/pvp/team/start', {method:'POST'});
+    const data = await res.json();
+    if (data.ok) {
+      $('teamPvpStartBtn').style.display = 'none';
+      $('teamPvpStopBtn').style.display = '';
+      $('teamPvpBadge').textContent = 'FIGHTING';
+      $('teamPvpBadge').className = 'pvp-badge on';
+    } else {
+      toast(data.error || 'Failed to start Team PvP', 'error');
+      $('teamPvpStartBtn').disabled = false;
+    }
+  } catch(e) {
+    toast('Team PvP error: ' + e.message, 'error');
+    $('teamPvpStartBtn').disabled = false;
+  }
+}
+
+async function stopTeamPvP() {
+  await fetch('/api/pvp/team/stop', {method:'POST'});
+  $('teamPvpStartBtn').style.display = '';
+  $('teamPvpStartBtn').disabled = false;
+  $('teamPvpStopBtn').style.display = 'none';
+  $('teamPvpBadge').textContent = 'OFF';
+  $('teamPvpBadge').className = 'pvp-badge off';
+  refreshTeamPvPStatus();
+}
+
+function updateTeamPvPStatus(running, stats) {
+  // Show the panel only if the user is in a party AND is the leader
+  const visible = !!(stats && stats.in_party && stats.is_leader);
+  $('teamPvpSection').style.display = visible ? '' : 'none';
+  if (!visible) return;
+
+  if (running) {
+    $('teamPvpStartBtn').style.display = 'none';
+    $('teamPvpStopBtn').style.display = '';
+    $('teamPvpBadge').textContent = 'FIGHTING';
+    $('teamPvpBadge').className = 'pvp-badge on';
+  } else {
+    $('teamPvpStartBtn').style.display = '';
+    $('teamPvpStartBtn').disabled = false;
+    $('teamPvpStopBtn').style.display = 'none';
+    $('teamPvpBadge').textContent = 'OFF';
+    $('teamPvpBadge').className = 'pvp-badge off';
+  }
+  const tokenStr = stats.tokens_max
+    ? stats.tokens + '/' + stats.tokens_max + ' tokens'
+    : (stats.tokens > 0 ? stats.tokens + ' tokens' : '');
+  if (stats.matches > 0) {
+    $('teamPvpStat').textContent = stats.matches + ' played \u00b7 ' + stats.wins + 'W/' + stats.losses + 'L' + (tokenStr ? ' \u00b7 ' + tokenStr : '');
+  } else {
+    $('teamPvpStat').textContent = tokenStr;
+  }
+}
+
+async function refreshTeamPvPStatus() {
+  try {
+    const res = await fetch('/api/pvp/team/status');
+    const data = await res.json();
+    if (!data.ok) return;
+    const merged = Object.assign({}, data.stats || {}, {
+      in_party: !!(data.party && data.party.in_party),
+      is_leader: !!(data.party && data.party.is_leader),
+      tokens: (data.party && typeof data.party.tokens === 'number') ? data.party.tokens : (data.stats && data.stats.tokens) || 0,
+      tokens_max: (data.party && typeof data.party.tokens_max === 'number') ? data.party.tokens_max : (data.stats && data.stats.tokens_max) || 0,
+      party_name: (data.party && data.party.party_name) || (data.stats && data.stats.party_name) || '',
+    });
+    updateTeamPvPStatus(!!data.running, merged);
+  } catch(e) {}
 }
 
 // ── Stat Allocator ──────────────────────────────────────────────────────────
@@ -1342,6 +1425,7 @@ function closeEvent() {
 
 document.addEventListener('DOMContentLoaded', () => {
   $('pvpBadge').className = 'pvp-badge off';
+  $('teamPvpBadge').className = 'pvp-badge off';
   $('statBadge').className = 'pvp-badge off';
   $('questBadge').className = 'pvp-badge off';
   renderEvents();

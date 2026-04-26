@@ -84,6 +84,8 @@ async def session(request: Request):
         "stats": manager.get_stats(),
         "pvp_running": manager.is_pvp_running,
         "pvp_stats": manager.get_pvp_stats(),
+        "team_pvp_running": manager.is_team_pvp_running,
+        "team_pvp_stats": manager.get_team_pvp_stats(),
         "stat_running": manager.is_stat_running,
         "stat_stats": manager.get_stat_stats(),
         "quest_running": manager.is_quest_running,
@@ -172,6 +174,8 @@ async def status():
         "stats": manager.get_stats(),
         "pvp_running": manager.is_pvp_running,
         "pvp_stats": manager.get_pvp_stats(),
+        "team_pvp_running": manager.is_team_pvp_running,
+        "team_pvp_stats": manager.get_team_pvp_stats(),
         "stat_running": manager.is_stat_running,
         "stat_stats": manager.get_stat_stats(),
         "quest_running": manager.is_quest_running,
@@ -196,6 +200,46 @@ async def pvp_start():
 @router.post("/pvp/stop")
 async def pvp_stop():
     manager.stop_pvp()
+    return {"ok": True}
+
+
+# ── Team PvP (party) ─────────────────────────────────────────────────────────
+
+
+@router.get("/pvp/team/status")
+async def pvp_team_status():
+    """Return live party info so the UI can render the Team PvP card."""
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    party = await manager.fetch_party_status()
+    return {
+        "ok": True,
+        "party": party,
+        "running": manager.is_team_pvp_running,
+        "stats": manager.get_team_pvp_stats(),
+    }
+
+
+@router.post("/pvp/team/start")
+async def pvp_team_start():
+    if manager.is_team_pvp_running:
+        return {"ok": False, "error": "Team PvP already running"}
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    party = await manager.fetch_party_status()
+    if not party.get("in_party"):
+        return {"ok": False, "error": "You are not in a party"}
+    if not party.get("is_leader"):
+        return {"ok": False, "error": "Only the party leader can start team matches"}
+    if int(party.get("tokens", 0)) <= 0:
+        return {"ok": False, "error": "No party tokens available"}
+    ok, err = await manager.start_team_pvp()
+    return {"ok": ok, "error": err} if not ok else {"ok": True}
+
+
+@router.post("/pvp/team/stop")
+async def pvp_team_stop():
+    manager.stop_team_pvp()
     return {"ok": True}
 
 
@@ -242,6 +286,7 @@ async def logs():
     async def generate():
         last_id = 0
         pvp_last_id = 0
+        team_pvp_last_id = 0
         stat_last_id = 0
         quest_last_id = 0
         col_last_id = 0
@@ -261,6 +306,14 @@ async def logs():
                     pvp_last_id = new[-1]["id"]
                 for entry in new:
                     tagged = {"id": entry["id"], "msg": f"[PvP] {entry['msg']}"}
+                    yield f"data: {json.dumps(tagged)}\n\n"
+            team_pvp_state = manager.get_team_pvp_state()
+            if team_pvp_state:
+                new = [l for l in team_pvp_state.logs if l["id"] > team_pvp_last_id]
+                if new:
+                    team_pvp_last_id = new[-1]["id"]
+                for entry in new:
+                    tagged = {"id": entry["id"], "msg": f"[Team PvP] {entry['msg']}"}
                     yield f"data: {json.dumps(tagged)}\n\n"
             stat_state = manager.get_stat_state()
             if stat_state:

@@ -11,6 +11,7 @@ from veyra.game.types import MonsterGroup, TargetConfig
 from veyra.engine.rate_limiter import RateLimiter
 from veyra.engine.wave_farmer import FarmerState, worker
 from veyra.engine.pvp_fighter import PvPState, pvp_worker
+from veyra.engine.team_pvp_fighter import TeamPvPState, team_pvp_worker
 from veyra.engine.stat_allocator import StatAllocatorState, StatGoal, stat_allocator_worker
 from veyra.engine.quest_runner import QuestState, quest_worker
 from veyra.engine.collection_farmer import (
@@ -44,6 +45,9 @@ class AccountWorker:
     pvp_state: PvPState = field(default_factory=PvPState)
     pvp_task: asyncio.Task | None = None
     pvp_auto_task: asyncio.Task | None = None  # background hourly PvP check
+    # Team PvP (party)
+    team_pvp_state: TeamPvPState = field(default_factory=TeamPvPState)
+    team_pvp_task: asyncio.Task | None = None
     # Stat allocator
     stat_state: StatAllocatorState = field(default_factory=StatAllocatorState)
     stat_task: asyncio.Task | None = None
@@ -137,6 +141,7 @@ class AccountManager:
         if self._worker:
             self._worker.state.stop()
             self._worker.pvp_state.stop()
+            self._worker.team_pvp_state.stop()
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
@@ -145,6 +150,8 @@ class AccountManager:
                 self._worker.task.cancel()
             if self._worker.pvp_task:
                 self._worker.pvp_task.cancel()
+            if self._worker.team_pvp_task:
+                self._worker.team_pvp_task.cancel()
             if self._worker.pvp_auto_task:
                 self._worker.pvp_auto_task.cancel()
             if self._worker.stat_task:
@@ -250,7 +257,7 @@ class AccountManager:
             self._worker.pvp_state.log("Stopping PvP...")
 
     async def _pvp_auto_loop(self) -> None:
-        """Background loop: check for PvP tokens every hour and auto-fight."""
+        """Background loop: check for solo + party tokens every hour and auto-fight."""
         w = self._worker
         if not w:
             return
@@ -264,23 +271,44 @@ class AccountManager:
             if not w or not w.connected:
                 return
 
-            # Skip if PvP is already running
+            # Solo
             if self.is_pvp_running:
-                logger.info("[Auto-PvP] PvP already running, skipping check")
-                continue
+                logger.info("[Auto-PvP] Solo PvP already running, skipping solo check")
+            else:
+                try:
+                    tokens = await w.game.fetch_pvp_tokens()
+                    logger.info(f"[Auto-PvP] Hourly check — {tokens} solo tokens")
+                except Exception as e:
+                    logger.warning(f"[Auto-PvP] Failed to check solo tokens: {e}")
+                    tokens = 0
 
-            # Check for tokens
+                if tokens > 0:
+                    logger.info(f"[Auto-PvP] {tokens} solo tokens found, starting PvP")
+                    w.state.log(f"[Auto-PvP] {tokens} solo tokens detected — auto-starting PvP")
+                    await self.start_pvp()
+
+            # Team (only if user is leader and has party tokens)
+            if self.is_team_pvp_running:
+                logger.info("[Auto-PvP] Team PvP already running, skipping team check")
+                continue
             try:
-                tokens = await w.game.fetch_pvp_tokens()
-                logger.info(f"[Auto-PvP] Hourly check — {tokens} solo tokens")
+                status = await w.game.fetch_pvp_party_status()
             except Exception as e:
-                logger.warning(f"[Auto-PvP] Failed to check tokens: {e}")
+                logger.warning(f"[Auto-PvP] Failed to check party status: {e}")
                 continue
 
-            if tokens > 0:
-                logger.info(f"[Auto-PvP] {tokens} tokens found, starting PvP")
-                w.state.log(f"[Auto-PvP] {tokens} tokens detected — auto-starting PvP")
-                await self.start_pvp()
+            if not status.get("in_party"):
+                continue
+            if not status.get("is_leader"):
+                logger.info("[Auto-PvP] In party but not leader — skipping team check")
+                continue
+            party_tokens = int(status.get("tokens", 0))
+            logger.info(f"[Auto-PvP] Hourly check — {party_tokens} party tokens (leader)")
+            if party_tokens > 0:
+                w.state.log(
+                    f"[Auto-PvP] {party_tokens} party tokens detected — auto-starting team PvP"
+                )
+                await self.start_team_pvp()
 
     def get_pvp_state(self) -> PvPState | None:
         if self._worker:
@@ -297,6 +325,69 @@ class AccountManager:
             "losses": s.losses,
             "tokens": s.tokens_remaining,
         }
+
+    # ── Team PvP (party) ───────────────────────────────────────────────────
+
+    @property
+    def is_team_pvp_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.team_pvp_task and self._worker.team_pvp_task.done():
+            self._worker.team_pvp_state.running = False
+            return False
+        return self._worker.team_pvp_state.running
+
+    async def start_team_pvp(self) -> tuple[bool, str]:
+        """Start the team-PvP auto-fight worker. Only valid if user is the party leader."""
+        if not self._worker or not self._worker.connected:
+            return False, "Not connected"
+        if self._worker.team_pvp_task and not self._worker.team_pvp_task.done():
+            return False, "Team PvP already running"
+
+        w = self._worker
+        w.team_pvp_state = TeamPvPState()
+        w.team_pvp_state.running = True
+        w.team_pvp_task = asyncio.create_task(team_pvp_worker(w.game, w.team_pvp_state))
+        return True, ""
+
+    def stop_team_pvp(self) -> None:
+        if self._worker and self._worker.team_pvp_state.running:
+            self._worker.team_pvp_state.stop()
+            self._worker.team_pvp_state.log("Stopping Team PvP...")
+
+    def get_team_pvp_state(self) -> TeamPvPState | None:
+        if self._worker:
+            return self._worker.team_pvp_state
+        return None
+
+    def get_team_pvp_stats(self) -> dict:
+        if not self._worker:
+            return {
+                "matches": 0, "wins": 0, "losses": 0,
+                "tokens": 0, "tokens_max": 0,
+                "in_party": False, "is_leader": False, "party_name": "",
+            }
+        s = self._worker.team_pvp_state
+        return {
+            "matches": s.matches_played,
+            "wins": s.wins,
+            "losses": s.losses,
+            "tokens": s.tokens_remaining,
+            "tokens_max": s.tokens_max,
+            "in_party": s.in_party,
+            "is_leader": s.is_leader,
+            "party_name": s.party_name,
+        }
+
+    async def fetch_party_status(self) -> dict:
+        """One-shot party status fetch for the UI (so it can show the card only when relevant)."""
+        if not self._worker or not self._worker.connected:
+            return {"in_party": False, "is_leader": False, "tokens": 0, "tokens_max": 0, "party_name": ""}
+        try:
+            return await self._worker.game.fetch_pvp_party_status()
+        except Exception as e:
+            logger.warning(f"fetch_party_status failed: {e}")
+            return {"in_party": False, "is_leader": False, "tokens": 0, "tokens_max": 0, "party_name": ""}
 
     # ── Stat Allocator ─────────────────────────────────────────────────────
 
@@ -577,6 +668,7 @@ class AccountManager:
         if self._worker:
             self._worker.state.stop()
             self._worker.pvp_state.stop()
+            self._worker.team_pvp_state.stop()
             self._worker.stat_state.stop()
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
@@ -591,6 +683,12 @@ class AccountManager:
                 self._worker.pvp_task.cancel()
                 try:
                     await self._worker.pvp_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.team_pvp_task:
+                self._worker.team_pvp_task.cancel()
+                try:
+                    await self._worker.team_pvp_task
                 except (asyncio.CancelledError, Exception):
                     pass
             if self._worker.pvp_auto_task:

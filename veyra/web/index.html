@@ -100,6 +100,22 @@
           </div>
         </div>
 
+        <div class="panel" id="teamPvpSection" style="display:none">
+          <div class="panel-header">
+            <span class="panel-title">
+              Team PvP
+              <span class="pvp-badge off" id="teamPvpBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body">
+            <span class="pvp-stat" id="teamPvpStat"></span>
+            <div class="pvp-btns">
+              <button class="btn btn-sm btn-pvp" id="teamPvpStartBtn" onclick="startTeamPvP()">Start Team PvP</button>
+              <button class="btn btn-sm btn-red" id="teamPvpStopBtn" onclick="stopTeamPvP()" style="display:none">Stop</button>
+            </div>
+          </div>
+        </div>
+
         <div class="panel panel-stat" id="statSection">
           <div class="panel-header">
             <span class="panel-title">

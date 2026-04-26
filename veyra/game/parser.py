@@ -606,6 +606,65 @@ def parse_pvp_solo_tokens(html: str) -> int:
     return 0
 
 
+def parse_pvp_party_status(html: str) -> dict:
+    """Parse the team/party block from pvp.php.
+
+    Returns:
+      {
+        "in_party": bool,           # user belongs to a party
+        "is_leader": bool,          # user can start party matches / disband
+        "tokens": int,              # current party tokens
+        "tokens_max": int,          # cap (e.g. 10)
+        "party_name": str,
+      }
+
+    Detection strategy (best-effort, robust to markup tweaks):
+      • "Disband Party" button → user is leader
+      • "Find Party Match" button → user is in a party
+      • Tokens cell shows "9 / 10" within the party section
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text(" ", strip=True)
+    lower = text.lower()
+
+    is_leader = "disband party" in lower
+    in_party = "find party match" in lower or is_leader
+
+    tokens = 0
+    tokens_max = 0
+
+    # Tokens: 9 / 10  (allow optional whitespace, optional thousands separators)
+    m = re.search(
+        r"Tokens[^A-Za-z0-9]*([\d,]+)\s*/\s*([\d,]+)",
+        text,
+        re.IGNORECASE,
+    )
+    if m:
+        try:
+            tokens = int(m.group(1).replace(",", ""))
+            tokens_max = int(m.group(2).replace(",", ""))
+        except ValueError:
+            pass
+
+    party_name = ""
+    # Try to grab the heading just above the party stats — fall back gracefully.
+    for h in soup.select("h1, h2, h3, .party-name, .team-name, [data-party-name]"):
+        h_text = h.get_text(strip=True)
+        if not h_text:
+            continue
+        if "party" in h_text.lower() and len(h_text) < 60:
+            party_name = h_text
+            break
+
+    return {
+        "in_party": in_party,
+        "is_leader": is_leader,
+        "tokens": tokens,
+        "tokens_max": tokens_max,
+        "party_name": party_name,
+    }
+
+
 def parse_character_stats(html: str) -> CharacterStats:
     """Parse unspent points and current stat values from stats.php.
 
