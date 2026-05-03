@@ -137,8 +137,15 @@ async def logs_file(request: Request):
     return PlainTextResponse("\n".join(tail) + "\n")
 
 
+class NoCacheStaticFiles(StaticFiles):
+    async def get_response(self, path, scope):
+        resp = await super().get_response(path, scope)
+        resp.headers["Cache-Control"] = "no-cache, must-revalidate"
+        return resp
+
+
 if web_dir.exists():
-    app.mount("/static", StaticFiles(directory=str(web_dir)), name="static")
+    app.mount("/static", NoCacheStaticFiles(directory=str(web_dir)), name="static")
 
 
 def main():
