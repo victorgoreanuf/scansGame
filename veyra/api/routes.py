@@ -90,6 +90,12 @@ async def session(request: Request):
         "stat_stats": manager.get_stat_stats(),
         "quest_running": manager.is_quest_running,
         "quest_stats": manager.get_quest_stats(),
+        "dungeon_pvp_running": manager.is_dungeon_pvp_running,
+        "dungeon_pvp_status": manager.get_dungeon_pvp_status(),
+        "dungeon_army_running": manager.is_dungeon_army_running,
+        "dungeon_army_status": manager.get_dungeon_army_status(),
+        "dungeon_warrens_running": manager.is_dungeon_warrens_running,
+        "dungeon_warrens_status": manager.get_dungeon_warrens_status(),
     }
 
 
@@ -184,7 +190,85 @@ async def status():
         "collection_status": manager.get_collection_status(),
         "achievement_running": manager.is_achievement_running,
         "achievement_status": manager.get_achievement_status(),
+        "dungeon_pvp_running": manager.is_dungeon_pvp_running,
+        "dungeon_pvp_status": manager.get_dungeon_pvp_status(),
+        "dungeon_army_running": manager.is_dungeon_army_running,
+        "dungeon_army_status": manager.get_dungeon_army_status(),
+        "dungeon_warrens_running": manager.is_dungeon_warrens_running,
+        "dungeon_warrens_status": manager.get_dungeon_warrens_status(),
     }
+
+
+# ── Guild Dungeon PvP ────────────────────────────────────────────────────────
+
+
+@router.post("/dungeon-pvp/start")
+async def dungeon_pvp_start():
+    if manager.is_dungeon_pvp_running:
+        return {"ok": False, "error": "Dungeon PvP already running"}
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    ok = await manager.start_dungeon_pvp()
+    return {"ok": ok}
+
+
+@router.post("/dungeon-pvp/stop")
+async def dungeon_pvp_stop():
+    manager.stop_dungeon_pvp()
+    return {"ok": True}
+
+
+@router.get("/dungeon-pvp/status")
+async def dungeon_pvp_status():
+    return {"ok": True, **manager.get_dungeon_pvp_status()}
+
+
+# ── Guild Dungeon Army ───────────────────────────────────────────────────────
+
+
+@router.post("/dungeon-army/start")
+async def dungeon_army_start():
+    if manager.is_dungeon_army_running:
+        return {"ok": False, "error": "Dungeon Army already running"}
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    ok = await manager.start_dungeon_army()
+    return {"ok": ok}
+
+
+@router.post("/dungeon-army/stop")
+async def dungeon_army_stop():
+    manager.stop_dungeon_army()
+    return {"ok": True}
+
+
+@router.get("/dungeon-army/status")
+async def dungeon_army_status():
+    return {"ok": True, **manager.get_dungeon_army_status()}
+
+
+# ── Guild Dungeon Warrens (Gribble) ──────────────────────────────────────────
+
+
+@router.post("/dungeon-warrens/start")
+async def dungeon_warrens_start():
+    if manager.is_dungeon_warrens_running:
+        return {"ok": False, "error": "Dungeon Warrens already running"}
+    if not manager.is_connected:
+        return {"ok": False, "error": "Not connected"}
+    ok = await manager.start_dungeon_warrens()
+    return {"ok": ok}
+
+
+@router.post("/dungeon-warrens/stop")
+async def dungeon_warrens_stop():
+    manager.stop_dungeon_warrens()
+    return {"ok": True}
+
+
+@router.get("/dungeon-warrens/status")
+async def dungeon_warrens_status():
+    return {"ok": True, **manager.get_dungeon_warrens_status()}
 
 
 @router.post("/pvp/start")
@@ -291,6 +375,9 @@ async def logs():
         quest_last_id = 0
         col_last_id = 0
         ach_last_id = 0
+        dpvp_last_id = 0
+        darmy_last_id = 0
+        dwarrens_last_id = 0
         while True:
             state = manager.get_state()
             if state:
@@ -346,6 +433,27 @@ async def logs():
                 for entry in new:
                     tagged = {"id": entry["id"], "msg": f"[Achievements] {entry['msg']}"}
                     yield f"data: {json.dumps(tagged)}\n\n"
+            dpvp_state = manager.get_dungeon_pvp_state()
+            if dpvp_state:
+                new = [l for l in dpvp_state.logs if l["id"] > dpvp_last_id]
+                if new:
+                    dpvp_last_id = new[-1]["id"]
+                for entry in new:
+                    yield f"data: {json.dumps(entry)}\n\n"
+            darmy_state = manager.get_dungeon_army_state()
+            if darmy_state:
+                new = [l for l in darmy_state.logs if l["id"] > darmy_last_id]
+                if new:
+                    darmy_last_id = new[-1]["id"]
+                for entry in new:
+                    yield f"data: {json.dumps(entry)}\n\n"
+            dwarrens_state = manager.get_dungeon_warrens_state()
+            if dwarrens_state:
+                new = [l for l in dwarrens_state.logs if l["id"] > dwarrens_last_id]
+                if new:
+                    dwarrens_last_id = new[-1]["id"]
+                for entry in new:
+                    yield f"data: {json.dumps(entry)}\n\n"
             await asyncio.sleep(1)
 
     return StreamingResponse(

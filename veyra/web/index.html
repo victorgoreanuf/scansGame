@@ -198,6 +198,69 @@
             </div>
           </div>
         </div>
+
+        <div class="panel panel-quest" id="dungeonPvpSection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Guild Dungeon (PvP)
+              <span class="pvp-badge off" id="dungeonPvpBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body dpvp-panel-body">
+            <div class="dpvp-info">
+              <span class="quest-info" id="dungeonPvpAction">Idle</span>
+              <span class="quest-info" id="dungeonPvpNextWake"></span>
+              <span class="quest-info" id="dungeonPvpCooldowns"></span>
+              <span class="quest-info dpvp-error" id="dungeonPvpError"></span>
+            </div>
+            <div class="quest-controls">
+              <button class="btn btn-sm btn-pvp" id="dungeonPvpStartBtn" onclick="startDungeonPvp()">Start</button>
+              <button class="btn btn-sm btn-red" id="dungeonPvpStopBtn" onclick="stopDungeonPvp()" style="display:none">Stop</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-quest" id="dungeonArmySection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Guild Dungeon (Army)
+              <span class="pvp-badge off" id="dungeonArmyBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body dpvp-panel-body">
+            <div class="dpvp-info">
+              <span class="quest-info" id="dungeonArmyAction">Idle</span>
+              <span class="quest-info" id="dungeonArmyNextWake"></span>
+              <span class="quest-info" id="dungeonArmyProgress"></span>
+              <span class="quest-info dpvp-error" id="dungeonArmyError"></span>
+            </div>
+            <div class="quest-controls">
+              <button class="btn btn-sm btn-pvp" id="dungeonArmyStartBtn" onclick="startDungeonArmy()">Start</button>
+              <button class="btn btn-sm btn-red" id="dungeonArmyStopBtn" onclick="stopDungeonArmy()" style="display:none">Stop</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-quest" id="dungeonWarrensSection">
+          <div class="panel-header">
+            <span class="panel-title">
+              Guild Dungeon (Warrens — Gribble)
+              <span class="pvp-badge off" id="dungeonWarrensBadge">OFF</span>
+            </span>
+          </div>
+          <div class="panel-body dpvp-panel-body">
+            <div class="dpvp-info">
+              <span class="quest-info" id="dungeonWarrensAction">Idle</span>
+              <span class="quest-info" id="dungeonWarrensNextWake"></span>
+              <span class="quest-info" id="dungeonWarrensProgress"></span>
+              <span class="quest-info dpvp-error" id="dungeonWarrensError"></span>
+            </div>
+            <div class="quest-controls">
+              <button class="btn btn-sm btn-pvp" id="dungeonWarrensStartBtn" onclick="startDungeonWarrens()">Start</button>
+              <button class="btn btn-sm btn-red" id="dungeonWarrensStopBtn" onclick="stopDungeonWarrens()" style="display:none">Stop</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

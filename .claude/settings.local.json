@@ -39,7 +39,10 @@
       "Bash(curl -s http://127.0.0.1:5678/api/quest/board/raw)",
       "Bash(python3 -c \"from veyra.engine.quest_runner import quest_worker, QuestState; print\\('OK'\\)\")",
       "Bash(python3 -c \"from veyra.engine.quest_runner import quest_worker; print\\('OK'\\)\")",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(timeout 3 curl -s -N http://127.0.0.1:5678/api/logs)",
+      "Bash(curl -s -X POST http://127.0.0.1:5678/api/dungeon-pvp/stop)",
+      "Bash(curl -s http://127.0.0.1:5678/api/dungeon-pvp/status)"
     ]
   }
 }

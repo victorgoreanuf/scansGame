@@ -195,3 +195,36 @@ class FarmStats:
     started_at: float = 0.0
     looted: int = 0
     exp_gained: float = 0.0
+
+
+@dataclass
+class PvpNodeMatchCard:
+    """One <div class='match'> card on pvp_style_node.php."""
+    match_no: int
+    slots: int
+    cap: int
+    status: str  # OPEN | LIVE | CLEARED
+    href: str = ""
+
+
+@dataclass
+class WarrensMonsterCard:
+    dgmid: str
+    name: str
+    is_dead: bool
+    hp_current: int | None
+    hp_max: int | None
+
+
+@dataclass
+class ArmyMatchCard:
+    """One entry in the cards[] of guild_dungeon_cube_army_action.php action=state."""
+    match_no: int
+    status: str            # 'open' | 'active' | 'cleared' (verify exact set)
+    winner_side: str       # '' while live; 'ALLY' / 'ENEMY' once resolved
+    banner_name: str
+    participant_count: int
+    battle_id: int
+    run_id: int | None = None
+    total_damage: int | None = None
+    total_kills: int | None = None

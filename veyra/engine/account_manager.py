@@ -23,6 +23,18 @@ from veyra.engine.achievement_farmer import (
     AchievementState,
     achievement_worker,
 )
+from veyra.engine.dungeon_pvp_farmer import (
+    DungeonPvpStatus,
+    dungeon_pvp_worker,
+)
+from veyra.engine.dungeon_army_farmer import (
+    DungeonArmyStatus,
+    dungeon_army_worker,
+)
+from veyra.engine.dungeon_warrens_farmer import (
+    DungeonWarrensStatus,
+    dungeon_warrens_worker,
+)
 
 
 logger = logging.getLogger("veyra.manager")
@@ -60,6 +72,15 @@ class AccountWorker:
     # Achievement farmer
     achievement_state: AchievementState = field(default_factory=AchievementState)
     achievement_task: asyncio.Task | None = None
+    # Guild Dungeon PvP
+    dungeon_pvp_status: DungeonPvpStatus = field(default_factory=DungeonPvpStatus)
+    dungeon_pvp_task: asyncio.Task | None = None
+    # Guild Dungeon Army
+    dungeon_army_status: DungeonArmyStatus = field(default_factory=DungeonArmyStatus)
+    dungeon_army_task: asyncio.Task | None = None
+    # Guild Dungeon Warrens (Gribble)
+    dungeon_warrens_status: DungeonWarrensStatus = field(default_factory=DungeonWarrensStatus)
+    dungeon_warrens_task: asyncio.Task | None = None
 
 
 class AccountManager:
@@ -146,6 +167,9 @@ class AccountManager:
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
             self._worker.achievement_state.stop()
+            self._worker.dungeon_pvp_status.stop()
+            self._worker.dungeon_army_status.stop()
+            self._worker.dungeon_warrens_status.stop()
             if self._worker.task:
                 self._worker.task.cancel()
             if self._worker.pvp_task:
@@ -162,6 +186,12 @@ class AccountManager:
                 self._worker.collection_task.cancel()
             if self._worker.achievement_task:
                 self._worker.achievement_task.cancel()
+            if self._worker.dungeon_pvp_task:
+                self._worker.dungeon_pvp_task.cancel()
+            if self._worker.dungeon_army_task:
+                self._worker.dungeon_army_task.cancel()
+            if self._worker.dungeon_warrens_task:
+                self._worker.dungeon_warrens_task.cancel()
             await self._worker.game.close()
 
         game = GameClient()
@@ -646,6 +676,175 @@ class AccountManager:
             },
         }
 
+    # ── Guild Dungeon PvP ─────────────────────────────────────────────────────
+
+    @property
+    def is_dungeon_pvp_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.dungeon_pvp_task and self._worker.dungeon_pvp_task.done():
+            self._worker.dungeon_pvp_status.running = False
+            return False
+        return self._worker.dungeon_pvp_status.running
+
+    async def start_dungeon_pvp(self) -> bool:
+        if not self._worker or not self._worker.connected:
+            return False
+        if self._worker.dungeon_pvp_task and not self._worker.dungeon_pvp_task.done():
+            return False
+
+        w = self._worker
+        w.dungeon_pvp_status = DungeonPvpStatus()
+        w.dungeon_pvp_status.running = True
+        w.dungeon_pvp_task = asyncio.create_task(
+            dungeon_pvp_worker(w.game, w.dungeon_pvp_status)
+        )
+        return True
+
+    def stop_dungeon_pvp(self) -> None:
+        if self._worker and self._worker.dungeon_pvp_status.running:
+            self._worker.dungeon_pvp_status.stop()
+            self._worker.dungeon_pvp_status.log("Stopping...")
+
+    def get_dungeon_pvp_state(self) -> DungeonPvpStatus | None:
+        if self._worker:
+            return self._worker.dungeon_pvp_status
+        return None
+
+    def get_dungeon_pvp_status(self) -> dict:
+        if not self._worker:
+            return {
+                "running": False,
+                "last_action_at": None,
+                "last_action": None,
+                "next_wake_at": None,
+                "cooldowns": {},
+                "last_error": None,
+            }
+        s = self._worker.dungeon_pvp_status
+        return {
+            "running": self.is_dungeon_pvp_running,
+            "last_action_at": s.last_action_at,
+            "last_action": s.last_action,
+            "next_wake_at": s.next_wake_at,
+            "cooldowns": dict(s.cooldowns),
+            "last_error": s.last_error,
+        }
+
+    # ── Guild Dungeon Army ────────────────────────────────────────────────────
+
+    @property
+    def is_dungeon_army_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if self._worker.dungeon_army_task and self._worker.dungeon_army_task.done():
+            self._worker.dungeon_army_status.running = False
+            return False
+        return self._worker.dungeon_army_status.running
+
+    async def start_dungeon_army(self) -> bool:
+        if not self._worker or not self._worker.connected:
+            return False
+        if self._worker.dungeon_army_task and not self._worker.dungeon_army_task.done():
+            return False
+
+        w = self._worker
+        w.dungeon_army_status = DungeonArmyStatus()
+        w.dungeon_army_status.running = True
+        w.dungeon_army_task = asyncio.create_task(
+            dungeon_army_worker(w.game, w.dungeon_army_status)
+        )
+        return True
+
+    def stop_dungeon_army(self) -> None:
+        if self._worker and self._worker.dungeon_army_status.running:
+            self._worker.dungeon_army_status.stop()
+            self._worker.dungeon_army_status.log("Stopping...")
+
+    def get_dungeon_army_state(self) -> DungeonArmyStatus | None:
+        if self._worker:
+            return self._worker.dungeon_army_status
+        return None
+
+    def get_dungeon_army_status(self) -> dict:
+        if not self._worker:
+            return {
+                "running": False,
+                "last_action_at": None,
+                "last_action": None,
+                "next_wake_at": None,
+                "progress": {},
+                "last_error": None,
+            }
+        s = self._worker.dungeon_army_status
+        return {
+            "running": self.is_dungeon_army_running,
+            "last_action_at": s.last_action_at,
+            "last_action": s.last_action,
+            "next_wake_at": s.next_wake_at,
+            "progress": dict(s.progress),
+            "last_error": s.last_error,
+        }
+
+    # ── Guild Dungeon Warrens (Gribble) ─────────────────────────────────────
+
+    @property
+    def is_dungeon_warrens_running(self) -> bool:
+        if self._worker is None:
+            return False
+        if (self._worker.dungeon_warrens_task
+                and self._worker.dungeon_warrens_task.done()):
+            self._worker.dungeon_warrens_status.running = False
+            return False
+        return self._worker.dungeon_warrens_status.running
+
+    async def start_dungeon_warrens(self) -> bool:
+        if not self._worker or not self._worker.connected:
+            return False
+        if (self._worker.dungeon_warrens_task
+                and not self._worker.dungeon_warrens_task.done()):
+            return False
+
+        w = self._worker
+        w.dungeon_warrens_status = DungeonWarrensStatus()
+        w.dungeon_warrens_status.running = True
+        w.dungeon_warrens_task = asyncio.create_task(
+            dungeon_warrens_worker(w.game, w.dungeon_warrens_status)
+        )
+        return True
+
+    def stop_dungeon_warrens(self) -> None:
+        if self._worker and self._worker.dungeon_warrens_status.running:
+            self._worker.dungeon_warrens_status.stop()
+            self._worker.dungeon_warrens_status.log("Stopping...")
+
+    def get_dungeon_warrens_state(self) -> DungeonWarrensStatus | None:
+        if self._worker:
+            return self._worker.dungeon_warrens_status
+        return None
+
+    def get_dungeon_warrens_status(self) -> dict:
+        if not self._worker:
+            return {
+                "running": False,
+                "last_action_at": None,
+                "last_action": None,
+                "next_wake_at": None,
+                "progress": {},
+                "totals": {},
+                "last_error": None,
+            }
+        s = self._worker.dungeon_warrens_status
+        return {
+            "running": self.is_dungeon_warrens_running,
+            "last_action_at": s.last_action_at,
+            "last_action": s.last_action,
+            "next_wake_at": s.next_wake_at,
+            "progress": dict(s.progress),
+            "totals": dict(s.totals),
+            "last_error": s.last_error,
+        }
+
     def get_state(self) -> FarmerState | None:
         if self._worker:
             return self._worker.state
@@ -673,6 +872,9 @@ class AccountManager:
             self._worker.quest_state.stop()
             self._worker.collection_state.stop()
             self._worker.achievement_state.stop()
+            self._worker.dungeon_pvp_status.stop()
+            self._worker.dungeon_army_status.stop()
+            self._worker.dungeon_warrens_status.stop()
             if self._worker.task:
                 self._worker.task.cancel()
                 try:
@@ -719,6 +921,24 @@ class AccountManager:
                 self._worker.achievement_task.cancel()
                 try:
                     await self._worker.achievement_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.dungeon_pvp_task:
+                self._worker.dungeon_pvp_task.cancel()
+                try:
+                    await self._worker.dungeon_pvp_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.dungeon_army_task:
+                self._worker.dungeon_army_task.cancel()
+                try:
+                    await self._worker.dungeon_army_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            if self._worker.dungeon_warrens_task:
+                self._worker.dungeon_warrens_task.cancel()
+                try:
+                    await self._worker.dungeon_warrens_task
                 except (asyncio.CancelledError, Exception):
                     pass
             await self._worker.game.close()

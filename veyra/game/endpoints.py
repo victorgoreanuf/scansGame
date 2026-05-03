@@ -47,6 +47,37 @@ BLACKSMITH_URL = f"{BASE_URL}/blacksmith.php"
 # Achievements
 ACHIEVEMENTS_URL = f"{BASE_URL}/achievements.php"
 
+# Guild Dungeon (cube)
+GUILD_DUNGEON_DASH_URL = f"{BASE_URL}/guild_dash.php"
+GUILD_DUNGEON_CUBE_URL = f"{BASE_URL}/guild_dungeon_cube.php"
+GUILD_DUNGEON_CUBE_ACTION_URL = f"{BASE_URL}/guild_dungeon_cube_action.php"
+
+# PvP-style rooms (under the cube)
+PVP_STYLE_NODE_URL = f"{BASE_URL}/pvp_style_node.php"
+PVP_STYLE_STATE_URL = f"{BASE_URL}/pvp_style_state.php"
+PVP_STYLE_BATTLE_URL = f"{BASE_URL}/pvp_style_battle.php"
+PVP_STYLE_ACTION_URL = f"{BASE_URL}/pvp_style_action.php"
+
+# Army rooms (under the cube)
+GUILD_DUNGEON_CUBE_ARMY_ENTER_URL = f"{BASE_URL}/guild_dungeon_cube_army_enter.php"
+GUILD_DUNGEON_CUBE_ARMY_ACTION_URL = f"{BASE_URL}/guild_dungeon_cube_army_action.php"
+SHADOW_ARMY_LIVE_BATTLE_URL = f"{BASE_URL}/shadow_army_live_battle.php"
+
+THE_POLYHEDRAL_CRUCIBLE_NAME = "The Polyhedral Crucible"
+DUNGEON_PVP_TARGET_KEYS = ["ring_ward", "duel_heart", "tyrant_conclave"]
+DUNGEON_ARMY_TARGET_KEYS = ["veil_post", "captain_spine", "abyssal_muster"]
+
+# Shadowbridge Warrens — Gribble Junk-Magus farming
+GUILD_DUNGEON_INSTANCE_URL  = f"{BASE_URL}/guild_dungeon_instance.php"
+GUILD_DUNGEON_LOCATION_URL  = f"{BASE_URL}/guild_dungeon_location.php"
+DUNGEON_JOIN_BATTLE_URL     = f"{BASE_URL}/dungeon_join_battle.php"
+SHADOWBRIDGE_WARRENS_NAME   = "Shadowbridge Warrens"
+WARRENS_GRIBBLE_LOCATIONS   = (2, 4)
+WARRENS_GRIBBLE_NAME        = "Gribble Junk-Magus"
+WARRENS_DAMAGE_THRESHOLD    = 1_000_000
+WARRENS_STAMINA_PER_HIT     = 10
+WARRENS_STAMINA_SKILL_ID    = "-1"
+
 STAMINA_OPTIONS = [
     {"label": "1 Stamina", "cost": 1, "skill_id": "0"},
     {"label": "10 Stamina", "cost": 10, "skill_id": "-1"},

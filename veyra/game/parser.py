@@ -17,12 +17,15 @@ from veyra.game.types import (
     Monster,
     MonsterGroup,
     PlayerStats,
+    PvpNodeMatchCard,
     Quest,
     QuestObjective,
     QuestStatus,
     QuestType,
     StaminaPotion,
+    WarrensMonsterCard,
 )
+import json
 
 
 def parse_monsters(html: str) -> list[Monster]:
@@ -1202,3 +1205,231 @@ def parse_active_quest(html: str) -> ActiveQuest | None:
         )
 
     return None
+
+
+# ── Guild Dungeon (cube) parsers ────────────────────────────────────────────
+
+
+_OPEN_DUNGEONS_NAME_DIV_RE = re.compile(r"font-weight\s*:\s*7")
+_OPEN_DUNGEONS_ENTER_RE = re.compile(r"guild_dungeon_enter\.php\?id=(\d+)")
+_DUNGEON_INFO_RE = re.compile(r"dungeon_info\.php\?id=(\d+)")
+
+
+def parse_open_dungeons(html: str) -> list[dict]:
+    """Parse the Open Dungeons section of guild_dash.php.
+
+    Returns a list of {name, instance_id, dungeon_info_id}.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    h2 = soup.find("h2", string=re.compile(r"open\s*dungeons?", re.I))
+    if not h2:
+        return []
+    panel = h2.find_parent("div", class_="panel") or h2.find_parent("div")
+    if not panel:
+        return []
+
+    out: list[dict] = []
+    for a in panel.find_all("a", href=_OPEN_DUNGEONS_ENTER_RE):
+        m = _OPEN_DUNGEONS_ENTER_RE.search(a.get("href", ""))
+        if not m:
+            continue
+        instance_id = m.group(1)
+        # The Enter link sits inside a button row, which sits inside the dungeon card.
+        # Walk up until we find a div that also contains the bold name div.
+        name = ""
+        info_id: int | None = None
+        card = a.parent
+        for _ in range(4):
+            if card is None or not isinstance(card, Tag):
+                break
+            name_div = card.find("div", style=_OPEN_DUNGEONS_NAME_DIV_RE)
+            if name_div:
+                name = name_div.get_text(strip=True)
+                break
+            card = card.parent
+        if card and isinstance(card, Tag):
+            info_a = card.find("a", href=_DUNGEON_INFO_RE)
+            if info_a:
+                im = _DUNGEON_INFO_RE.search(info_a.get("href", ""))
+                if im:
+                    try:
+                        info_id = int(im.group(1))
+                    except ValueError:
+                        info_id = None
+        out.append({"name": name, "instance_id": instance_id, "dungeon_info_id": info_id})
+    return out
+
+
+_CUBE_STATE_RE = re.compile(r"const\s+STATE\s*=\s*(\{.*?\});", re.DOTALL)
+
+
+def parse_cube_state(html: str) -> dict:
+    """Extract the inline `const STATE = {...}` JSON from guild_dungeon_cube.php."""
+    m = _CUBE_STATE_RE.search(html)
+    if not m:
+        raise ValueError("STATE not found in cube page")
+    return json.loads(m.group(1))
+
+
+_PVP_NODE_COOLDOWN_RE = re.compile(
+    r"locked to another match in this node for about (\d+):(\d{2}):(\d{2}) more"
+)
+
+
+def parse_pvp_node_matches(html: str) -> list[PvpNodeMatchCard]:
+    """Parse all <div class='match'> cards on pvp_style_node.php."""
+    soup = BeautifulSoup(html, "html.parser")
+    out: list[PvpNodeMatchCard] = []
+    for card in soup.find_all("div", class_="match"):
+        text = card.get_text(" ", strip=True)
+        m = re.search(r"Match\s*#(\d+)\s*/\s*Slots\s*(\d+)\s*/\s*(\d+)", text)
+        if not m:
+            continue
+        match_no = int(m.group(1))
+        slots = int(m.group(2))
+        cap = int(m.group(3))
+        status = "?"
+        upper = text.upper()
+        for tok in ("CLEARED", "LIVE", "OPEN"):
+            if tok in upper:
+                status = tok
+                break
+        a = card.find("a", href=re.compile(r"pvp_style_battle\.php"))
+        href = a.get("href", "") if a else ""
+        out.append(PvpNodeMatchCard(
+            match_no=match_no, slots=slots, cap=cap, status=status, href=href,
+        ))
+    out.sort(key=lambda c: c.match_no)
+    return out
+
+
+def parse_pvp_node_cooldown(html: str) -> int | None:
+    """Return remaining seconds from the 'locked to another match...' line, or None."""
+    m = _PVP_NODE_COOLDOWN_RE.search(html)
+    if not m:
+        return None
+    h, mi, s = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    return h * 3600 + mi * 60 + s
+
+
+# ── Shadowbridge Warrens (Gribble Junk-Magus) ──────────────────────────────
+
+_WARRENS_DGMID_RE = re.compile(r"battle\.php\?dgmid=(\d+)")
+_WARRENS_HP_RE = re.compile(r"HP\s*<strong>([\d,]+)</strong>\s*/\s*([\d,]+)")
+_WARRENS_STAMINA_RE = re.compile(r'id\s*=\s*["\']stamina_span["\'][^>]*>\s*([\d,]+)')
+_WARRENS_NOT_JOINED_RE = re.compile(r"haven[’']t\s+joined", re.IGNORECASE)
+_WARRENS_JOIN_BTN_RE = re.compile(r'<button[^>]+id\s*=\s*["\']join-battle["\']')
+
+
+def parse_warrens_monsters(html: str) -> list[WarrensMonsterCard]:
+    """Parse <div class='mon'> cards on a guild_dungeon_location.php page."""
+    soup = BeautifulSoup(html, "html.parser")
+    out: list[WarrensMonsterCard] = []
+    for card in soup.find_all("div", class_="mon"):
+        classes = card.get("class") or []
+        is_dead = "dead" in classes
+        a = card.find("a", href=_WARRENS_DGMID_RE)
+        if not a:
+            continue
+        m = _WARRENS_DGMID_RE.search(a.get("href", ""))
+        if not m:
+            continue
+        dgmid = m.group(1)
+
+        name = ""
+        # Mob cards put the name as a bare text node inside a <div style="font-weight:700">.
+        # The same div also wraps a "not joined" pill in a nested element — strip the
+        # nested element text and take what's left.
+        name_div = card.find(
+            "div",
+            style=lambda s: bool(s) and "font-weight:700" in s.replace(" ", ""),
+        )
+        if name_div:
+            tmp = name_div.__copy__()
+            for nested in tmp.find_all(["div", "span", "a", "img"]):
+                nested.decompose()
+            name = re.sub(r"\s+", " ", tmp.get_text(" ", strip=True)).strip()
+        if not name:
+            # Fallback: split the card text on '|' and pick the first segment that
+            # isn't a known label / HP block / decoration.
+            parts = [p.strip() for p in card.get_text("|", strip=True).split("|") if p.strip()]
+            skip_exact = {"joined", "not joined", "dead", "alive", "View", "Fight"}
+            for p in parts:
+                pl = p.lower()
+                if pl in {x.lower() for x in skip_exact}: continue
+                if pl.startswith("no loot"): continue
+                if re.fullmatch(r"[\d,. /]+(\s*HP)?", p): continue
+                if any(t in p for t in ("HP", "ATK", "DEF", "EXP/dmg")): continue
+                if p in ("⚔️", "🛡️", "⭐", "👀", "✨", "👾", "⚔️ Fight", "👀 View"): continue
+                name = p
+                break
+
+        hp_current: int | None = None
+        hp_max: int | None = None
+        hp_m = _WARRENS_HP_RE.search(str(card))
+        if hp_m:
+            try:
+                hp_current = int(hp_m.group(1).replace(",", ""))
+                hp_max = int(hp_m.group(2).replace(",", ""))
+            except ValueError:
+                pass
+
+        out.append(WarrensMonsterCard(
+            dgmid=dgmid, name=name, is_dead=is_dead,
+            hp_current=hp_current, hp_max=hp_max,
+        ))
+    return out
+
+
+def parse_my_dungeon_damage(html: str, user_id: str) -> int:
+    """Return our damage from the leaderboard on battle.php, or 0 if not present."""
+    if not user_id:
+        return 0
+    soup = BeautifulSoup(html, "html.parser")
+    for row in soup.select("div.lb-row"):
+        a = row.select_one(f'a[href*="pid={user_id}"]')
+        if not a:
+            continue
+        dmg_el = row.select_one(".lb-dmg")
+        if not dmg_el:
+            continue
+        m = re.search(r"([\d,]+)", dmg_el.get_text(strip=True))
+        if m:
+            try:
+                return int(m.group(1).replace(",", ""))
+            except ValueError:
+                return 0
+    return 0
+
+
+def parse_dungeon_battle_status(html: str) -> dict:
+    """Parse joined/stamina/HP from battle.php?dgmid=…&instance_id=… page."""
+    joined = True
+    if _WARRENS_NOT_JOINED_RE.search(html) or _WARRENS_JOIN_BTN_RE.search(html):
+        joined = False
+
+    stamina: int | None = None
+    sm = _WARRENS_STAMINA_RE.search(html)
+    if sm:
+        try:
+            stamina = int(sm.group(1).replace(",", ""))
+        except ValueError:
+            stamina = None
+
+    hp_current = 0
+    hp_max = 0
+    hp_m = _WARRENS_HP_RE.search(html)
+    if hp_m:
+        try:
+            hp_current = int(hp_m.group(1).replace(",", ""))
+            hp_max = int(hp_m.group(2).replace(",", ""))
+        except ValueError:
+            pass
+
+    return {
+        "joined": joined,
+        "stamina": stamina,
+        "monster_alive": hp_current > 0,
+        "hp_current": hp_current,
+        "hp_max": hp_max,
+    }

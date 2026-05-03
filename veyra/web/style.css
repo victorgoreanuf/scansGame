@@ -708,6 +708,16 @@ input::placeholder { color: var(--text-muted); }
 .quest-progress { color: var(--green); }
 .quest-fallback { color: var(--amber); font-style: italic; }
 
+/* ─── Guild Dungeon PvP ─── */
+.dpvp-panel-body { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+.dpvp-info {
+  display: flex; flex-direction: column; gap: 2px;
+  flex: 1; min-width: 0;
+}
+.dpvp-info .quest-info { flex: 0 0 auto; }
+.dpvp-error { color: var(--red); }
+.dpvp-error:empty { display: none; }
+
 /* ─── Action Bar (fixed bottom) ─── */
 .action-bar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;

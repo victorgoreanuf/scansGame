@@ -1,7 +1,9 @@
 """Async game client — one instance per account, wraps all game HTTP calls."""
 
 import asyncio
+import json
 import logging
+import re
 from typing import Callable
 
 import httpx
@@ -17,7 +19,15 @@ from veyra.game.endpoints import (
     CHAPTER_URL,
     COLLECTIONS_URL,
     DAMAGE_URL,
+    DUNGEON_JOIN_BATTLE_URL,
     GUILD_ACCEPT_URL,
+    GUILD_DUNGEON_CUBE_ACTION_URL,
+    GUILD_DUNGEON_CUBE_ARMY_ACTION_URL,
+    GUILD_DUNGEON_CUBE_ARMY_ENTER_URL,
+    GUILD_DUNGEON_CUBE_URL,
+    GUILD_DUNGEON_DASH_URL,
+    GUILD_DUNGEON_INSTANCE_URL,
+    GUILD_DUNGEON_LOCATION_URL,
     GUILD_FINISH_URL,
     GUILD_GIVEUP_URL,
     GUILD_URL,
@@ -31,8 +41,13 @@ from veyra.game.endpoints import (
     PVP_BATTLE_STATE_URL,
     PVP_BATTLE_URL,
     PVP_MATCHMAKE_URL,
+    PVP_STYLE_ACTION_URL,
+    PVP_STYLE_BATTLE_URL,
+    PVP_STYLE_NODE_URL,
+    PVP_STYLE_STATE_URL,
     PVP_URL,
     REACT_URL,
+    SHADOW_ARMY_LIVE_BATTLE_URL,
     STATS_URL,
     USE_ITEM_URL,
     WAVE_MAP,
@@ -47,6 +62,7 @@ from veyra.game.parser import (
     parse_character_stats,
     parse_class_skills,
     parse_collection_progress,
+    parse_cube_state,
     parse_damage_response,
     parse_dead_monsters,
     parse_exp_per_dmg,
@@ -54,14 +70,29 @@ from veyra.game.parser import (
     parse_manga_links,
     parse_monster_loot,
     parse_monsters,
+    parse_open_dungeons,
     parse_player_stats,
+    parse_pvp_node_cooldown,
+    parse_pvp_node_matches,
     parse_pvp_party_status,
     parse_pvp_solo_tokens,
     parse_quest_board,
     parse_stamina_potions,
     parse_unclaimed_kills,
+    parse_warrens_monsters,
 )
-from veyra.game.types import AttackResult, CharacterStats, DeadMonster, LootItem, Monster, MonsterGroup, PlayerStats, StaminaPotion
+from veyra.game.types import (
+    AttackResult,
+    CharacterStats,
+    DeadMonster,
+    LootItem,
+    Monster,
+    MonsterGroup,
+    PlayerStats,
+    PvpNodeMatchCard,
+    StaminaPotion,
+    WarrensMonsterCard,
+)
 
 
 SITE_DOWN_THRESHOLD = 3        # consecutive failures before declaring site down
@@ -558,16 +589,335 @@ class GameClient:
         html = await self.fetch_page(f"{BATTLE_URL}?id={monster_id}")
         return parse_monster_loot(html)
 
+    # ── Guild Dungeon (cube) ────────────────────────────────────────────────
+
+    async def fetch_open_dungeons(self) -> list[dict]:
+        """List open dungeon instances on guild_dash.php."""
+        html = await self.fetch_page(GUILD_DUNGEON_DASH_URL)
+        return parse_open_dungeons(html)
+
+    async def fetch_cube_state(self, instance_id: str) -> dict:
+        """Fetch the cube map page and return its parsed STATE dict."""
+        url = f"{GUILD_DUNGEON_CUBE_URL}?instance_id={instance_id}"
+        html = await self.fetch_page(url)
+        return parse_cube_state(html)
+
+    async def enter_cube_node(self, instance_id: str, node_id: int | str, face_key: str) -> dict:
+        """POST guild_dungeon_cube_action.php action=enter_node."""
+        referer = f"{GUILD_DUNGEON_CUBE_URL}?instance_id={instance_id}"
+        resp = await self._client.post(
+            GUILD_DUNGEON_CUBE_ACTION_URL,
+            data={
+                "action": "enter_node",
+                "instance_id": str(instance_id),
+                "node_id": str(node_id),
+                "face_key": face_key,
+            },
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": referer},
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def fetch_pvp_node_matches(
+        self, instance_id: str, node_id: int | str
+    ) -> tuple[list[PvpNodeMatchCard], int | None]:
+        """GET pvp_style_node.php once. Returns (cards, cooldown_seconds_or_None)."""
+        url = (f"{PVP_STYLE_NODE_URL}?source=cube&instance_id={instance_id}"
+               f"&node_id={node_id}")
+        referer = f"{GUILD_DUNGEON_CUBE_URL}?instance_id={instance_id}"
+        resp = await self._client.get(
+            url,
+            headers={**HEADERS, "Referer": referer},
+            timeout=20,
+        )
+        resp.raise_for_status()
+        cards = parse_pvp_node_matches(resp.text)
+        cooldown = parse_pvp_node_cooldown(resp.text)
+        return cards, cooldown
+
+    async def fetch_pvp_match_state(
+        self, instance_id: str, node_id: int | str, match_no: int
+    ) -> dict:
+        """GET pvp_style_state.php for a single match."""
+        url = (f"{PVP_STYLE_STATE_URL}?source=cube&instance_id={instance_id}"
+               f"&node_id={node_id}&match_no={match_no}")
+        referer = (f"{PVP_STYLE_BATTLE_URL}?source=cube&instance_id={instance_id}"
+                   f"&node_id={node_id}&match_no={match_no}")
+        resp = await self._client.get(
+            url,
+            headers={**HEADERS, "Referer": referer},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def pvp_pick_slot(
+        self,
+        instance_id: str,
+        node_id: int | str,
+        match_no: int,
+        slot_index: int,
+    ) -> dict:
+        """POST pvp_style_action.php action=pick_slot for a cube source match."""
+        referer = (f"{PVP_STYLE_BATTLE_URL}?source=cube&instance_id={instance_id}"
+                   f"&node_id={node_id}&match_no={match_no}")
+        resp = await self._client.post(
+            PVP_STYLE_ACTION_URL,
+            data={
+                "source": "cube",
+                "instance_id": str(instance_id),
+                "node_id": str(node_id),
+                "match_no": str(match_no),
+                "action": "pick_slot",
+                "slot_index": str(slot_index),
+            },
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": referer},
+            timeout=15,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    # ── Army cube rooms / live shadow battle ────────────────────────────────
+
+    async def fetch_army_node_state(
+        self, instance_id: str, node_id: int | str
+    ) -> dict:
+        """POST guild_dungeon_cube_army_action.php action=state. Returns full payload."""
+        referer = (f"{GUILD_DUNGEON_CUBE_ARMY_ENTER_URL}"
+                   f"?instance_id={instance_id}&node_id={node_id}")
+        resp = await self._client.post(
+            GUILD_DUNGEON_CUBE_ARMY_ACTION_URL,
+            data={
+                "action": "state",
+                "instance_id": str(instance_id),
+                "node_id": str(node_id),
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def army_enter_fight(
+        self, instance_id: str, node_id: int | str, match_no: int
+    ) -> dict:
+        """POST action=enter_fight. Returns {ok, redirect, battle_id, match_no}."""
+        referer = (f"{GUILD_DUNGEON_CUBE_ARMY_ENTER_URL}"
+                   f"?instance_id={instance_id}&node_id={node_id}")
+        resp = await self._client.post(
+            GUILD_DUNGEON_CUBE_ARMY_ACTION_URL,
+            data={
+                "action": "enter_fight",
+                "instance_id": str(instance_id),
+                "node_id": str(node_id),
+                "match_no": str(match_no),
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def shadow_battle_state(self, battle_id: int) -> dict:
+        """GET shadow_army_live_battle.php?battle_id=X and parse inline `const initialState`."""
+        url = f"{SHADOW_ARMY_LIVE_BATTLE_URL}?battle_id={battle_id}"
+        resp = await self._client.get(url, headers=HEADERS, timeout=20)
+        resp.raise_for_status()
+        m = re.search(
+            r"const\s+initialState\s*=\s*(\{.*?\})\s*;",
+            resp.text, re.DOTALL,
+        )
+        if not m:
+            return {}
+        try:
+            return json.loads(m.group(1))
+        except Exception:
+            return {}
+
+    async def shadow_battle_join(self, battle_id: int) -> dict:
+        """POST shadow_army_live_battle.php action=join_battle."""
+        referer = f"{SHADOW_ARMY_LIVE_BATTLE_URL}?battle_id={battle_id}"
+        resp = await self._client.post(
+            SHADOW_ARMY_LIVE_BATTLE_URL,
+            data={
+                "action": "join_battle",
+                "battle_id": str(battle_id),
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def shadow_battle_assign_target(
+        self,
+        battle_id: int,
+        attacker_captain_unit_id: int,
+        defender_captain_unit_id: int,
+    ) -> dict:
+        """POST action=assign_target — start dealing damage to one enemy captain."""
+        referer = f"{SHADOW_ARMY_LIVE_BATTLE_URL}?battle_id={battle_id}"
+        resp = await self._client.post(
+            SHADOW_ARMY_LIVE_BATTLE_URL,
+            data={
+                "action": "assign_target",
+                "battle_id": str(battle_id),
+                "attacker_captain_unit_id": str(attacker_captain_unit_id),
+                "defender_captain_unit_id": str(defender_captain_unit_id),
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    async def shadow_battle_retreat(
+        self, battle_id: int, captain_unit_id: int
+    ) -> dict:
+        """POST action=retreat_captain — queues retreat after the next enemy hit."""
+        referer = f"{SHADOW_ARMY_LIVE_BATTLE_URL}?battle_id={battle_id}"
+        resp = await self._client.post(
+            SHADOW_ARMY_LIVE_BATTLE_URL,
+            data={
+                "action": "retreat_captain",
+                "battle_id": str(battle_id),
+                "captain_unit_id": str(captain_unit_id),
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            return {"ok": False, "error": resp.text[:300]}
+
+    # ── Shadowbridge Warrens (Gribble Junk-Magus) ──────────────────────────
+
+    async def fetch_warrens_room(
+        self, instance_id: str, location_id: int
+    ) -> tuple[str, list[WarrensMonsterCard]]:
+        """GET guild_dungeon_location.php and return (raw_html, parsed_cards)."""
+        url = (f"{GUILD_DUNGEON_LOCATION_URL}?instance_id={instance_id}"
+               f"&location_id={location_id}")
+        referer = f"{GUILD_DUNGEON_INSTANCE_URL}?id={instance_id}"
+        resp = await self._client.get(
+            url,
+            headers={**HEADERS, "Referer": referer},
+            timeout=20,
+        )
+        resp.raise_for_status()
+        return resp.text, parse_warrens_monsters(resp.text)
+
+    async def fetch_dungeon_battle_page(
+        self, instance_id: str, dgmid: str
+    ) -> str:
+        """GET battle.php?dgmid=…&instance_id=… (leaderboard + join status + stamina)."""
+        url = f"{BATTLE_URL}?dgmid={dgmid}&instance_id={instance_id}"
+        referer = (f"{GUILD_DUNGEON_LOCATION_URL}?instance_id={instance_id}"
+                   f"&location_id=2")
+        resp = await self._client.get(
+            url,
+            headers={**HEADERS, "Referer": referer},
+            timeout=20,
+        )
+        resp.raise_for_status()
+        return resp.text
+
+    async def join_dungeon_battle(
+        self, instance_id: str, dgmid: str
+    ) -> tuple[bool, str]:
+        """POST dungeon_join_battle.php. Returns (ok, server_message)."""
+        referer = f"{BATTLE_URL}?dgmid={dgmid}&instance_id={instance_id}"
+        resp = await self._client.post(
+            DUNGEON_JOIN_BATTLE_URL,
+            data={
+                "instance_id": str(instance_id),
+                "dgmid": str(dgmid),
+                "user_id": self.user_id,
+            },
+            headers={
+                **HEADERS, **ATTACK_EXTRA_HEADERS,
+                "Referer": referer,
+                "X-Requested-With": "fetch",
+            },
+            timeout=15,
+        )
+        body = resp.text.strip()
+        ok = body.lower().startswith("you have successfully")
+        return ok, body
+
+    async def attack_dungeon_monster(
+        self,
+        instance_id: str,
+        dgmid: str,
+        stamina_cost: int = 10,
+        skill_id: str = "-1",
+    ) -> dict:
+        """POST damage.php with dgmid form. Returns parsed JSON."""
+        referer = f"{BATTLE_URL}?dgmid={dgmid}&instance_id={instance_id}"
+        resp = await self._client.post(
+            DAMAGE_URL,
+            data={
+                "instance_id": str(instance_id),
+                "dgmid": str(dgmid),
+                "skill_id": skill_id,
+                "stamina_cost": str(stamina_cost),
+            },
+            headers={**HEADERS, **ATTACK_EXTRA_HEADERS, "Referer": referer},
+            timeout=20,
+        )
+        try:
+            return resp.json()
+        except Exception:
+            logger.warning(
+                "attack_dungeon_monster: non-JSON (HTTP %s): %s",
+                resp.status_code, resp.text[:300],
+            )
+            return {"_status": resp.status_code, "_text": resp.text[:400]}
+
     def get_cookies_json(self) -> str:
         """Serialize current cookies to JSON for persistence."""
-        import json
         jar = self._client.cookies
         cookies = {name: jar.get(name, "") for name in jar}  # type: ignore[arg-type]
         return json.dumps(cookies)
 
     def load_cookies_json(self, cookies_json: str) -> None:
         """Load cookies from JSON string to restore a session."""
-        import json
         cookies = json.loads(cookies_json)
         for name, value in cookies.items():
             self._client.cookies.set(name, value)

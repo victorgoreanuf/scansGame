@@ -142,6 +142,9 @@ function showApp(data) {
   refreshTeamPvPStatus();
   updateStatStatus(data.stat_running, data.stat_stats);
   updateQuestStatus(data.quest_running, data.quest_stats);
+  updateDungeonPvpStatus(data.dungeon_pvp_running, data.dungeon_pvp_status);
+  updateDungeonArmyStatus(data.dungeon_army_running, data.dungeon_army_status);
+  updateDungeonWarrensStatus(data.dungeon_warrens_running, data.dungeon_warrens_status);
 
   startSSE();
   startPolling();
@@ -432,6 +435,9 @@ function startPolling() {
       if (teamPvpTick === 0) refreshTeamPvPStatus();
       updateStatStatus(s.stat_running, s.stat_stats);
       updateQuestStatus(s.quest_running, s.quest_stats);
+      updateDungeonPvpStatus(s.dungeon_pvp_running, s.dungeon_pvp_status);
+      updateDungeonArmyStatus(s.dungeon_army_running, s.dungeon_army_status);
+      updateDungeonWarrensStatus(s.dungeon_warrens_running, s.dungeon_warrens_status);
     } catch(e){}
   }, 1000);
 }
@@ -812,6 +818,206 @@ function updateQuestStatus(questRunning, questStats) {
     parts.push('(wave farming)');
   }
   display.textContent = parts.join(' \u00b7 ');
+}
+
+// ── Guild Dungeon PvP ───────────────────────────────────────────────────────
+
+function fmtCooldownSeconds(s) {
+  if (s == null) return '—';
+  if (s <= 0) return 'ready';
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return [h, m, sec].map(v => String(v).padStart(2, '0')).join(':');
+}
+
+async function startDungeonPvp() {
+  $('dungeonPvpStartBtn').disabled = true;
+  startSSE();
+  try {
+    const res = await fetch('/api/dungeon-pvp/start', {method: 'POST'});
+    const data = await res.json();
+    if (data.ok) {
+      $('dungeonPvpStartBtn').style.display = 'none';
+      $('dungeonPvpStopBtn').style.display = '';
+      $('dungeonPvpBadge').textContent = 'RUNNING';
+      $('dungeonPvpBadge').className = 'pvp-badge on';
+    } else {
+      toast(data.error || 'Failed to start Guild Dungeon PvP', 'error');
+      $('dungeonPvpStartBtn').disabled = false;
+    }
+  } catch (e) {
+    toast('Dungeon PvP error: ' + e.message, 'error');
+    $('dungeonPvpStartBtn').disabled = false;
+  }
+}
+
+async function stopDungeonPvp() {
+  await fetch('/api/dungeon-pvp/stop', {method: 'POST'});
+  $('dungeonPvpStartBtn').style.display = '';
+  $('dungeonPvpStartBtn').disabled = false;
+  $('dungeonPvpStopBtn').style.display = 'none';
+  $('dungeonPvpBadge').textContent = 'OFF';
+  $('dungeonPvpBadge').className = 'pvp-badge off';
+}
+
+function updateDungeonPvpStatus(running, st) {
+  st = st || {};
+  if (running) {
+    $('dungeonPvpStartBtn').style.display = 'none';
+    $('dungeonPvpStopBtn').style.display = '';
+    $('dungeonPvpBadge').textContent = 'RUNNING';
+    $('dungeonPvpBadge').className = 'pvp-badge on';
+  } else {
+    $('dungeonPvpStartBtn').style.display = '';
+    $('dungeonPvpStartBtn').disabled = false;
+    $('dungeonPvpStopBtn').style.display = 'none';
+    $('dungeonPvpBadge').textContent = 'OFF';
+    $('dungeonPvpBadge').className = 'pvp-badge off';
+  }
+
+  const action = st.last_action
+    ? 'Last action: ' + st.last_action + (st.last_action_at ? ' (' + st.last_action_at + ')' : '')
+    : 'Last action: —';
+  $('dungeonPvpAction').textContent = action;
+
+  $('dungeonPvpNextWake').textContent = st.next_wake_at
+    ? 'Next wake: ' + st.next_wake_at
+    : 'Next wake: —';
+
+  const cd = st.cooldowns || {};
+  const keys = ['ring_ward', 'duel_heart', 'tyrant_conclave'];
+  const parts = keys.map(k => k + ' ' + (k in cd ? fmtCooldownSeconds(cd[k]) : '—'));
+  $('dungeonPvpCooldowns').textContent = 'Cooldowns: ' + parts.join(' · ');
+
+  $('dungeonPvpError').textContent = st.last_error ? 'Error: ' + st.last_error : '';
+}
+
+async function startDungeonArmy() {
+  $('dungeonArmyStartBtn').disabled = true;
+  startSSE();
+  try {
+    const res = await fetch('/api/dungeon-army/start', {method: 'POST'});
+    const data = await res.json();
+    if (data.ok) {
+      $('dungeonArmyStartBtn').style.display = 'none';
+      $('dungeonArmyStopBtn').style.display = '';
+      $('dungeonArmyBadge').textContent = 'RUNNING';
+      $('dungeonArmyBadge').className = 'pvp-badge on';
+    } else {
+      toast(data.error || 'Failed to start Guild Dungeon Army', 'error');
+      $('dungeonArmyStartBtn').disabled = false;
+    }
+  } catch (e) {
+    toast('Dungeon Army error: ' + e.message, 'error');
+    $('dungeonArmyStartBtn').disabled = false;
+  }
+}
+
+async function stopDungeonArmy() {
+  await fetch('/api/dungeon-army/stop', {method: 'POST'});
+  $('dungeonArmyStartBtn').style.display = '';
+  $('dungeonArmyStartBtn').disabled = false;
+  $('dungeonArmyStopBtn').style.display = 'none';
+  $('dungeonArmyBadge').textContent = 'OFF';
+  $('dungeonArmyBadge').className = 'pvp-badge off';
+}
+
+function updateDungeonArmyStatus(running, st) {
+  st = st || {};
+  if (running) {
+    $('dungeonArmyStartBtn').style.display = 'none';
+    $('dungeonArmyStopBtn').style.display = '';
+    $('dungeonArmyBadge').textContent = 'RUNNING';
+    $('dungeonArmyBadge').className = 'pvp-badge on';
+  } else {
+    $('dungeonArmyStartBtn').style.display = '';
+    $('dungeonArmyStartBtn').disabled = false;
+    $('dungeonArmyStopBtn').style.display = 'none';
+    $('dungeonArmyBadge').textContent = 'OFF';
+    $('dungeonArmyBadge').className = 'pvp-badge off';
+  }
+
+  const action = st.last_action
+    ? 'Last action: ' + st.last_action + (st.last_action_at ? ' (' + st.last_action_at + ')' : '')
+    : 'Last action: —';
+  $('dungeonArmyAction').textContent = action;
+
+  $('dungeonArmyNextWake').textContent = st.next_wake_at
+    ? 'Next wake: ' + st.next_wake_at
+    : 'Next wake: —';
+
+  const prog = st.progress || {};
+  const keys = ['veil_post', 'captain_spine', 'abyssal_muster'];
+  const labels = {veil_post: 'Veil Post', captain_spine: 'Captain Spine', abyssal_muster: 'Abyssal Muster'};
+  const parts = keys.map(k => labels[k] + ': ' + (k in prog ? prog[k] : '—'));
+  $('dungeonArmyProgress').textContent = parts.join(' · ');
+
+  $('dungeonArmyError').textContent = st.last_error ? 'Error: ' + st.last_error : '';
+}
+
+async function startDungeonWarrens() {
+  $('dungeonWarrensStartBtn').disabled = true;
+  startSSE();
+  try {
+    const res = await fetch('/api/dungeon-warrens/start', {method: 'POST'});
+    const data = await res.json();
+    if (data.ok) {
+      $('dungeonWarrensStartBtn').style.display = 'none';
+      $('dungeonWarrensStopBtn').style.display = '';
+      $('dungeonWarrensBadge').textContent = 'RUNNING';
+      $('dungeonWarrensBadge').className = 'pvp-badge on';
+    } else {
+      toast(data.error || 'Failed to start Guild Dungeon Warrens', 'error');
+      $('dungeonWarrensStartBtn').disabled = false;
+    }
+  } catch (e) {
+    toast('Dungeon Warrens error: ' + e.message, 'error');
+    $('dungeonWarrensStartBtn').disabled = false;
+  }
+}
+
+async function stopDungeonWarrens() {
+  await fetch('/api/dungeon-warrens/stop', {method: 'POST'});
+  $('dungeonWarrensStartBtn').style.display = '';
+  $('dungeonWarrensStartBtn').disabled = false;
+  $('dungeonWarrensStopBtn').style.display = 'none';
+  $('dungeonWarrensBadge').textContent = 'OFF';
+  $('dungeonWarrensBadge').className = 'pvp-badge off';
+}
+
+function updateDungeonWarrensStatus(running, st) {
+  st = st || {};
+  if (running) {
+    $('dungeonWarrensStartBtn').style.display = 'none';
+    $('dungeonWarrensStopBtn').style.display = '';
+    $('dungeonWarrensBadge').textContent = 'RUNNING';
+    $('dungeonWarrensBadge').className = 'pvp-badge on';
+  } else {
+    $('dungeonWarrensStartBtn').style.display = '';
+    $('dungeonWarrensStartBtn').disabled = false;
+    $('dungeonWarrensStopBtn').style.display = 'none';
+    $('dungeonWarrensBadge').textContent = 'OFF';
+    $('dungeonWarrensBadge').className = 'pvp-badge off';
+  }
+
+  const action = st.last_action
+    ? 'Last action: ' + st.last_action + (st.last_action_at ? ' (' + st.last_action_at + ')' : '')
+    : 'Last action: —';
+  $('dungeonWarrensAction').textContent = action;
+
+  $('dungeonWarrensNextWake').textContent = st.next_wake_at
+    ? 'Next wake: ' + st.next_wake_at
+    : 'Next wake: —';
+
+  const prog = st.progress || {};
+  const keys = Object.keys(prog);
+  const parts = keys.length
+    ? keys.map(k => k + ': ' + prog[k])
+    : ['—'];
+  $('dungeonWarrensProgress').textContent = parts.join(' · ');
+
+  $('dungeonWarrensError').textContent = st.last_error ? 'Error: ' + st.last_error : '';
 }
 
 // ── Profiles ────────────────────────────────────────────────────────────────
@@ -1448,6 +1654,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('teamPvpBadge').className = 'pvp-badge off';
   $('statBadge').className = 'pvp-badge off';
   $('questBadge').className = 'pvp-badge off';
+  $('dungeonPvpBadge').className = 'pvp-badge off';
+  $('dungeonArmyBadge').className = 'pvp-badge off';
+  $('dungeonWarrensBadge').className = 'pvp-badge off';
   renderEvents();
   checkSession();
 });
